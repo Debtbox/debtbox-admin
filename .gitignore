@@ -1,0 +1,43 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# typescript
+*.tsbuildinfo
+
+
+#Generated CSS
+# **/*.css
+
+# local env files
+.env*.local
+
+# Only allow the styles.css in public folder to be committed   
+!public/errors/assets/styles/style.css
+node_modules
+pnpm-workspace.yaml
+
+DEPLOYMENT.md
+VALID_IBAN_EXAMPLES.md
+SEPTEMBER_2025_SUMMARY.md
