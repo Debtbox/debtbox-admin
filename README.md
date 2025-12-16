@@ -25,6 +25,25 @@ The project includes a GitHub Actions workflow that automatically deploys to Git
      `https://<your-username>.github.io/<repository-name>/`
    - Or if you have a custom domain configured, it will use that
 
+### Custom Domain Setup (admin.debtbox.sa)
+
+To configure the custom domain `admin.debtbox.sa`:
+
+1. **CNAME file is already created** in `public/CNAME` (will be automatically included in builds)
+
+2. **Add DNS CNAME record** at your DNS provider:
+   - **Type:** CNAME
+   - **Name:** `admin`
+   - **Value:** `<your-org-or-username>.github.io` (e.g., `debtbox.github.io`)
+   - **TTL:** 3600 (or default)
+
+3. **Configure in GitHub:**
+   - Go to **Settings** → **Pages** → **Custom domain**
+   - Enter: `admin.debtbox.sa`
+   - Wait for DNS verification (can take a few minutes to hours)
+
+**⚠️ Troubleshooting DNS errors?** See [DNS_SETUP.md](./DNS_SETUP.md) for detailed instructions and troubleshooting.
+
 ### Manual Deployment
 
 If you prefer to deploy manually:
