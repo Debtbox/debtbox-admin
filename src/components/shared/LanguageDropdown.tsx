@@ -1,34 +1,37 @@
-import { useState, useRef, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Globe } from 'lucide-react';
-import Cookies from 'js-cookie';
-import clsx from 'clsx';
+import { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { Globe } from "lucide-react";
+import Cookies from "js-cookie";
+import clsx from "clsx";
 
 const LanguageDropdown = () => {
-  const { i18n, t } = useTranslation();
+  const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
-    Cookies.set('i18next', lng, { expires: 365 });
+    Cookies.set("i18next", lng, { expires: 365 });
     setIsOpen(false);
   };
 
   const languages = [
-    { code: 'en', name: 'English', flag: '🇬🇧' },
-    { code: 'ar', name: 'العربية', flag: '🇸🇦' },
+    { code: "en", name: "English", flag: "🇬🇧" },
+    { code: "ar", name: "العربية", flag: "🇸🇦" },
   ];
 
   return (
@@ -48,8 +51,10 @@ const LanguageDropdown = () => {
               key={lang.code}
               onClick={() => changeLanguage(lang.code)}
               className={clsx(
-                'w-full text-start px-4 py-2 text-sm flex items-center space-x-2 hover:bg-gray-100',
-                i18n.language === lang.code ? 'bg-gray-50 font-medium' : 'text-gray-700',
+                "w-full text-start px-4 py-2 text-sm flex items-center space-x-2 hover:bg-gray-100",
+                i18n.language === lang.code
+                  ? "bg-gray-50 font-medium"
+                  : "text-gray-700"
               )}
             >
               <span>{lang.flag}</span>

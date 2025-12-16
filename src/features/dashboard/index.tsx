@@ -1,7 +1,25 @@
-import { useTranslation } from 'react-i18next';
-import { Users, Store, TrendingUp, DollarSign, CheckCircle2, Clock, ArrowUpRight, Building2, UserPlus } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useTranslation } from "react-i18next";
+import {
+  Users,
+  Store,
+  TrendingUp,
+  DollarSign,
+  CheckCircle2,
+  Clock,
+  ArrowUpRight,
+  Building2,
+  UserPlus,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -9,59 +27,91 @@ const Dashboard = () => {
   // Static data
   const stats = [
     {
-      name: t('dashboard.totalCustomers', 'Total Customers'),
-      value: '12,458',
-      change: '+12.5%',
+      name: t("dashboard.totalCustomers", "Total Customers"),
+      value: "12,458",
+      change: "+12.5%",
       icon: Users,
-      color: 'text-blue-600 bg-blue-50',
-      link: '/customers',
+      color: "text-blue-600 bg-blue-50",
+      link: "/customers",
     },
     {
-      name: t('dashboard.totalMerchants', 'Total Merchants'),
-      value: '3,245',
-      change: '+8.2%',
+      name: t("dashboard.totalMerchants", "Total Merchants"),
+      value: "3,245",
+      change: "+8.2%",
       icon: Store,
-      color: 'text-green-600 bg-green-50',
-      link: '/merchants',
+      color: "text-green-600 bg-green-50",
+      link: "/merchants",
     },
     {
-      name: t('dashboard.totalTransactions', 'Total Transactions'),
-      value: '45,892',
-      change: '+15.3%',
+      name: t("dashboard.totalTransactions", "Total Transactions"),
+      value: "45,892",
+      change: "+15.3%",
       icon: TrendingUp,
-      color: 'text-purple-600 bg-purple-50',
-      link: '/money',
+      color: "text-purple-600 bg-purple-50",
+      link: "/money",
     },
     {
-      name: t('dashboard.totalRevenue', 'Total Revenue'),
-      value: 'SAR 2.85M',
-      change: '+18.7%',
+      name: t("dashboard.totalRevenue", "Total Revenue"),
+      value: "SAR 2.85M",
+      change: "+18.7%",
       icon: DollarSign,
-      color: 'text-orange-600 bg-orange-50',
-      link: '/money',
+      color: "text-orange-600 bg-orange-50",
+      link: "/money",
     },
   ];
 
   const chartData = [
-    { month: 'Jan', revenue: 125000, users: 8500 },
-    { month: 'Feb', revenue: 145000, users: 9200 },
-    { month: 'Mar', revenue: 168000, users: 10100 },
-    { month: 'Apr', revenue: 189000, users: 11000 },
-    { month: 'May', revenue: 210000, users: 11800 },
-    { month: 'Jun', revenue: 235000, users: 12458 },
+    { month: "Jan", revenue: 125000, users: 8500 },
+    { month: "Feb", revenue: 145000, users: 9200 },
+    { month: "Mar", revenue: 168000, users: 10100 },
+    { month: "Apr", revenue: 189000, users: 11000 },
+    { month: "May", revenue: 210000, users: 11800 },
+    { month: "Jun", revenue: 235000, users: 12458 },
   ];
 
   const pendingApprovals = [
-    { id: '1', businessName: 'Al-Rashid Trading Co.', submittedDate: '2024-01-15' },
-    { id: '2', businessName: 'Modern Fashion Boutique', submittedDate: '2024-01-12' },
-    { id: '3', businessName: 'Tech Solutions LLC', submittedDate: '2024-01-10' },
+    {
+      id: "1",
+      businessName: "Al-Rashid Trading Co.",
+      submittedDate: "2024-01-15",
+    },
+    {
+      id: "2",
+      businessName: "Modern Fashion Boutique",
+      submittedDate: "2024-01-12",
+    },
+    {
+      id: "3",
+      businessName: "Tech Solutions LLC",
+      submittedDate: "2024-01-10",
+    },
   ];
 
   const recentActivity = [
-    { type: 'user', action: 'New user registered', time: '2 hours ago', icon: UserPlus },
-    { type: 'business', action: 'Business approval requested', time: '4 hours ago', icon: Building2 },
-    { type: 'transaction', action: 'Large transaction processed', time: '6 hours ago', icon: DollarSign },
-    { type: 'approval', action: 'Business approved', time: '1 day ago', icon: CheckCircle2 },
+    {
+      type: "user",
+      action: "New user registered",
+      time: "2 hours ago",
+      icon: UserPlus,
+    },
+    {
+      type: "business",
+      action: "Business approval requested",
+      time: "4 hours ago",
+      icon: Building2,
+    },
+    {
+      type: "transaction",
+      action: "Large transaction processed",
+      time: "6 hours ago",
+      icon: DollarSign,
+    },
+    {
+      type: "approval",
+      action: "Business approved",
+      time: "1 day ago",
+      icon: CheckCircle2,
+    },
   ];
 
   return (
@@ -69,10 +119,13 @@ const Dashboard = () => {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">
-          {t('dashboard.title', 'Admin Dashboard')}
+          {t("dashboard.title", "Admin Dashboard")}
         </h1>
         <p className="text-gray-600 mt-1">
-          {t('dashboard.subtitle', 'Overview of your platform statistics and activity')}
+          {t(
+            "dashboard.subtitle",
+            "Overview of your platform statistics and activity"
+          )}
         </p>
       </div>
 
@@ -87,7 +140,9 @@ const Dashboard = () => {
               className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-200 group"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className={`${stat.color} p-3 rounded-lg group-hover:scale-110 transition-transform`}>
+                <div
+                  className={`${stat.color} p-3 rounded-lg group-hover:scale-110 transition-transform`}
+                >
                   <Icon className="w-6 h-6" />
                 </div>
                 <div className="flex items-center text-xs font-semibold text-green-600">
@@ -96,7 +151,9 @@ const Dashboard = () => {
                 </div>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600 mb-1">{stat.name}</p>
+                <p className="text-sm font-medium text-gray-600 mb-1">
+                  {stat.name}
+                </p>
                 <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
               </div>
             </Link>
@@ -111,10 +168,10 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-lg font-semibold text-gray-900">
-                {t('dashboard.revenueGrowth', 'Revenue Growth')}
+                {t("dashboard.revenueGrowth", "Revenue Growth")}
               </h2>
               <p className="text-sm text-gray-600 mt-1">
-                {t('dashboard.last6Months', 'Last 6 months')}
+                {t("dashboard.last6Months", "Last 6 months")}
               </p>
             </div>
           </div>
@@ -131,9 +188,9 @@ const Dashboard = () => {
               <YAxis stroke="#64748b" fontSize={12} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#fff',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '8px',
+                  backgroundColor: "#fff",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "8px",
                 }}
                 formatter={(value: number) => `SAR ${value.toLocaleString()}`}
               />
@@ -154,17 +211,17 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-lg font-semibold text-gray-900">
-                {t('dashboard.pendingApprovals', 'Pending Approvals')}
+                {t("dashboard.pendingApprovals", "Pending Approvals")}
               </h2>
               <p className="text-sm text-gray-600 mt-1">
-                {t('dashboard.requiresAttention', 'Requires attention')}
+                {t("dashboard.requiresAttention", "Requires attention")}
               </p>
             </div>
             <Link
               to="/business-approvals"
               className="text-primary hover:text-primary-dark text-sm font-medium"
             >
-              {t('common.viewAll', 'View All')}
+              {t("common.viewAll", "View All")}
             </Link>
           </div>
           <div className="space-y-3">
@@ -178,7 +235,9 @@ const Dashboard = () => {
                     <Clock className="w-4 h-4 text-yellow-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{approval.businessName}</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {approval.businessName}
+                    </p>
                     <p className="text-xs text-gray-500">
                       {new Date(approval.submittedDate).toLocaleDateString()}
                     </p>
@@ -188,7 +247,7 @@ const Dashboard = () => {
             ))}
             {pendingApprovals.length === 0 && (
               <p className="text-sm text-gray-500 text-center py-4">
-                {t('dashboard.noPendingApprovals', 'No pending approvals')}
+                {t("dashboard.noPendingApprovals", "No pending approvals")}
               </p>
             )}
           </div>
@@ -200,7 +259,7 @@ const Dashboard = () => {
         {/* Recent Activity */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-6">
-            {t('dashboard.recentActivity', 'Recent Activity')}
+            {t("dashboard.recentActivity", "Recent Activity")}
           </h2>
           <div className="space-y-4">
             {recentActivity.map((activity, index) => {
@@ -211,8 +270,12 @@ const Dashboard = () => {
                     <Icon className="w-4 h-4 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">{activity.action}</p>
-                    <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {activity.action}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {activity.time}
+                    </p>
                   </div>
                 </div>
               );
@@ -223,7 +286,7 @@ const Dashboard = () => {
         {/* Quick Actions */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-6">
-            {t('dashboard.quickActions', 'Quick Actions')}
+            {t("dashboard.quickActions", "Quick Actions")}
           </h2>
           <div className="grid grid-cols-2 gap-3">
             <Link
@@ -232,7 +295,7 @@ const Dashboard = () => {
             >
               <Building2 className="w-5 h-5 text-blue-600 mb-2" />
               <p className="text-sm font-medium text-gray-900">
-                {t('dashboard.reviewApprovals', 'Review Approvals')}
+                {t("dashboard.reviewApprovals", "Review Approvals")}
               </p>
             </Link>
             <Link
@@ -241,7 +304,7 @@ const Dashboard = () => {
             >
               <UserPlus className="w-5 h-5 text-green-600 mb-2" />
               <p className="text-sm font-medium text-gray-900">
-                {t('dashboard.manageUsers', 'Manage Users')}
+                {t("dashboard.manageUsers", "Manage Users")}
               </p>
             </Link>
             <Link
@@ -250,7 +313,7 @@ const Dashboard = () => {
             >
               <DollarSign className="w-5 h-5 text-purple-600 mb-2" />
               <p className="text-sm font-medium text-gray-900">
-                {t('dashboard.viewFinancials', 'View Financials')}
+                {t("dashboard.viewFinancials", "View Financials")}
               </p>
             </Link>
             <Link
@@ -259,7 +322,7 @@ const Dashboard = () => {
             >
               <Users className="w-5 h-5 text-orange-600 mb-2" />
               <p className="text-sm font-medium text-gray-900">
-                {t('dashboard.manageCustomers', 'Manage Customers')}
+                {t("dashboard.manageCustomers", "Manage Customers")}
               </p>
             </Link>
           </div>
