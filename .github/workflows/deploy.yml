@@ -43,10 +43,13 @@ jobs:
         env:
           VITE_BASE_PATH: /debtbox-admin/
 
-      - name: Copy CNAME to dist
+      - name: Copy CNAME and 404.html to dist
         run: |
           if [ -f public/CNAME ]; then
             cp public/CNAME dist/CNAME
+          fi
+          if [ -f public/404.html ]; then
+            cp public/404.html dist/404.html
           fi
 
       - name: Setup Pages
