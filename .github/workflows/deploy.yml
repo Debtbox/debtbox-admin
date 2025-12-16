@@ -39,9 +39,21 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: pnpm run build
+        run: |
+          echo "Building with VITE_BASE_PATH=/debtbox-admin/"
+          pnpm run build
         env:
           VITE_BASE_PATH: /debtbox-admin/
+
+      - name: Verify build output
+        run: |
+          echo "Checking built index.html..."
+          if grep -q "/src/main.tsx" dist/index.html; then
+            echo "ERROR: Build failed - index.html still contains source script tag!"
+            cat dist/index.html
+            exit 1
+          fi
+          echo "✓ Build verification passed"
 
       - name: Copy CNAME and 404.html to dist
         run: |
