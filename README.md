@@ -61,8 +61,10 @@ pnpm run deploy
 ### Configuration
 
 - The build output directory is `dist/`
-- The base path in `vite.config.ts` is set to `/` for GitHub Pages
-- If deploying to a subdirectory, update the `base` path in `vite.config.ts`
+- The base path in `vite.config.ts` is set to `/debtbox-admin/` for GitHub Pages subdirectory deployment
+- **When custom domain (admin.debtbox.sa) is configured and working**, update the base path:
+  - In `vite.config.ts`: Change `base` to `'/'` or set `VITE_BASE_PATH='/'` environment variable
+  - The app will automatically use the correct base path via `VITE_BASE_PATH` environment variable
 
 ### Branch Configuration
 

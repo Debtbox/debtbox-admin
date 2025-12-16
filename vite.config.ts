@@ -4,7 +4,9 @@ import tailwindcss from "@tailwindcss/vite";
 import { resolve } from "path";
 
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? '/' : '/',
+  // Use /debtbox-admin/ for GitHub Pages subdirectory deployment
+  // When custom domain (admin.debtbox.sa) is configured, change this to '/'
+  base: process.env.VITE_BASE_PATH || '/debtbox-admin/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

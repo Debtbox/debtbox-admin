@@ -13,6 +13,11 @@ function App() {
   const { showSessionExpiryPopup, setShowSessionExpiryPopup } =
     useSessionStore();
 
+  // Match the base path from vite.config.ts
+  // For GitHub Pages subdirectory: '/debtbox-admin/'
+  // For custom domain (admin.debtbox.sa): '/'
+  const basename = import.meta.env.VITE_BASE_PATH || '/debtbox-admin/';
+
   useEffect(() => {
     const handleLanguageChange = (lng: string) => {
       setDocDirection(lng);
@@ -29,11 +34,11 @@ function App() {
     clearCookie('access_token');
     queryClient.clear();
     localStorage.clear();
-    window.location.replace('/auth/login');
+    window.location.replace(`${basename}auth/login`);
   };
 
   return (
-    <BrowserRouter basename="/">
+    <BrowserRouter basename={basename}>
       <AppRoutes />
       <SessionExpiryPopup
         isOpen={showSessionExpiryPopup}

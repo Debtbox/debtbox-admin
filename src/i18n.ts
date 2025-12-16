@@ -21,7 +21,8 @@ const i18nConfig = i18n
       escapeValue: false,
     },
     backend: {
-      loadPath: '/locales/{{lng}}.json',
+      // Use relative path that works with base path
+      loadPath: './locales/{{lng}}.json',
     },
   });
 
