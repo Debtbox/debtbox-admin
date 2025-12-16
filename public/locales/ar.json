@@ -1,0 +1,178 @@
+{
+  "login": {
+    "nationalId": "الهوية الوطنية",
+    "emailPlaceholder": "أدخل رقم الهوية الوطنية",
+    "password": "كلمة المرور",
+    "passwordPlaceholder": "أدخل كلمة المرور",
+    "rememberMe": "تذكرني",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "signingIn": "جارٍ تسجيل الدخول...",
+    "signIn": "تسجيل الدخول",
+    "staticMode": "الوضع الثابت: أي بيانات اعتماد ستعمل",
+    "footer": "© 2024 ديبت بوكس. جميع الحقوق محفوظة."
+  },
+  "navigation": {
+    "dashboard": "لوحة التحكم",
+    "businessApprovals": "موافقات الأعمال",
+    "userManagement": "إدارة المستخدمين",
+    "money": "الأموال والأرباح",
+    "customers": "العملاء",
+    "merchants": "التجار",
+    "settings": "الإعدادات"
+  },
+  "navbar": {
+    "welcome": "مرحباً!"
+  },
+  "dashboard": {
+    "title": "لوحة تحكم المدير",
+    "subtitle": "نظرة عامة على إحصائيات منصتك وأنشطتها",
+    "totalCustomers": "إجمالي العملاء",
+    "totalMerchants": "إجمالي التجار",
+    "totalTransactions": "إجمالي المعاملات",
+    "totalRevenue": "إجمالي الإيرادات",
+    "revenueGrowth": "نمو الإيرادات",
+    "last6Months": "آخر 6 أشهر",
+    "pendingApprovals": "الموافقات المعلقة",
+    "requiresAttention": "يتطلب الاهتمام",
+    "noPendingApprovals": "لا توجد موافقات معلقة",
+    "recentActivity": "النشاط الأخير",
+    "quickActions": "إجراءات سريعة",
+    "reviewApprovals": "مراجعة الموافقات",
+    "manageUsers": "إدارة المستخدمين",
+    "viewFinancials": "عرض البيانات المالية",
+    "manageCustomers": "إدارة العملاء"
+  },
+  "businessApprovals": {
+    "title": "موافقات الأعمال",
+    "subtitle": "مراجعة وإدارة طلبات تسجيل الأعمال",
+    "total": "إجمالي الطلبات",
+    "pending": "معلق",
+    "approved": "موافق عليه",
+    "rejected": "مرفوض",
+    "all": "الكل",
+    "searchPlaceholder": "البحث عن الأعمال...",
+    "businessName": "اسم العمل",
+    "owner": "المالك",
+    "contact": "جهة الاتصال",
+    "category": "الفئة",
+    "submittedDate": "تاريخ التقديم",
+    "status": "الحالة",
+    "noBusinesses": "لم يتم العثور على أعمال",
+    "approve": "موافقة",
+    "reject": "رفض"
+  },
+  "userManagement": {
+    "title": "إدارة المستخدمين",
+    "subtitle": "إدارة مستخدمي النظام وصلاحياتهم",
+    "totalUsers": "إجمالي المستخدمين",
+    "activeUsers": "نشط",
+    "inactiveUsers": "غير نشط",
+    "suspendedUsers": "معلق",
+    "searchPlaceholder": "البحث عن المستخدمين...",
+    "allRoles": "جميع الأدوار",
+    "allStatuses": "جميع الحالات",
+    "roles": {
+      "admin": "مدير",
+      "manager": "مدير",
+      "support": "دعم",
+      "viewer": "عارض"
+    },
+    "status": {
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "suspended": "معلق"
+    },
+    "user": "المستخدم",
+    "contact": "جهة الاتصال",
+    "role": "الدور",
+    "statusLabel": "الحالة",
+    "lastLogin": "آخر تسجيل دخول",
+    "noUsers": "لم يتم العثور على مستخدمين",
+    "joined": "انضم",
+    "addUser": "إضافة مستخدم"
+  },
+  "money": {
+    "title": "الأموال والأرباح",
+    "subtitle": "نظرة عامة مالية وتحليلات الأرباح",
+    "export": "تصدير",
+    "generateReport": "إنشاء تقرير",
+    "totalRevenue": "إجمالي الإيرادات",
+    "totalProfit": "إجمالي الأرباح",
+    "monthlyRevenue": "الإيرادات الشهرية",
+    "activeTransactions": "المعاملات النشطة",
+    "categories": {
+      "transactions": "المعاملات",
+      "fees": "الرسوم",
+      "subscriptions": "الاشتراكات",
+      "other": "أخرى"
+    },
+    "transactionTypes": {
+      "payment": "تم استلام الدفع",
+      "fee": "رسوم الخدمة",
+      "refund": "تم معالجة الاسترداد",
+      "subscription": "دفع الاشتراك"
+    },
+    "revenueProfit": "الإيرادات والأرباح",
+    "last12Months": "آخر 12 شهراً",
+    "revenue": "الإيرادات",
+    "profit": "الأرباح",
+    "revenueByCategory": "الإيرادات حسب الفئة",
+    "categoryBreakdown": "توزيع الإيرادات",
+    "weeklyTransactions": "المعاملات الأسبوعية",
+    "thisWeek": "هذا الأسبوع",
+    "recentTransactions": "المعاملات الأخيرة",
+    "latestActivity": "أحدث النشاط المالي"
+  },
+  "customers": {
+    "title": "العملاء",
+    "subtitle": "إدارة حسابات العملاء ومعلوماتهم",
+    "addCustomer": "إضافة عميل",
+    "searchPlaceholder": "البحث عن العملاء...",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "status": "الحالة",
+    "noCustomers": "لم يتم العثور على عملاء"
+  },
+  "merchants": {
+    "title": "التجار",
+    "subtitle": "إدارة حسابات التجار وإعدادات الأعمال",
+    "addMerchant": "إضافة تاجر",
+    "searchPlaceholder": "البحث عن التجار...",
+    "businessName": "اسم العمل",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "status": "الحالة",
+    "noMerchants": "لم يتم العثور على تجار"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "subtitle": "إدارة إعدادات حسابك والنظام",
+    "profile": "إعدادات الملف الشخصي",
+    "profileDescription": "إدارة معلومات حسابك",
+    "notifications": "الإشعارات",
+    "notificationsDescription": "تكوين تفضيلات الإشعارات",
+    "security": "الأمان",
+    "securityDescription": "إدارة إعدادات الأمان وكلمات المرور",
+    "system": "إعدادات النظام",
+    "systemDescription": "تكوين إعدادات النظام العامة",
+    "general": "الإعدادات العامة",
+    "comingSoon": "ستكون تكوينات الإعدادات متاحة هنا"
+  },
+  "session": {
+    "expired": "انتهت الجلسة",
+    "expiredMessage": "انتهت جلستك. يرجى تسجيل الدخول مرة أخرى."
+  },
+  "common": {
+    "actions": "الإجراءات",
+    "active": "نشط",
+    "viewAll": "عرض الكل",
+    "view": "عرض",
+    "edit": "تعديل",
+    "buttons": {
+      "logout": "تسجيل الخروج",
+      "login": "تسجيل الدخول"
+    }
+  }
+}
+

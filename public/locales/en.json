@@ -1,0 +1,178 @@
+{
+  "login": {
+    "nationalId": "National ID",
+    "emailPlaceholder": "Enter your national id",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "signingIn": "Signing in...",
+    "signIn": "Sign In",
+    "staticMode": "Static mode: Any credentials will work",
+    "footer": "© 2024 Debtbox. All rights reserved."
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "businessApprovals": "Business Approvals",
+    "userManagement": "User Management",
+    "money": "Money & Profits",
+    "customers": "Customers",
+    "merchants": "Merchants",
+    "settings": "Settings"
+  },
+  "navbar": {
+    "welcome": "Welcome!"
+  },
+  "dashboard": {
+    "title": "Admin Dashboard",
+    "subtitle": "Overview of your platform statistics and activity",
+    "totalCustomers": "Total Customers",
+    "totalMerchants": "Total Merchants",
+    "totalTransactions": "Total Transactions",
+    "totalRevenue": "Total Revenue",
+    "revenueGrowth": "Revenue Growth",
+    "last6Months": "Last 6 months",
+    "pendingApprovals": "Pending Approvals",
+    "requiresAttention": "Requires attention",
+    "noPendingApprovals": "No pending approvals",
+    "recentActivity": "Recent Activity",
+    "quickActions": "Quick Actions",
+    "reviewApprovals": "Review Approvals",
+    "manageUsers": "Manage Users",
+    "viewFinancials": "View Financials",
+    "manageCustomers": "Manage Customers"
+  },
+  "businessApprovals": {
+    "title": "Business Approvals",
+    "subtitle": "Review and manage business registration applications",
+    "total": "Total Applications",
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "all": "All",
+    "searchPlaceholder": "Search businesses...",
+    "businessName": "Business Name",
+    "owner": "Owner",
+    "contact": "Contact",
+    "category": "Category",
+    "submittedDate": "Submitted",
+    "status": "Status",
+    "noBusinesses": "No businesses found",
+    "approve": "Approve",
+    "reject": "Reject"
+  },
+  "userManagement": {
+    "title": "User Management",
+    "subtitle": "Manage system users and their permissions",
+    "totalUsers": "Total Users",
+    "activeUsers": "Active",
+    "inactiveUsers": "Inactive",
+    "suspendedUsers": "Suspended",
+    "searchPlaceholder": "Search users...",
+    "allRoles": "All Roles",
+    "allStatuses": "All Statuses",
+    "roles": {
+      "admin": "Admin",
+      "manager": "Manager",
+      "support": "Support",
+      "viewer": "Viewer"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "suspended": "Suspended"
+    },
+    "user": "User",
+    "contact": "Contact",
+    "role": "Role",
+    "statusLabel": "Status",
+    "lastLogin": "Last Login",
+    "noUsers": "No users found",
+    "joined": "Joined",
+    "addUser": "Add User"
+  },
+  "money": {
+    "title": "Money & Profits",
+    "subtitle": "Financial overview and profit analytics",
+    "export": "Export",
+    "generateReport": "Generate Report",
+    "totalRevenue": "Total Revenue",
+    "totalProfit": "Total Profit",
+    "monthlyRevenue": "Monthly Revenue",
+    "activeTransactions": "Active Transactions",
+    "categories": {
+      "transactions": "Transactions",
+      "fees": "Fees",
+      "subscriptions": "Subscriptions",
+      "other": "Other"
+    },
+    "transactionTypes": {
+      "payment": "Payment Received",
+      "fee": "Service Fee",
+      "refund": "Refund Processed",
+      "subscription": "Subscription Payment"
+    },
+    "revenueProfit": "Revenue & Profit",
+    "last12Months": "Last 12 months",
+    "revenue": "Revenue",
+    "profit": "Profit",
+    "revenueByCategory": "Revenue by Category",
+    "categoryBreakdown": "Revenue distribution",
+    "weeklyTransactions": "Weekly Transactions",
+    "thisWeek": "This week",
+    "recentTransactions": "Recent Transactions",
+    "latestActivity": "Latest financial activity"
+  },
+  "customers": {
+    "title": "Customers",
+    "subtitle": "Manage customer accounts and information",
+    "addCustomer": "Add Customer",
+    "searchPlaceholder": "Search customers...",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "status": "Status",
+    "noCustomers": "No customers found"
+  },
+  "merchants": {
+    "title": "Merchants",
+    "subtitle": "Manage merchant accounts and business settings",
+    "addMerchant": "Add Merchant",
+    "searchPlaceholder": "Search merchants...",
+    "businessName": "Business Name",
+    "email": "Email",
+    "phone": "Phone",
+    "status": "Status",
+    "noMerchants": "No merchants found"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account and system settings",
+    "profile": "Profile Settings",
+    "profileDescription": "Manage your account information",
+    "notifications": "Notifications",
+    "notificationsDescription": "Configure notification preferences",
+    "security": "Security",
+    "securityDescription": "Manage security settings and passwords",
+    "system": "System Settings",
+    "systemDescription": "Configure system-wide settings",
+    "general": "General Settings",
+    "comingSoon": "Settings configuration will be available here"
+  },
+  "session": {
+    "expired": "Session Expired",
+    "expiredMessage": "Your session has expired. Please log in again."
+  },
+  "common": {
+    "actions": "Actions",
+    "active": "Active",
+    "viewAll": "View All",
+    "view": "View",
+    "edit": "Edit",
+    "buttons": {
+      "logout": "Logout",
+      "login": "Login"
+    }
+  }
+}
+
