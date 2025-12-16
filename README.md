@@ -1,30 +1,52 @@
 # debtbox-admin
 
-## Deployment
+## Deployment to GitHub Pages
 
-**⚠️ Important:** GitHub Pages only works with **public repositories** on free GitHub accounts. Since this is a private admin panel, see [DEPLOYMENT.md](./DEPLOYMENT.md) for better deployment options.
+This project can be deployed to GitHub Pages using either automated GitHub Actions or manual deployment.
 
-### Quick Deploy Options:
+### Automated Deployment (Recommended)
 
-1. **Vercel** (Recommended) - Free, works with private repos, easy custom domain setup
-2. **Netlify** - Free, works with private repos
-3. **Cloudflare Pages** - Free, works with private repos
-4. **Docker** - Deploy to any container platform (AWS, GCP, Azure, etc.)
+The project includes a GitHub Actions workflow that automatically deploys to GitHub Pages when you push to the `main` branch.
 
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions on all deployment methods.
+#### Setup Steps:
 
-### Local Development
+1. **Enable GitHub Pages in your repository:**
+   - Go to your repository on GitHub
+   - Navigate to **Settings** → **Pages**
+   - Under **Source**, select **GitHub Actions**
+   - Save the settings
+
+2. **Push to main branch:**
+   - The workflow will automatically trigger on push to `main`
+   - You can also manually trigger it from the **Actions** tab → **Deploy to GitHub Pages** → **Run workflow**
+
+3. **Access your deployed site:**
+   - After deployment, your site will be available at:
+     `https://<your-username>.github.io/<repository-name>/`
+   - Or if you have a custom domain configured, it will use that
+
+### Manual Deployment
+
+If you prefer to deploy manually:
 
 ```bash
-# Install dependencies
-pnpm install
-
-# Run development server
-pnpm run dev
-
-# Build for production
+# Build the project
 pnpm run build
 
-# Preview production build
-pnpm run preview
+# Deploy to GitHub Pages
+pnpm run deploy
 ```
+
+**Note:** Make sure you have the `gh-pages` package installed (already in devDependencies) and have push access to the repository.
+
+### Configuration
+
+- The build output directory is `dist/`
+- The base path in `vite.config.ts` is set to `/` for GitHub Pages
+- If deploying to a subdirectory, update the `base` path in `vite.config.ts`
+
+### Branch Configuration
+
+If your default branch is not `main`, update the workflow file:
+- Edit `.github/workflows/deploy.yml`
+- Change `branches: - main` to your branch name (e.g., `master`)
