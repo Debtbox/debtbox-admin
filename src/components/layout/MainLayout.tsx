@@ -18,7 +18,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <div className="h-screen flex bg-[#FAFAFAF]">
+    <div className="h-screen flex bg-gray-50">
       <div
         className={clsx(
           isSidebarCollapsed ? 'w-16' : 'w-64',
@@ -41,7 +41,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
           isSidebarCollapsed={isSidebarCollapsed}
         />
 
-        <main className="flex-1 overflow-y-auto bg-gray-50">
+        <main className="flex-1 overflow-y-auto bg-gradient-to-br from-gray-50 to-gray-100">
           <div className="p-6">{children}</div>
         </main>
       </div>

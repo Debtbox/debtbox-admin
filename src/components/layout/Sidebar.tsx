@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
-import { LayoutDashboard, Users, Store, Settings } from 'lucide-react';
+import { LayoutDashboard, Users, Store, Settings, Building2, UserCog, DollarSign } from 'lucide-react';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -23,6 +23,21 @@ const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
       name: t('navigation.dashboard', 'Dashboard'),
       href: '/',
       icon: <LayoutDashboard className="w-5 h-5" />,
+    },
+    {
+      name: t('navigation.businessApprovals', 'Business Approvals'),
+      href: '/business-approvals',
+      icon: <Building2 className="w-5 h-5" />,
+    },
+    {
+      name: t('navigation.userManagement', 'User Management'),
+      href: '/user-management',
+      icon: <UserCog className="w-5 h-5" />,
+    },
+    {
+      name: t('navigation.money', 'Money & Profits'),
+      href: '/money',
+      icon: <DollarSign className="w-5 h-5" />,
     },
     {
       name: t('navigation.customers', 'Customers'),
@@ -52,21 +67,25 @@ const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
     <div
       className={clsx(
         isCollapsed ? 'w-16' : 'w-64',
-        'bg-white shadow-lg relative flex flex-col transition-all duration-300 h-screen',
+        'bg-white border-r border-gray-200 relative flex flex-col transition-all duration-300 h-screen',
       )}
     >
       {/* Logo Section */}
-      <div className="flex items-center justify-center p-2">
+      <div className="flex items-center justify-center p-4 border-b border-gray-200">
         {!isCollapsed && (
           <Link to="/" className="flex items-center space-x-3">
-            <span className="text-xl font-bold text-primary">Debtbox Admin</span>
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">DA</span>
+            </div>
+            <span className="text-xl font-bold text-gray-900">Debtbox Admin</span>
           </Link>
         )}
         {isCollapsed && (
-          <div className="text-primary font-bold text-lg">DA</div>
+          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-sm">DA</span>
+          </div>
         )}
       </div>
-      <div className="w-full h-px bg-gray-200 mb-3" />
 
       <nav className="flex-1 px-2 py-4 space-y-2">
         {navigation.map((item) => (
@@ -74,9 +93,9 @@ const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
             key={item.name}
             to={item.href}
             className={clsx(
-              'group flex items-center px-3 py-3 font-medium rounded-md transition-colors duration-200',
+              'group flex items-center px-3 py-3 font-medium rounded-lg transition-all duration-200',
               isActive(item.href)
-                ? 'bg-primary text-white'
+                ? 'bg-primary text-white shadow-md'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
             )}
             title={isCollapsed ? item.name : undefined}

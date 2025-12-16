@@ -4,9 +4,9 @@ import { publicRoutes } from './public';
 import { getCookie } from '@/utils/storage';
 
 export const AppRoutes = () => {
-  // For now, always show protected routes (static template)
-  // When backend is integrated, check for authentication token
-  const isLoggedIn = getCookie('access_token') || true; // Temporary: always true for static template
+  // Static mode: Check for access token cookie
+  // When backend is integrated, this will validate the token properly
+  const isLoggedIn = !!getCookie('access_token');
   const routes = isLoggedIn ? protectedRoutes : publicRoutes;
 
   const element = useRoutes([

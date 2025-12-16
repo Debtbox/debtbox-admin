@@ -3,6 +3,9 @@ import ProtectedRoutes from './ProtectedRoutes';
 import { CustomersRoutes } from '@/features/customers';
 import { MerchantsRoutes } from '@/features/merchants';
 import { SettingsRoutes } from '@/features/settings';
+import { BusinessApprovalsRoutes } from '@/features/business-approvals';
+import { UserManagementRoutes } from '@/features/user-management';
+import { MoneyRoutes } from '@/features/money';
 
 export const protectedRoutes = [
   {
@@ -16,6 +19,18 @@ export const protectedRoutes = [
       {
         path: '/dashboard',
         element: <DashboardRoutes />,
+      },
+      {
+        path: '/business-approvals',
+        element: <BusinessApprovalsRoutes />,
+      },
+      {
+        path: '/user-management',
+        element: <UserManagementRoutes />,
+      },
+      {
+        path: '/money',
+        element: <MoneyRoutes />,
       },
       {
         path: '/customers',

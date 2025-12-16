@@ -3,7 +3,17 @@
 @theme {
   --font-cairo: 'Cairo', sans-serif;
   --color-primary: #003153;
-  --color-light-gray: #fcfcfc;
+  --color-primary-light: #004d73;
+  --color-primary-dark: #001f33;
+  --color-light-gray: #f8fafc;
+  --color-card-bg: #ffffff;
+  --color-border: #e2e8f0;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
 }
 
 button {
