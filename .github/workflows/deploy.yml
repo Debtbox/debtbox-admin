@@ -1,5 +1,8 @@
 name: Deploy to GitHub Pages
 
+# ⚠️ NOTE: GitHub Pages only works with PUBLIC repositories on free accounts.
+# For private repositories, use deploy-vercel.yml instead.
+
 on:
   push:
     branches:
