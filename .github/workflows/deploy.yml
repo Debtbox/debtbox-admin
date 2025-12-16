@@ -40,6 +40,8 @@ jobs:
 
       - name: Build
         run: pnpm run build
+        env:
+          VITE_BASE_PATH: /debtbox-admin/
 
       - name: Copy CNAME to dist
         run: |
