@@ -3,6 +3,7 @@ import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
+import { ProfileSync } from '@/features/auth/components/ProfileSync';
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { i18n } = useTranslation();
@@ -19,6 +20,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="h-screen flex bg-gray-50">
+      <ProfileSync />
       <div
         className={clsx(
           isSidebarCollapsed ? 'w-16' : 'w-64',

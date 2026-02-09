@@ -1,15 +1,33 @@
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { LogOut } from "lucide-react";
+
+function formatLastLogin(iso: string): string {
+  try {
+    const d = new Date(iso);
+    return d.toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" });
+  } catch {
+    return iso;
+  }
+}
 import { useUserStore } from "@/stores/UserStore";
-import { clearCookie } from "@/utils/storage";
+import { clearAuthTokens } from "@/utils/storage";
 import { queryClient } from "@/lib/queryClient";
+import { useLogout } from "@/features/auth/api/logout";
+import { toast } from "sonner";
 
 const UserDropdown = () => {
   const { t } = useTranslation();
   const { user, clearUser } = useUserStore();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const basename = import.meta.env.VITE_BASE_PATH || '/debtbox-admin/';
+
+  const { mutate: logoutMutation, isPending } = useLogout({
+    onError: () => {
+      toast.error(t('login.logoutError', 'Failed to sign out. You have been signed out locally.'));
+    },
+  });
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -26,11 +44,15 @@ const UserDropdown = () => {
   }, []);
 
   const handleLogout = () => {
-    clearCookie("access_token");
-    clearUser();
-    queryClient.clear();
-    localStorage.clear();
-    window.location.replace("/auth/login");
+    logoutMutation(undefined, {
+      onSettled: () => {
+        clearAuthTokens();
+        clearUser();
+        queryClient.clear();
+        localStorage.clear();
+        window.location.replace(`${basename}auth/login`);
+      },
+    });
   };
 
   return (
@@ -45,21 +67,37 @@ const UserDropdown = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute end-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-          <div className="px-4 py-2 border-b border-gray-200">
-            <p className="text-sm font-medium text-gray-900">
+        <div className="absolute end-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-100">
+          <div className="px-4 py-3 border-b border-gray-100">
+            <p className="text-sm font-semibold text-gray-900">
               {user?.full_name_en || "Admin User"}
             </p>
-            <p className="text-xs text-gray-500">
-              {user?.email || "admin@debtbox.sa"}
+            <p className="text-xs text-gray-500 mt-0.5">
+              {user?.email || "—"}
             </p>
+            {user?.role && (
+              <p className="text-xs text-primary font-medium mt-1">
+                {user.role}
+              </p>
+            )}
+            {user?.phone && (
+              <p className="text-xs text-gray-500 mt-0.5">
+                {user.phone}
+              </p>
+            )}
+            {user?.last_login_at && (
+              <p className="text-xs text-gray-400 mt-1">
+                {t("user.lastLogin", "Last login")}: {formatLastLogin(user.last_login_at)}
+              </p>
+            )}
           </div>
           <button
             onClick={handleLogout}
-            className="w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+            disabled={isPending}
+            className="w-full text-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <LogOut className="w-4 h-4" />
-            <span>{t("common.buttons.logout", "Logout")}</span>
+            <LogOut className="w-4 h-4 shrink-0" />
+            <span>{isPending ? t("login.signingOut", "Signing out...") : t("common.buttons.logout", "Logout")}</span>
           </button>
         </div>
       )}

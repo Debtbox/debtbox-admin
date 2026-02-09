@@ -1,11 +1,14 @@
 import { create } from 'zustand';
 
-interface User {
+export interface User {
   id: string;
   full_name_en: string;
   full_name_ar: string;
   email: string;
   role: string;
+  phone?: string;
+  status?: string;
+  last_login_at?: string | null;
 }
 
 interface UserStore {

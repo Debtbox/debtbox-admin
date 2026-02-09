@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import SessionExpiryPopup from './components/shared/SessionExpiryPopup';
 import { useSessionStore } from './stores/SessionStore';
-import { clearCookie } from './utils/storage';
+import { clearAuthTokens } from './utils/storage';
 import { queryClient } from './lib/queryClient';
 
 function App() {
@@ -31,7 +31,7 @@ function App() {
 
   const handleSessionRedirect = () => {
     setShowSessionExpiryPopup(false);
-    clearCookie('access_token');
+    clearAuthTokens();
     queryClient.clear();
     localStorage.clear();
     window.location.replace(`${basename}auth/login`);

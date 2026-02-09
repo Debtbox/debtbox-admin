@@ -1,15 +1,26 @@
 {
   "login": {
+    "email": "Email",
     "nationalId": "National ID",
-    "emailPlaceholder": "Enter your national id",
+    "emailPlaceholder": "Enter your email",
+    "subtitle": "Sign in to access your dashboard",
     "password": "Password",
     "passwordPlaceholder": "Enter your password",
     "rememberMe": "Remember me",
     "forgotPassword": "Forgot password?",
     "signingIn": "Signing in...",
+    "signingOut": "Signing out...",
     "signIn": "Sign In",
-    "staticMode": "Static mode: Any credentials will work",
+    "success": "Signed in successfully",
+    "error": "Invalid email or password. Please try again.",
+    "logoutError": "Failed to sign out. You have been signed out locally.",
     "footer": "© 2024 Debtbox. All rights reserved."
+  },
+  "validation": {
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email address",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 8 characters"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -22,6 +33,9 @@
   },
   "navbar": {
     "welcome": "Welcome!"
+  },
+  "user": {
+    "lastLogin": "Last login"
   },
   "dashboard": {
     "title": "Admin Dashboard",
