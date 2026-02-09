@@ -11,7 +11,7 @@ const i18nConfig = i18n
   .init({
     lng: getLanguageFromCookie(),
     fallbackLng: 'en',
-    supportedLngs: ['en', 'ar'],
+    supportedLngs: ['en', 'ar', 'ur', 'bn'],
     detection: {
       order: ['cookie'],
       caches: [],
@@ -21,8 +21,7 @@ const i18nConfig = i18n
       escapeValue: false,
     },
     backend: {
-      // Use relative path that works with base path
-      loadPath: './locales/{{lng}}.json',
+      loadPath: '/debtbox-admin/locales/{{lng}}.json',
     },
   });
 

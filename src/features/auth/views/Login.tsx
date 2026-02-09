@@ -158,7 +158,9 @@ export const Login = () => {
         </div>
 
         <p className="text-center text-sm text-gray-600 mt-6">
-          {t('login.footer', '© 2024 Debtbox. All rights reserved.')}
+          {t('login.footer',
+            { year: new Date().getFullYear() }
+          )}
         </p>
       </div>
     </div>

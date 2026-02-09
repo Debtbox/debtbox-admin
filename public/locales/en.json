@@ -14,8 +14,8 @@
     "success": "Signed in successfully",
     "error": "Invalid email or password. Please try again.",
     "logoutError": "Failed to sign out. You have been signed out locally.",
-    "footer": "© 2024 Debtbox. All rights reserved."
-  },
+    "footer": "© {year} Debtbox. All rights reserved."
+  },  
   "validation": {
     "emailRequired": "Email is required",
     "emailInvalid": "Please enter a valid email address",
