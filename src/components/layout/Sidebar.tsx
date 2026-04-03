@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import { LayoutDashboard, Users, Store, Settings, Building2, UserCog, DollarSign } from 'lucide-react';
+import { sidebarLogo } from '@/assets/images';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -74,10 +75,7 @@ const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
       <div className="flex items-center justify-center p-4 border-b border-gray-200">
         {!isCollapsed && (
           <Link to="/" className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">DA</span>
-            </div>
-            <span className="text-xl font-bold text-gray-900">Debtbox Admin</span>
+            <img src={sidebarLogo} alt="Debtbox Admin" className="h-8" />
           </Link>
         )}
         {isCollapsed && (
