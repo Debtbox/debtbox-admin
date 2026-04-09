@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
-import { LayoutDashboard, Users, Store, Settings, Building2, UserCog, DollarSign } from 'lucide-react';
+import { LayoutDashboard, Users, Store, Settings, Building2, UserCog, DollarSign, MessageSquare } from 'lucide-react';
 import { sidebarLogo } from '@/assets/images';
 
 interface SidebarProps {
@@ -24,6 +24,11 @@ const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
       name: t('navigation.dashboard', 'Dashboard'),
       href: '/',
       icon: <LayoutDashboard className="w-5 h-5" />,
+    },
+    {
+      name: t('navigation.supportTickets', 'Support Tickets'),
+      href: '/support-tickets',
+      icon: <MessageSquare className="w-5 h-5" />,
     },
     {
       name: t('navigation.businessApprovals', 'Business Approvals'),

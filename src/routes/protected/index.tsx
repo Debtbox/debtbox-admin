@@ -6,12 +6,17 @@ import { SettingsRoutes } from '@/features/settings';
 import { BusinessApprovalsRoutes } from '@/features/business-approvals';
 import { UserManagementRoutes } from '@/features/user-management';
 import { MoneyRoutes } from '@/features/money';
+import { SupportTicketsRoutes } from '@/features/supportTickets';
 
 export const protectedRoutes = [
   {
     path: '/',
     element: <ProtectedRoutes />,
     children: [
+      {
+        path: '/support-tickets*',
+        element: <SupportTicketsRoutes />,
+      },
       {
         path: '/',
         element: <DashboardRoutes />,
