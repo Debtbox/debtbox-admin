@@ -158,7 +158,46 @@
     "email": "Email",
     "phone": "Phone",
     "status": "Status",
-    "noMerchants": "No merchants found"
+    "noMerchants": "No merchants found",
+    "merchants": "Merchants",
+    "approvals": "Pending Approvals",
+    "name": "Name",
+    "createdAt": "Created",
+    "approve": "Approve",
+    "reject": "Reject",
+    "approveMerchant": "Approve Merchant",
+    "rejectMerchant": "Reject Merchant",
+    "approveConfirmation": "Are you sure you want to approve this merchant registration?",
+    "rejectConfirmation": "Are you sure you want to reject this merchant registration?",
+    "reviewNote": "Review Note",
+    "reviewNotePlaceholder": "Please provide a reason for rejection...",
+    "registrationMethodLabel": "Registration Method",
+    "registrationMethod": {
+      "email": "Email",
+      "nafath": "Nafath",
+      "manual": "Manual"
+    },
+    "viewIdCard": "View ID Card",
+    "noPendingApprovals": "No pending approvals",
+    "filters": "Filters",
+    "search": "Search merchants...",
+    "selectStatus": "Select status",
+    "selectVerificationStatus": "Select verification status",
+    "createdFrom": "From",
+    "createdTo": "To",
+    "statusLabel": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending",
+      "banned": "Banned"
+    },
+    "verificationStatus": {
+      "pending_nafath": "Pending Nafath",
+      "pending_email_verification": "Pending Email",
+      "pending_admin_approval": "Pending Admin Approval",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -184,18 +223,34 @@
     "viewAll": "View All",
     "view": "View",
     "edit": "Edit",
-    "showing": "Showing",
+    "showing": "Showing {start}-{end} of {total}",
     "of": "of",
     "items": "items",
     "firstPage": "First page",
     "previousPage": "Previous page",
     "nextPage": "Next page",
     "lastPage": "Last page",
+    "goToPage": "Go to page {{page}}",
+    "goTo": "Go to",
+    "perPage": "Per page",
     "filters": "Filters",
+    "clearFilters": "Clear Filters",
     "clearAll": "Clear All",
+    "cancel": "Cancel",
     "buttons": {
       "logout": "Logout",
-      "login": "Login"
+      "login": "Login",
+      "viewAll": "View All"
+    },
+    "pagination": {
+      "showing": "Showing {start}-{end} of {total}",
+      "perPage": "Per page",
+      "goTo": "Go to",
+      "firstPage": "First page",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "lastPage": "Last page",
+      "goToPage": "Go to page {{page}}"
     }
   },
   "supportTickets": {

@@ -158,7 +158,46 @@
     "email": "البريد الإلكتروني",
     "phone": "الهاتف",
     "status": "الحالة",
-    "noMerchants": "لم يتم العثور على تجار"
+    "noMerchants": "لم يتم العثور على تجار",
+    "merchants": "التجار",
+    "approvals": "الموافقات المعلقة",
+    "name": "الاسم",
+    "createdAt": "تاريخ الإنشاء",
+    "approve": "موافقة",
+    "reject": "رفض",
+    "approveMerchant": "موافقة على التاجر",
+    "rejectMerchant": "رفض التاجر",
+    "approveConfirmation": "هل أنت متأكد من أنك تريد الموافقة على تسجيل هذا التاجر؟",
+    "rejectConfirmation": "هل أنت متأكد من أنك تريد رفض تسجيل هذا التاجر؟",
+    "reviewNote": "ملاحظة المراجعة",
+    "reviewNotePlaceholder": "يرجى تقديم سبب الرفض...",
+    "registrationMethodLabel": "طريقة التسجيل",
+    "registrationMethod": {
+      "email": "البريد الإلكتروني",
+      "nafath": "نفاذ",
+      "manual": "يدوي"
+    },
+    "viewIdCard": "عرض البطاقة الشخصية",
+    "noPendingApprovals": "لا توجد موافقات معلقة",
+    "filters": "الفلاتر",
+    "search": "البحث عن التجار...",
+    "selectStatus": "اختر الحالة",
+    "selectVerificationStatus": "اختر حالة التحقق",
+    "createdFrom": "من",
+    "createdTo": "إلى",
+    "statusLabel": {
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "pending": "معلق",
+      "banned": "محظور"
+    },
+    "verificationStatus": {
+      "pending_nafath": "معلق نفاذ",
+      "pending_email_verification": "معلق البريد الإلكتروني",
+      "pending_admin_approval": "معلق موافقة المدير",
+      "approved": "معتمد",
+      "rejected": "مرفوض"
+    }
   },
   "settings": {
     "title": "الإعدادات",
@@ -191,11 +230,27 @@
     "previousPage": "الصفحة السابقة",
     "nextPage": "الصفحة التالية",
     "lastPage": "الصفحة الأخيرة",
+    "goToPage": "الذهاب إلى الصفحة {{page}}",
+    "goTo": "الذهاب إلى",
+    "perPage": "لكل صفحة",
     "filters": "الفلاتر",
+    "clearFilters": "مسح الفلاتر",
     "clearAll": "مسح الكل",
+    "cancel": "إلغاء",
     "buttons": {
       "logout": "تسجيل الخروج",
-      "login": "تسجيل الدخول"
+      "login": "تسجيل الدخول",
+      "viewAll": "عرض الكل"
+    },
+    "pagination": {
+      "showing": "عرض {start}-{end} من {total}",
+      "perPage": "لكل صفحة",
+      "goTo": "الذهاب إلى",
+      "firstPage": "الصفحة الأولى",
+      "previousPage": "الصفحة السابقة",
+      "nextPage": "الصفحة التالية",
+      "lastPage": "الصفحة الأخيرة",
+      "goToPage": "الذهاب إلى الصفحة {{page}}"
     }
   },
   "supportTickets": {

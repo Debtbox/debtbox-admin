@@ -1,8 +1,17 @@
-import { useTranslation } from 'react-i18next';
-import { Link, useLocation } from 'react-router-dom';
-import clsx from 'clsx';
-import { LayoutDashboard, Users, Store, Settings, Building2, UserCog, DollarSign, MessageSquare } from 'lucide-react';
-import { sidebarLogo } from '@/assets/images';
+import { useTranslation } from "react-i18next";
+import { Link, useLocation } from "react-router-dom";
+import clsx from "clsx";
+import {
+  LayoutDashboard,
+  Store,
+  // Users,
+  // Settings,
+  // Building2,
+  // UserCog,
+  // DollarSign,
+  MessageSquare,
+} from "lucide-react";
+import { sidebarLogo } from "@/assets/images";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -21,50 +30,50 @@ const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
 
   const navigation: NavItem[] = [
     {
-      name: t('navigation.dashboard', 'Dashboard'),
-      href: '/',
+      name: t("navigation.dashboard", "Dashboard"),
+      href: "/",
       icon: <LayoutDashboard className="w-5 h-5" />,
     },
     {
-      name: t('navigation.supportTickets', 'Support Tickets'),
-      href: '/support-tickets',
+      name: t("navigation.supportTickets", "Support Tickets"),
+      href: "/support-tickets",
       icon: <MessageSquare className="w-5 h-5" />,
     },
+    // {
+    //   name: t('navigation.businessApprovals', 'Business Approvals'),
+    //   href: '/business-approvals',
+    //   icon: <Building2 className="w-5 h-5" />,
+    // },
+    // {
+    //   name: t('navigation.userManagement', 'User Management'),
+    //   href: '/user-management',
+    //   icon: <UserCog className="w-5 h-5" />,
+    // },
+    // {
+    //   name: t('navigation.money', 'Money & Profits'),
+    //   href: '/money',
+    //   icon: <DollarSign className="w-5 h-5" />,
+    // },
+    // {
+    //   name: t('navigation.customers', 'Customers'),
+    //   href: '/customers',
+    //   icon: <Users className="w-5 h-5" />,
+    // },
     {
-      name: t('navigation.businessApprovals', 'Business Approvals'),
-      href: '/business-approvals',
-      icon: <Building2 className="w-5 h-5" />,
-    },
-    {
-      name: t('navigation.userManagement', 'User Management'),
-      href: '/user-management',
-      icon: <UserCog className="w-5 h-5" />,
-    },
-    {
-      name: t('navigation.money', 'Money & Profits'),
-      href: '/money',
-      icon: <DollarSign className="w-5 h-5" />,
-    },
-    {
-      name: t('navigation.customers', 'Customers'),
-      href: '/customers',
-      icon: <Users className="w-5 h-5" />,
-    },
-    {
-      name: t('navigation.merchants', 'Merchants'),
-      href: '/merchants',
+      name: t("navigation.merchants", "Merchants"),
+      href: "/merchants",
       icon: <Store className="w-5 h-5" />,
     },
-    {
-      name: t('navigation.settings', 'Settings'),
-      href: '/settings',
-      icon: <Settings className="w-5 h-5" />,
-    },
+    // {
+    //   name: t('navigation.settings', 'Settings'),
+    //   href: '/settings',
+    //   icon: <Settings className="w-5 h-5" />,
+    // },
   ];
 
   const isActive = (href: string) => {
-    if (href === '/') {
-      return location.pathname === '/';
+    if (href === "/") {
+      return location.pathname === "/";
     }
     return location.pathname.startsWith(href);
   };
@@ -72,8 +81,8 @@ const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
   return (
     <div
       className={clsx(
-        isCollapsed ? 'w-16' : 'w-64',
-        'bg-white border-r border-gray-200 relative flex flex-col transition-all duration-300 h-screen',
+        isCollapsed ? "w-16" : "w-64",
+        "bg-white border-r border-gray-200 relative flex flex-col transition-all duration-300 h-screen",
       )}
     >
       {/* Logo Section */}
@@ -96,19 +105,19 @@ const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
             key={item.name}
             to={item.href}
             className={clsx(
-              'group flex items-center px-3 py-3 font-medium rounded-lg transition-all duration-200',
+              "group flex items-center px-3 py-3 font-medium rounded-lg transition-all duration-200",
               isActive(item.href)
-                ? 'bg-primary text-white shadow-md'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                ? "bg-primary text-white shadow-md"
+                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
             )}
             title={isCollapsed ? item.name : undefined}
             onClick={onToggle}
           >
             <span
               className={clsx(
-                isCollapsed ? '' : 'me-3',
-                'flex-shrink-0',
-                isActive(item.href) ? 'text-white' : 'text-gray-600',
+                isCollapsed ? "" : "me-3",
+                "flex-shrink-0",
+                isActive(item.href) ? "text-white" : "text-gray-600",
               )}
             >
               {item.icon}

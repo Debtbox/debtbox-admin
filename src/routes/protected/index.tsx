@@ -42,7 +42,7 @@ export const protectedRoutes = [
         element: <CustomersRoutes />,
       },
       {
-        path: '/merchants',
+        path: '/merchants*',
         element: <MerchantsRoutes />,
       },
       {
