@@ -1,4 +1,6 @@
 export { Pagination } from './Pagination';
+export { FilterBar } from './FilterBar';
+export type { FilterBarProps, FilterGroupDef, DateRangeDef, FilterOption } from './FilterBar';
 export { default as LanguageDropdown } from './LanguageDropdown';
 export { default as SessionExpiryPopup } from './SessionExpiryPopup';
 export { Input } from './Input';

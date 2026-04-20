@@ -169,7 +169,7 @@ const Table = <T extends object>({
               ))}
               {showActions && (
                 <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
-                  {t('common.buttons.actions')}
+                  {t('common.actions')}
                 </th>
               )}
             </tr>

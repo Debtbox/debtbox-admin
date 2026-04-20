@@ -39,7 +39,7 @@ export const SupportTickets = () => {
 
   const { data, isLoading, error } = useGetSupportTickets({
     params: {
-      page: currentPage,
+      page: currentPage - 1,
       limit: itemsPerPage,
       search: debouncedSearchTerm || undefined,
       status: filters.status?.map(s => s.toString()),
@@ -106,7 +106,6 @@ export const SupportTickets = () => {
         onSearchChange={setSearchTerm}
         filters={filters}
         onFiltersChange={handleFiltersChange}
-        t={t}
       />
 
       {/* Content Grid with partial loading */}

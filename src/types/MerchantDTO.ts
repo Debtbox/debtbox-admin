@@ -12,6 +12,10 @@ export interface MerchantDTO {
     payout_method: 'weekly' | 'monthly' | 'instant';
     iban_verified: boolean;
     created_at: string;
+    updated_at: string;
+    debtsCount: string;
+    customersCountDistinct: string;
+    businessesCount: string;
 }
 
 export interface MerchantDetailsDTO extends MerchantDTO {

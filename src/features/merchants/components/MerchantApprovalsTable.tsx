@@ -176,10 +176,10 @@ export const MerchantApprovalsTable = ({
         showActions={true}
         actions={actions}
         pagination={{
-          current: pagination.page,
+          current: pagination.page + 1,
           pageSize: pagination.limit,
           total: pagination.total,
-          onChange: (page) => onPageChange(page),
+          onChange: (page) => onPageChange(page - 1),
         }}
       />
 
