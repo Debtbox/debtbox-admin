@@ -4,12 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { User, X } from "lucide-react";
 import { Button, Input, Select } from "@/components/shared";
-import type { MerchantDetailsDTO } from "@/types/MerchantDTO";
-import type { UpdateMerchantRequest } from "../api/updateMerchant";
+import type { CustomerDetailsDTO } from "@/types/CustomerDTO";
+import type { UpdateCustomerRequest } from "../api/updateCustomer";
 
 const schema = z.object({
-  full_name_en: z.string().min(1, "Required").optional().or(z.literal("")),
-  full_name_ar: z.string().min(1, "Required").optional().or(z.literal("")),
+  full_name_en: z.string().optional().or(z.literal("")),
+  full_name_ar: z.string().optional().or(z.literal("")),
   nationality: z.string().optional().or(z.literal("")),
   dob: z.string().optional().or(z.literal("")),
   gender: z.string().optional().or(z.literal("")),
@@ -17,24 +17,24 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-interface EditMerchantModalProps {
-  merchant: MerchantDetailsDTO;
+interface EditCustomerModalProps {
+  customer: CustomerDetailsDTO;
   onClose: () => void;
-  onSave: (data: UpdateMerchantRequest) => void;
+  onSave: (data: UpdateCustomerRequest) => void;
   isLoading: boolean;
 }
 
-export const EditMerchantModal = ({ merchant, onClose, onSave, isLoading }: EditMerchantModalProps) => {
+export const EditCustomerModal = ({ customer, onClose, onSave, isLoading }: EditCustomerModalProps) => {
   const { t } = useTranslation();
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      full_name_en: merchant.full_name_en || "",
-      full_name_ar: merchant.full_name_ar || "",
-      nationality: merchant.nationality || "",
-      dob: merchant.dob || "",
-      gender: merchant.gender || "",
+      full_name_en: customer.full_name_en || "",
+      full_name_ar: customer.full_name_ar || "",
+      nationality: customer.nationality || "",
+      dob: customer.dob || "",
+      gender: customer.gender || "",
     },
   });
 
@@ -45,7 +45,7 @@ export const EditMerchantModal = ({ merchant, onClose, onSave, isLoading }: Edit
   ];
 
   const onSubmit = (values: FormValues) => {
-    const payload: UpdateMerchantRequest = {};
+    const payload: UpdateCustomerRequest = {};
     if (values.full_name_en) payload.full_name_en = values.full_name_en;
     if (values.full_name_ar) payload.full_name_ar = values.full_name_ar;
     if (values.nationality) payload.nationality = values.nationality;
@@ -57,12 +57,11 @@ export const EditMerchantModal = ({ merchant, onClose, onSave, isLoading }: Edit
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl max-w-lg w-full shadow-2xl max-h-[90vh] flex flex-col">
-        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <div className="flex items-center gap-2">
             <User className="w-5 h-5 text-blue-600" />
             <h2 className="text-lg font-semibold text-gray-900">
-              {t("merchants.editMerchant", "Edit Merchant")}
+              {t("customers.editCustomer", "Edit Customer")}
             </h2>
           </div>
           <button
@@ -73,41 +72,38 @@ export const EditMerchantModal = ({ merchant, onClose, onSave, isLoading }: Edit
           </button>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 overflow-hidden">
           <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
-                label={t("merchants.fullNameEn", "Full Name (English)")}
+                label={t("customers.fullNameEn", "Full Name (English)")}
                 placeholder="John Doe"
                 error={errors.full_name_en}
                 {...register("full_name_en")}
               />
               <Input
-                label={t("merchants.fullNameAr", "Full Name (Arabic)")}
+                label={t("customers.fullNameAr", "Full Name (Arabic)")}
                 placeholder="محمد علي"
                 dir="rtl"
                 error={errors.full_name_ar}
                 {...register("full_name_ar")}
               />
             </div>
-
             <Input
-              label={t("merchants.nationality", "Nationality")}
-              placeholder={t("merchants.nationalityPlaceholder", "e.g. Saudi")}
+              label={t("customers.nationality", "Nationality")}
+              placeholder={t("customers.nationalityPlaceholder", "e.g. Saudi")}
               error={errors.nationality}
               {...register("nationality")}
             />
-
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
                 type="date"
-                label={t("merchants.dob", "Date of Birth")}
+                label={t("customers.dob", "Date of Birth")}
                 error={errors.dob}
                 {...register("dob")}
               />
               <Select
-                label={t("merchants.gender", "Gender")}
+                label={t("customers.gender", "Gender")}
                 options={genderOptions}
                 error={errors.gender}
                 {...register("gender")}
@@ -115,7 +111,6 @@ export const EditMerchantModal = ({ merchant, onClose, onSave, isLoading }: Edit
             </div>
           </div>
 
-          {/* Footer */}
           <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-xl">
             <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
               {t("common.cancel", "Cancel")}

@@ -1,10 +1,10 @@
 import { axios } from "@/lib/axios";
 import { getLanguageFromCookie } from "@/utils/getLanguageFromCookies";
-import type { MerchantDTO } from "@/types/MerchantDTO";
 import { useMutation } from "@tanstack/react-query";
 import type { MutationConfig } from "@/lib/react-query";
+import type { CustomerDTO } from "@/types/CustomerDTO";
 
-export interface UpdateMerchantRequest {
+export interface UpdateCustomerRequest {
   full_name_ar?: string;
   full_name_en?: string;
   nationality?: string;
@@ -12,36 +12,36 @@ export interface UpdateMerchantRequest {
   gender?: string;
 }
 
-export const updateMerchant = ({
+export const updateCustomer = ({
   id,
   data,
 }: {
   id: number | string;
-  data: UpdateMerchantRequest;
-}): Promise<UpdateMerchantResponse> => {
+  data: UpdateCustomerRequest;
+}): Promise<UpdateCustomerResponse> => {
   const language = getLanguageFromCookie();
-  return axios.patch(`/admin/merchants/${id}`, data, {
+  return axios.patch(`/admin/customers/${id}`, data, {
     headers: {
       "Accept-Language": language,
     },
   });
 };
 
-export type UpdateMerchantResponse = {
+export type UpdateCustomerResponse = {
   message: string;
   success: boolean;
-  data: MerchantDTO;
+  data: CustomerDTO;
 };
 
-type UseUpdateMerchantOptions = {
-  config?: MutationConfig<typeof updateMerchant>;
+type UseUpdateCustomerOptions = {
+  config?: MutationConfig<typeof updateCustomer>;
 };
 
-export const useUpdateMerchant = ({
+export const useUpdateCustomer = ({
   config,
-}: UseUpdateMerchantOptions = {}) => {
+}: UseUpdateCustomerOptions = {}) => {
   return useMutation({
     ...config,
-    mutationFn: updateMerchant,
+    mutationFn: updateCustomer,
   });
 };

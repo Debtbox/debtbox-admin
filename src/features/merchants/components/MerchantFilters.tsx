@@ -6,8 +6,8 @@ interface MerchantFiltersProps {
     page: number;
     limit: number;
     search: string;
-    status: string[];
-    verificationStatus: string[];
+    status: ("active" | "inactive" | "pending" | "banned")[];
+    verificationStatus: ("pending_nafath" | "pending_email_verification" | "pending_admin_approval" | "approved" | "rejected")[];
     createdFrom: string;
     createdTo: string;
   };
@@ -22,10 +22,10 @@ export const MerchantFilters = ({ filters, onFiltersChange, activeTab }: Merchan
     key: 'status',
     label: t('merchants.filters.status', 'Status'),
     options: [
-      { value: 'active', label: t('merchants.status.active', 'Active') },
-      { value: 'inactive', label: t('merchants.status.inactive', 'Inactive') },
-      { value: 'pending', label: t('merchants.status.pending', 'Pending') },
-      { value: 'banned', label: t('merchants.status.banned', 'Banned') },
+      { value: 'active', label: t('merchants.statusLabel.active', 'Active') },
+      { value: 'inactive', label: t('merchants.statusLabel.inactive', 'Inactive') },
+      { value: 'pending', label: t('merchants.statusLabel.pending', 'Pending') },
+      { value: 'banned', label: t('merchants.statusLabel.banned', 'Banned') },
     ],
   };
 

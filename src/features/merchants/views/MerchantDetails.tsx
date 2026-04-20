@@ -14,7 +14,7 @@ export const MerchantDetails = () => {
   const navigate = useNavigate();
   const [showEditModal, setShowEditModal] = useState(false);
 
-  const { data: response, isLoading, error } = useGetMerchant({ id: id! });
+  const { data: response, isLoading, error, refetch } = useGetMerchant({ id: id! });
   const merchant = response?.data;
   const updateMutation = useUpdateMerchant();
 
@@ -282,10 +282,11 @@ export const MerchantDetails = () => {
           onClose={() => setShowEditModal(false)}
           onSave={(data) => {
             updateMutation.mutate(
-              { id: merchant.id, ...data },
+              { id: merchant.id, data },
               {
                 onSuccess: () => {
                   setShowEditModal(false);
+                  refetch();
                 },
               },
             );

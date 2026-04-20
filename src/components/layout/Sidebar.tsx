@@ -4,11 +4,7 @@ import clsx from "clsx";
 import {
   LayoutDashboard,
   Store,
-  // Users,
-  // Settings,
-  // Building2,
-  // UserCog,
-  // DollarSign,
+  Users,
   MessageSquare,
 } from "lucide-react";
 import { sidebarLogo } from "@/assets/images";
@@ -39,36 +35,16 @@ const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
       href: "/support-tickets",
       icon: <MessageSquare className="w-5 h-5" />,
     },
-    // {
-    //   name: t('navigation.businessApprovals', 'Business Approvals'),
-    //   href: '/business-approvals',
-    //   icon: <Building2 className="w-5 h-5" />,
-    // },
-    // {
-    //   name: t('navigation.userManagement', 'User Management'),
-    //   href: '/user-management',
-    //   icon: <UserCog className="w-5 h-5" />,
-    // },
-    // {
-    //   name: t('navigation.money', 'Money & Profits'),
-    //   href: '/money',
-    //   icon: <DollarSign className="w-5 h-5" />,
-    // },
-    // {
-    //   name: t('navigation.customers', 'Customers'),
-    //   href: '/customers',
-    //   icon: <Users className="w-5 h-5" />,
-    // },
     {
       name: t("navigation.merchants", "Merchants"),
       href: "/merchants",
       icon: <Store className="w-5 h-5" />,
     },
-    // {
-    //   name: t('navigation.settings', 'Settings'),
-    //   href: '/settings',
-    //   icon: <Settings className="w-5 h-5" />,
-    // },
+    {
+      name: t("navigation.customers", "Customers"),
+      href: "/customers",
+      icon: <Users className="w-5 h-5" />,
+    },
   ];
 
   const isActive = (href: string) => {
@@ -122,11 +98,7 @@ const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
             >
               {item.icon}
             </span>
-            {!isCollapsed && (
-              <>
-                <span className="flex-1">{item.name}</span>
-              </>
-            )}
+            {!isCollapsed && <span className="flex-1">{item.name}</span>}
           </Link>
         ))}
       </nav>

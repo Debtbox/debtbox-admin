@@ -2,20 +2,20 @@ import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { Building2, Clock } from "lucide-react";
-import { useGetMerchants } from "../api/getMerchants";
-import { useGetMerchantPendingApprovals } from "../api/getMerchantPendingApprovals";
-import { MerchantsTable } from "../components/MerchantsTable";
-import { MerchantApprovalsTable } from "../components/MerchantApprovalsTable";
-import { MerchantFilters } from "../components/MerchantFilters";
+import { Users, Clock } from "lucide-react";
+import { useGetCustomers } from "../api/getCustomers";
+import { useGetCustomerPendingApprovals } from "../api/getCustomerPendingApprovals";
+import { CustomersTable } from "../components/CustomersTable";
+import { CustomerApprovalsTable } from "../components/CustomerApprovalsTable";
+import { CustomerFilters } from "../components/CustomerFilters";
 
-export const Merchants = () => {
+export const Customers = () => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [activeTab, setActiveTab] = useState<"merchants" | "approvals">(
-    (searchParams.get('tab') as "merchants" | "approvals") || "merchants"
+  const [activeTab, setActiveTab] = useState<"customers" | "approvals">(
+    (searchParams.get("tab") as "customers" | "approvals") || "customers",
   );
 
   const [filters, setFilters] = useState<{
@@ -36,31 +36,30 @@ export const Merchants = () => {
     createdTo: "",
   });
 
-  // Update URL when tab changes
   useEffect(() => {
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set('tab', activeTab);
-    setSearchParams(newSearchParams, { replace: true });
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("tab", activeTab);
+    setSearchParams(newParams, { replace: true });
   }, [activeTab, searchParams, setSearchParams]);
 
-  const merchantsQuery = useGetMerchants({
-    params: activeTab === "merchants" ? filters : undefined,
+  const customersQuery = useGetCustomers({
+    params: activeTab === "customers" ? filters : undefined,
   });
 
-  const approvalsQuery = useGetMerchantPendingApprovals({
+  const approvalsQuery = useGetCustomerPendingApprovals({
     params: activeTab === "approvals" ? filters : undefined,
   });
 
   const tabs = [
     {
-      id: "merchants" as const,
-      label: t("merchants.merchants", "Merchants"),
-      icon: Building2,
-      count: merchantsQuery.data?.data.total || 0,
+      id: "customers" as const,
+      label: t("customers.customers", "Customers"),
+      icon: Users,
+      count: customersQuery.data?.data.total || 0,
     },
     {
       id: "approvals" as const,
-      label: t("merchants.approvals", "Pending Approvals"),
+      label: t("customers.approvals", "Pending Approvals"),
       icon: Clock,
       count: approvalsQuery.data?.data.total || 0,
     },
@@ -70,10 +69,10 @@ export const Merchants = () => {
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          {t("merchants.title", "Merchants")}
+          {t("customers.title", "Customers")}
         </h1>
         <p className="text-gray-600">
-          {t("merchants.subtitle", "Manage merchants and their approvals")}
+          {t("customers.subtitle", "Manage customers and their approvals")}
         </p>
       </div>
 
@@ -107,7 +106,7 @@ export const Merchants = () => {
 
       {/* Filters */}
       <div className="mb-6">
-        <MerchantFilters
+        <CustomerFilters
           filters={filters}
           onFiltersChange={setFilters}
           activeTab={activeTab}
@@ -115,21 +114,21 @@ export const Merchants = () => {
       </div>
 
       {/* Content */}
-      {activeTab === "merchants" && (
-        <MerchantsTable
-          data={merchantsQuery.data?.data.data || []}
-          isLoading={merchantsQuery.isLoading}
+      {activeTab === "customers" && (
+        <CustomersTable
+          data={customersQuery.data?.data.data || []}
+          isLoading={customersQuery.isLoading}
           pagination={{
-            page: merchantsQuery.data?.data.page || 0,
-            limit: merchantsQuery.data?.data.limit || 10,
-            total: merchantsQuery.data?.data.total || 0,
+            page: customersQuery.data?.data.page || 0,
+            limit: customersQuery.data?.data.limit || 10,
+            total: customersQuery.data?.data.total || 0,
           }}
           onPageChange={(page) => setFilters((prev) => ({ ...prev, page }))}
         />
       )}
 
       {activeTab === "approvals" && (
-        <MerchantApprovalsTable
+        <CustomerApprovalsTable
           data={approvalsQuery.data?.data.data || []}
           isLoading={approvalsQuery.isLoading}
           pagination={{
@@ -140,7 +139,7 @@ export const Merchants = () => {
           onPageChange={(page) => setFilters((prev) => ({ ...prev, page }))}
           onRefresh={() => {
             approvalsQuery.refetch();
-            queryClient.invalidateQueries({ queryKey: ["merchants"] });
+            queryClient.invalidateQueries({ queryKey: ["customers"] });
           }}
         />
       )}
@@ -148,4 +147,4 @@ export const Merchants = () => {
   );
 };
 
-export default Merchants;
+export default Customers;

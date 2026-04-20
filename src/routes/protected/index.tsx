@@ -38,7 +38,7 @@ export const protectedRoutes = [
         element: <MoneyRoutes />,
       },
       {
-        path: '/customers',
+        path: '/customers*',
         element: <CustomersRoutes />,
       },
       {

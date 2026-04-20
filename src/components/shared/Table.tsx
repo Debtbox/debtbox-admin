@@ -1,15 +1,15 @@
-import clsx from 'clsx';
-import { type ReactNode, useState, Fragment } from 'react';
-import { ChevronUp, ChevronDown, MoreHorizontal } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import CustomPagination from './CustomPagination';
+import clsx from "clsx";
+import { type ReactNode, useState, Fragment } from "react";
+import { ChevronUp, ChevronDown, MoreHorizontal } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import CustomPagination from "./CustomPagination";
 
 export interface TableColumn<T = object> {
   key: string;
   title: string;
   dataIndex: string;
   width?: string;
-  align?: 'left' | 'center' | 'right';
+  align?: "left" | "center" | "right";
   sortable?: boolean;
   render?: (value: unknown, record: T, index: number) => ReactNode;
   className?: string;
@@ -35,8 +35,8 @@ export interface TableProps<T = object> {
   };
   sortConfig?: {
     key: string;
-    direction: 'asc' | 'desc';
-    onChange: (key: string, direction: 'asc' | 'desc') => void;
+    direction: "asc" | "desc";
+    onChange: (key: string, direction: "asc" | "desc") => void;
   };
   actions?: (record: T, index: number) => ReactNode;
   showActions?: boolean;
@@ -48,7 +48,7 @@ const Table = <T extends object>({
   loading = false,
   emptyText,
   className,
-  rowKey = 'id',
+  rowKey = "id",
   onRowClick,
   rowClassName,
   rowExtra,
@@ -60,11 +60,11 @@ const Table = <T extends object>({
   const [hoveredRow, setHoveredRow] = useState<number | null>(null);
   const { t } = useTranslation();
   const getRowKey = (record: T, index: number): string => {
-    if (typeof rowKey === 'function') {
+    if (typeof rowKey === "function") {
       return rowKey(record);
     }
     const candidate = (record as Record<string, unknown>)[rowKey];
-    return typeof candidate === 'string' && candidate.length > 0
+    return typeof candidate === "string" && candidate.length > 0
       ? candidate
       : index.toString();
   };
@@ -73,9 +73,9 @@ const Table = <T extends object>({
     if (!column.sortable || !sortConfig) return;
 
     const newDirection =
-      sortConfig.key === column.dataIndex && sortConfig.direction === 'asc'
-        ? 'desc'
-        : 'asc';
+      sortConfig.key === column.dataIndex && sortConfig.direction === "asc"
+        ? "desc"
+        : "asc";
 
     sortConfig.onChange(column.dataIndex, newDirection);
   };
@@ -115,14 +115,14 @@ const Table = <T extends object>({
       <div className="bg-white rounded-2xl overflow-hidden">
         <div className="p-8 text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-gray-500">{t('common.buttons.loading')}</p>
+          <p className="mt-2 text-gray-500">{t("common.loading")}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={clsx('bg-white rounded-2xl overflow-hidden', className)}>
+    <div className={clsx("bg-white rounded-2xl overflow-hidden", className)}>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50">
@@ -131,11 +131,11 @@ const Table = <T extends object>({
                 <th
                   key={column.key}
                   className={clsx(
-                    'px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
+                    "px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
                     column.width && `w-${column.width}`,
-                    column.align === 'center' && 'text-center',
-                    column.align === 'right' && 'text-right',
-                    column.sortable && 'cursor-pointer hover:bg-gray-100',
+                    column.align === "center" && "text-center",
+                    column.align === "right" && "text-right",
+                    column.sortable && "cursor-pointer hover:bg-gray-100",
                     column.className,
                   )}
                   onClick={() => column.sortable && handleSort(column)}
@@ -146,20 +146,20 @@ const Table = <T extends object>({
                       <div className="flex flex-col">
                         <ChevronUp
                           className={clsx(
-                            'w-3 h-3',
+                            "w-3 h-3",
                             sortConfig.key === column.dataIndex &&
-                              sortConfig.direction === 'asc'
-                              ? 'text-primary'
-                              : 'text-gray-400',
+                              sortConfig.direction === "asc"
+                              ? "text-primary"
+                              : "text-gray-400",
                           )}
                         />
                         <ChevronDown
                           className={clsx(
-                            'w-3 h-3 -mt-1',
+                            "w-3 h-3 -mt-1",
                             sortConfig.key === column.dataIndex &&
-                              sortConfig.direction === 'desc'
-                              ? 'text-primary'
-                              : 'text-gray-400',
+                              sortConfig.direction === "desc"
+                              ? "text-primary"
+                              : "text-gray-400",
                           )}
                         />
                       </div>
@@ -169,7 +169,7 @@ const Table = <T extends object>({
               ))}
               {showActions && (
                 <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
-                  {t('common.actions')}
+                  {t("common.actions")}
                 </th>
               )}
             </tr>
@@ -197,11 +197,11 @@ const Table = <T extends object>({
                   <Fragment key={key}>
                     <tr
                       className={clsx(
-                        'transition-colors duration-150',
-                        onRowClick && 'cursor-pointer',
-                        showExtra && 'border-b-0!',
-                        isHovered && 'bg-gray-50',
-                        !isHovered && 'hover:bg-gray-50',
+                        "transition-colors duration-150",
+                        onRowClick && "cursor-pointer",
+                        showExtra && "border-b-0!",
+                        isHovered && "bg-gray-50",
+                        !isHovered && "hover:bg-gray-50",
                         rowClassName && rowClassName(record, index),
                       )}
                       onClick={() => onRowClick?.(record, index)}
@@ -212,9 +212,9 @@ const Table = <T extends object>({
                         <td
                           key={column.key}
                           className={clsx(
-                            'px-6 py-4 text-sm text-gray-900',
-                            column.align === 'center' && 'text-center',
-                            column.align === 'right' && 'text-right',
+                            "px-6 py-4 text-sm text-gray-900",
+                            column.align === "center" && "text-center",
+                            column.align === "right" && "text-right",
                             column.className,
                           )}
                         >
@@ -236,8 +236,8 @@ const Table = <T extends object>({
                     {showExtra && (
                       <tr
                         className={clsx(
-                          'border-t-0! transition-colors duration-150',
-                          isHovered && 'bg-gray-50',
+                          "border-t-0! transition-colors duration-150",
+                          isHovered && "bg-gray-50",
                         )}
                         onMouseEnter={() => setHoveredRow(index)}
                         onMouseLeave={() => setHoveredRow(null)}

@@ -1,0 +1,60 @@
+import { axios } from "@/lib/axios";
+import type { QueryConfig } from "@/lib/react-query";
+import { useQueryWithCallback } from "@/lib/hooks/useQueryWithCallback";
+import { getLanguageFromCookie } from "@/utils/getLanguageFromCookies";
+import type { CustomerDTO } from "@/types/CustomerDTO";
+
+export const getCustomers = (
+  params?: {
+    page?: number;
+    limit?: number;
+    status?: ("active" | "inactive" | "pending" | "banned")[];
+    verificationStatus?: (
+      | "pending_nafath"
+      | "pending_email_verification"
+      | "pending_admin_approval"
+      | "approved"
+      | "rejected"
+    )[];
+    search?: string;
+    createdFrom?: string;
+    createdTo?: string;
+  },
+): Promise<GetCustomersResponse> => {
+  const language = getLanguageFromCookie();
+  const queryParams = new URLSearchParams();
+
+  if (params?.page !== undefined) queryParams.append("page", params.page.toString());
+  if (params?.limit !== undefined) queryParams.append("limit", params.limit.toString());
+  if (params?.status?.length) queryParams.append("status", params.status.join(","));
+  if (params?.verificationStatus?.length)
+    queryParams.append("verificationStatus", params.verificationStatus.join(","));
+  if (params?.search) queryParams.append("search", params.search);
+  if (params?.createdFrom) queryParams.append("createdFrom", params.createdFrom);
+  if (params?.createdTo) queryParams.append("createdTo", params.createdTo);
+
+  const url = `/admin/customers${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
+
+  return axios.get(url, { headers: { "Accept-Language": language } });
+};
+
+export type GetCustomersResponse = {
+  message: string;
+  success: boolean;
+  data: { data: CustomerDTO[]; total: number; page: number; limit: number };
+};
+
+type UseGetCustomers = {
+  params?: Parameters<typeof getCustomers>[0];
+  config?: QueryConfig<typeof getCustomers>;
+  onSuccess?: (data: GetCustomersResponse) => void;
+};
+
+export const useGetCustomers = ({ params, config, onSuccess }: UseGetCustomers) => {
+  return useQueryWithCallback({
+    ...config,
+    queryKey: ["customers", params],
+    queryFn: () => getCustomers(params),
+    onSuccess,
+  });
+};
