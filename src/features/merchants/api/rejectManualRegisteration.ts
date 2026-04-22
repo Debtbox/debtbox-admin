@@ -1,7 +1,6 @@
 import { axios } from '@/lib/axios';
 import { getLanguageFromCookie } from '@/utils/getLanguageFromCookies';
-import { useMutation } from '@tanstack/react-query';
-import type { MutationConfig } from '@/lib/react-query';
+import { createMutationHook } from '@/lib/react-query';
 
 export interface RejectManualRegistrationRequest {
   reviewNote: string;
@@ -28,13 +27,4 @@ export type RejectManualRegistrationResponse = {
   data: null;
 };
 
-type UseRejectManualRegistrationOptions = {
-  config?: MutationConfig<typeof rejectManualRegistration>;
-};
-
-export const useRejectManualRegistration = ({ config }: UseRejectManualRegistrationOptions = {}) => {
-  return useMutation({
-    ...config,
-    mutationFn: rejectManualRegistration,
-  });
-};
+export const useRejectManualRegistration = createMutationHook(rejectManualRegistration);

@@ -1,8 +1,7 @@
 import { axios } from "@/lib/axios";
 import { getLanguageFromCookie } from "@/utils/getLanguageFromCookies";
 import type { MerchantDTO } from "@/types/MerchantDTO";
-import { useMutation } from "@tanstack/react-query";
-import type { MutationConfig } from "@/lib/react-query";
+import { createMutationHook } from "@/lib/react-query";
 
 export interface UpdateMerchantRequest {
   full_name_ar?: string;
@@ -33,15 +32,4 @@ export type UpdateMerchantResponse = {
   data: MerchantDTO;
 };
 
-type UseUpdateMerchantOptions = {
-  config?: MutationConfig<typeof updateMerchant>;
-};
-
-export const useUpdateMerchant = ({
-  config,
-}: UseUpdateMerchantOptions = {}) => {
-  return useMutation({
-    ...config,
-    mutationFn: updateMerchant,
-  });
-};
+export const useUpdateMerchant = createMutationHook(updateMerchant);

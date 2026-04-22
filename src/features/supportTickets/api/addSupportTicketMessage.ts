@@ -1,8 +1,7 @@
 import { axios } from '@/lib/axios';
 import { getLanguageFromCookie } from '@/utils/getLanguageFromCookies';
 import type { SupportTicketMessageDTO } from '@/types/SupportTicketDTO';
-import { useMutation } from '@tanstack/react-query';
-import type { MutationConfig } from '@/lib/react-query';
+import { createMutationHook } from '@/lib/react-query';
 
 export interface AddSupportTicketMessageRequest {
   body: string;
@@ -24,13 +23,4 @@ export type AddSupportTicketMessageResponse = {
   data: SupportTicketMessageDTO;
 };
 
-type UseAddSupportTicketMessageOptions = {
-  config?: MutationConfig<typeof addSupportTicketMessage>;
-};
-
-export const useAddSupportTicketMessage = ({ config }: UseAddSupportTicketMessageOptions = {}) => {
-  return useMutation({
-    ...config,
-    mutationFn: addSupportTicketMessage,
-  });
-};
+export const useAddSupportTicketMessage = createMutationHook(addSupportTicketMessage);

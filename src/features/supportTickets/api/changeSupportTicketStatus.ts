@@ -2,8 +2,7 @@ import { axios } from '@/lib/axios';
 import { getLanguageFromCookie } from '@/utils/getLanguageFromCookies';
 import type { SupportTicketDTO } from '@/types/SupportTicketDTO';
 import type { SupportTicketStatus } from '@/enums';
-import { useMutation } from '@tanstack/react-query';
-import type { MutationConfig } from '@/lib/react-query';
+import { createMutationHook } from '@/lib/react-query';
 
 export interface ChangeSupportTicketStatusRequest {
   status: SupportTicketStatus;
@@ -24,13 +23,4 @@ export type ChangeSupportTicketStatusResponse = {
   data: SupportTicketDTO;
 };
 
-type UseChangeSupportTicketStatusOptions = {
-  config?: MutationConfig<typeof changeSupportTicketStatus>;
-};
-
-export const useChangeSupportTicketStatus = ({ config }: UseChangeSupportTicketStatusOptions = {}) => {
-  return useMutation({
-    ...config,
-    mutationFn: changeSupportTicketStatus,
-  });
-};
+export const useChangeSupportTicketStatus = createMutationHook(changeSupportTicketStatus);

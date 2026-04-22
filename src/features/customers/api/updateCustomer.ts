@@ -1,7 +1,6 @@
 import { axios } from "@/lib/axios";
 import { getLanguageFromCookie } from "@/utils/getLanguageFromCookies";
-import { useMutation } from "@tanstack/react-query";
-import type { MutationConfig } from "@/lib/react-query";
+import { createMutationHook } from "@/lib/react-query";
 import type { CustomerDTO } from "@/types/CustomerDTO";
 
 export interface UpdateCustomerRequest {
@@ -33,15 +32,4 @@ export type UpdateCustomerResponse = {
   data: CustomerDTO;
 };
 
-type UseUpdateCustomerOptions = {
-  config?: MutationConfig<typeof updateCustomer>;
-};
-
-export const useUpdateCustomer = ({
-  config,
-}: UseUpdateCustomerOptions = {}) => {
-  return useMutation({
-    ...config,
-    mutationFn: updateCustomer,
-  });
-};
+export const useUpdateCustomer = createMutationHook(updateCustomer);

@@ -1,7 +1,6 @@
 import { axios } from "@/lib/axios";
 import { getLanguageFromCookie } from "@/utils/getLanguageFromCookies";
-import { useMutation } from "@tanstack/react-query";
-import type { MutationConfig } from "@/lib/react-query";
+import { createMutationHook } from "@/lib/react-query";
 
 export interface FlagDebtForReviewRequest {
   reason: string;
@@ -28,15 +27,4 @@ export type FlagDebtForReviewResponse = {
   data: null;
 };
 
-type UseFlagDebtForReviewOptions = {
-  config?: MutationConfig<typeof flagDebtForReview>;
-};
-
-export const useFlagDebtForReview = ({
-  config,
-}: UseFlagDebtForReviewOptions = {}) => {
-  return useMutation({
-    ...config,
-    mutationFn: flagDebtForReview,
-  });
-};
+export const useFlagDebtForReview = createMutationHook(flagDebtForReview);

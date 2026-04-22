@@ -1,7 +1,6 @@
 import { axios } from "@/lib/axios";
 import { getLanguageFromCookie } from "@/utils/getLanguageFromCookies";
-import { useMutation } from "@tanstack/react-query";
-import type { MutationConfig } from "@/lib/react-query";
+import { createMutationHook } from "@/lib/react-query";
 
 export const resendDebtNotification = ({
   id,
@@ -22,15 +21,4 @@ export type ResendDebtNotificationResponse = {
   data: null;
 };
 
-type UseResendDebtNotificationOptions = {
-  config?: MutationConfig<typeof resendDebtNotification>;
-};
-
-export const useResendDebtNotification = ({
-  config,
-}: UseResendDebtNotificationOptions = {}) => {
-  return useMutation({
-    ...config,
-    mutationFn: resendDebtNotification,
-  });
-};
+export const useResendDebtNotification = createMutationHook(resendDebtNotification);

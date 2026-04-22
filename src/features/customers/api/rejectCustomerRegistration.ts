@@ -1,7 +1,6 @@
 import { axios } from "@/lib/axios";
 import { getLanguageFromCookie } from "@/utils/getLanguageFromCookies";
-import { useMutation } from "@tanstack/react-query";
-import type { MutationConfig } from "@/lib/react-query";
+import { createMutationHook } from "@/lib/react-query";
 
 export interface RejectCustomerRegistrationRequest {
   reviewNote: string;
@@ -26,12 +25,4 @@ export type RejectCustomerRegistrationResponse = {
   data: null;
 };
 
-type UseRejectCustomerRegistrationOptions = {
-  config?: MutationConfig<typeof rejectCustomerRegistration>;
-};
-
-export const useRejectCustomerRegistration = ({
-  config,
-}: UseRejectCustomerRegistrationOptions = {}) => {
-  return useMutation({ ...config, mutationFn: rejectCustomerRegistration });
-};
+export const useRejectCustomerRegistration = createMutationHook(rejectCustomerRegistration);
