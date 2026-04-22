@@ -464,5 +464,114 @@
       "CUSTOMER": "Customer",
       "INTERNAL": "Internal"
     }
+  },
+  "debts": {
+    "title": "Debts Management",
+    "subtitle": "View and manage all debt records",
+    "debtId": "Debt",
+    "flagged": "Flagged",
+    "noDebts": "No debts found",
+    "errorLoading": "Failed to load debt details.",
+    "noActionsAvailable": "No actions available for this debt.",
+    "search": "Search debts...",
+    "stats": {
+      "total": "Total Debts",
+      "active": "Active",
+      "overdue": "Overdue",
+      "inArrears": "In Arrears"
+    },
+    "statuses": {
+      "pending": "Pending",
+      "active": "Active",
+      "paid": "Paid",
+      "overdue": "Overdue",
+      "in_arrears": "In Arrears",
+      "cancelled": "Cancelled"
+    },
+    "filters": {
+      "status": "Status",
+      "createdDate": "Created Date",
+      "dueDate": "Due Date"
+    },
+    "columns": {
+      "id": "ID",
+      "title": "Title",
+      "amount": "Amount",
+      "status": "Status",
+      "merchant": "Merchant",
+      "customer": "Customer",
+      "dueDate": "Due Date",
+      "createdAt": "Created"
+    },
+    "sections": {
+      "debtDetails": "Debt Details",
+      "merchantBusiness": "Merchant & Business",
+      "customer": "Customer",
+      "paymentHistory": "Payment & History",
+      "quickInfo": "Debt Information",
+      "actions": "Actions",
+      "reviewFlag": "Flagged for Review"
+    },
+    "fields": {
+      "amount": "Amount",
+      "status": "Status",
+      "dueDate": "Due Date",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "merchant": "Merchant",
+      "business": "Business",
+      "createdWithSanad": "Created with Sanad",
+      "paymentDate": "Payment Date",
+      "paymentStatus": "Payment Status",
+      "paymentMethod": "Payment Method",
+      "extensionsCount": "Extensions",
+      "overdueActionsCount": "Overdue Actions",
+      "flaggedAt": "Flagged At",
+      "flagReason": "Reason",
+      "flaggedBy": "Flagged By"
+    },
+    "actions": {
+      "extendDueDate": "Extend Due Date",
+      "flagForReview": "Flag for Review",
+      "resendNotification": "Resend Notification",
+      "cancelDebt": "Cancel Debt"
+    },
+    "modals": {
+      "cancel": {
+        "title": "Cancel Debt",
+        "warning": "This action is irreversible. The debt will be permanently cancelled.",
+        "reasonLabel": "Cancellation Reason",
+        "reasonPlaceholder": "Explain why this debt is being cancelled...",
+        "confirmButton": "Cancel Debt",
+        "success": "Debt cancelled successfully",
+        "error": "Failed to cancel debt"
+      },
+      "extend": {
+        "title": "Extend Due Date",
+        "currentDueDate": "Current due date",
+        "newDueDateLabel": "New Due Date",
+        "reasonLabel": "Reason for Extension",
+        "reasonPlaceholder": "Explain why the due date is being extended...",
+        "confirmButton": "Extend Due Date",
+        "success": "Due date extended successfully",
+        "error": "Failed to extend due date"
+      },
+      "flag": {
+        "title": "Flag for Review",
+        "info": "Flagging this debt will mark it for manual review by the admin team.",
+        "reasonLabel": "Flag Reason",
+        "reasonPlaceholder": "Describe the reason for flagging this debt...",
+        "confirmButton": "Flag for Review",
+        "success": "Debt flagged for review",
+        "error": "Failed to flag debt"
+      },
+      "resend": {
+        "title": "Resend Notification",
+        "description": "This will resend the debt notification to the customer. Do you want to continue?",
+        "confirmButton": "Resend",
+        "success": "Notification sent successfully",
+        "error": "Failed to send notification"
+      }
+    }
   }
 }

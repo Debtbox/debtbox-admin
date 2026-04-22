@@ -464,5 +464,114 @@
       "CUSTOMER": "عميل",
       "INTERNAL": "داخلي"
     }
+  },
+  "debts": {
+    "title": "إدارة الديون",
+    "subtitle": "عرض وإدارة جميع سجلات الديون",
+    "debtId": "الدين",
+    "flagged": "مُبلَّغ عنه",
+    "noDebts": "لا توجد ديون",
+    "errorLoading": "فشل في تحميل تفاصيل الدين.",
+    "noActionsAvailable": "لا توجد إجراءات متاحة لهذا الدين.",
+    "search": "البحث في الديون...",
+    "stats": {
+      "total": "إجمالي الديون",
+      "active": "نشط",
+      "overdue": "متأخر",
+      "inArrears": "متعثر"
+    },
+    "statuses": {
+      "pending": "معلق",
+      "active": "نشط",
+      "paid": "مدفوع",
+      "overdue": "متأخر",
+      "in_arrears": "متعثر",
+      "cancelled": "ملغي"
+    },
+    "filters": {
+      "status": "الحالة",
+      "createdDate": "تاريخ الإنشاء",
+      "dueDate": "تاريخ الاستحقاق"
+    },
+    "columns": {
+      "id": "الرقم",
+      "title": "العنوان",
+      "amount": "المبلغ",
+      "status": "الحالة",
+      "merchant": "التاجر",
+      "customer": "العميل",
+      "dueDate": "تاريخ الاستحقاق",
+      "createdAt": "تاريخ الإنشاء"
+    },
+    "sections": {
+      "debtDetails": "تفاصيل الدين",
+      "merchantBusiness": "التاجر والنشاط التجاري",
+      "customer": "العميل",
+      "paymentHistory": "الدفع والسجل",
+      "quickInfo": "معلومات الدين",
+      "actions": "الإجراءات",
+      "reviewFlag": "مُحدَّد للمراجعة"
+    },
+    "fields": {
+      "amount": "المبلغ",
+      "status": "الحالة",
+      "dueDate": "تاريخ الاستحقاق",
+      "createdAt": "تاريخ الإنشاء",
+      "updatedAt": "تاريخ التحديث",
+      "merchant": "التاجر",
+      "business": "النشاط التجاري",
+      "createdWithSanad": "أنشئ بسند",
+      "paymentDate": "تاريخ الدفع",
+      "paymentStatus": "حالة الدفع",
+      "paymentMethod": "طريقة الدفع",
+      "extensionsCount": "التمديدات",
+      "overdueActionsCount": "إجراءات التأخر",
+      "flaggedAt": "تاريخ الإبلاغ",
+      "flagReason": "السبب",
+      "flaggedBy": "أبلغ عنه"
+    },
+    "actions": {
+      "extendDueDate": "تمديد تاريخ الاستحقاق",
+      "flagForReview": "إحالة للمراجعة",
+      "resendNotification": "إعادة إرسال الإشعار",
+      "cancelDebt": "إلغاء الدين"
+    },
+    "modals": {
+      "cancel": {
+        "title": "إلغاء الدين",
+        "warning": "هذا الإجراء لا يمكن التراجع عنه. سيتم إلغاء الدين بشكل دائم.",
+        "reasonLabel": "سبب الإلغاء",
+        "reasonPlaceholder": "اشرح سبب إلغاء هذا الدين...",
+        "confirmButton": "إلغاء الدين",
+        "success": "تم إلغاء الدين بنجاح",
+        "error": "فشل في إلغاء الدين"
+      },
+      "extend": {
+        "title": "تمديد تاريخ الاستحقاق",
+        "currentDueDate": "تاريخ الاستحقاق الحالي",
+        "newDueDateLabel": "تاريخ الاستحقاق الجديد",
+        "reasonLabel": "سبب التمديد",
+        "reasonPlaceholder": "اشرح سبب تمديد تاريخ الاستحقاق...",
+        "confirmButton": "تمديد تاريخ الاستحقاق",
+        "success": "تم تمديد تاريخ الاستحقاق بنجاح",
+        "error": "فشل في تمديد تاريخ الاستحقاق"
+      },
+      "flag": {
+        "title": "إحالة للمراجعة",
+        "info": "سيتم تمييز هذا الدين للمراجعة اليدوية من قِبل فريق الإدارة.",
+        "reasonLabel": "سبب الإحالة",
+        "reasonPlaceholder": "اشرح سبب إحالة هذا الدين للمراجعة...",
+        "confirmButton": "إحالة للمراجعة",
+        "success": "تم إحالة الدين للمراجعة",
+        "error": "فشل في إحالة الدين"
+      },
+      "resend": {
+        "title": "إعادة إرسال الإشعار",
+        "description": "سيتم إعادة إرسال إشعار الدين إلى العميل. هل تريد المتابعة؟",
+        "confirmButton": "إعادة الإرسال",
+        "success": "تم إرسال الإشعار بنجاح",
+        "error": "فشل في إرسال الإشعار"
+      }
+    }
   }
 }

@@ -6,6 +6,7 @@ import {
   Store,
   Users,
   MessageSquare,
+  CircleDollarSign,
 } from "lucide-react";
 import { sidebarLogo } from "@/assets/images";
 
@@ -36,14 +37,19 @@ const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
       icon: <MessageSquare className="w-5 h-5" />,
     },
     {
-      name: t("navigation.merchants", "Merchants"),
-      href: "/merchants",
+      name: t("navigation.merchants", "Merchants Management"),
+      href: "/merchants-management",
       icon: <Store className="w-5 h-5" />,
     },
     {
-      name: t("navigation.customers", "Customers"),
-      href: "/customers",
+      name: t("navigation.customers", "Customers Management"),
+      href: "/customers-management",
       icon: <Users className="w-5 h-5" />,
+    },
+    {
+      name: t("navigation.debts", "Debts Management"),
+      href: "/debts-management",
+      icon: <CircleDollarSign className="w-5 h-5" />,
     },
   ];
 

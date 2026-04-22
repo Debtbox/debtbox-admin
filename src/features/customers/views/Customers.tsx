@@ -9,7 +9,7 @@ import { CustomersTable } from "../components/CustomersTable";
 import { CustomerApprovalsTable } from "../components/CustomerApprovalsTable";
 import { CustomerFilters } from "../components/CustomerFilters";
 
-export const Customers = () => {
+const Customers = () => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -23,7 +23,13 @@ export const Customers = () => {
     limit: number;
     search: string;
     status: ("active" | "inactive" | "pending" | "banned")[];
-    verificationStatus: ("pending_nafath" | "pending_email_verification" | "pending_admin_approval" | "approved" | "rejected")[];
+    verificationStatus: (
+      | "pending_nafath"
+      | "pending_email_verification"
+      | "pending_admin_approval"
+      | "approved"
+      | "rejected"
+    )[];
     createdFrom: string;
     createdTo: string;
   }>({
