@@ -27,10 +27,12 @@
     "businessApprovals": "Business Approvals",
     "userManagement": "User Management",
     "money": "Money & Profits",
-    "customers": "Customers",
-    "merchants": "Merchants",
+    "customers": "Customers Management",
+    "merchants": "Merchants Management",
     "settings": "Settings",
-    "supportTickets": "Support Tickets"
+    "supportTickets": "Support Tickets",
+    "debts": "Debts Management",
+    "salesLeads": "Sales Leads"
   },
   "navbar": {
     "welcome": "Welcome!"
@@ -463,6 +465,83 @@
       "MERCHANT": "Merchant",
       "CUSTOMER": "Customer",
       "INTERNAL": "Internal"
+    }
+  },
+  "salesLeads": {
+    "title": "Sales Leads",
+    "subtitle": "Track and manage your sales pipeline",
+    "createButton": "Create Lead",
+    "search": "Search by name, email, or phone...",
+    "noLeads": "No sales leads found",
+    "stats": {
+      "total": "Total Leads",
+      "new": "New Leads",
+      "converted": "Converted"
+    },
+    "statuses": {
+      "NEW": "New",
+      "CONTACTED": "Contacted",
+      "INTERESTED": "Interested",
+      "CONVERTED": "Converted",
+      "LOST": "Lost"
+    },
+    "leadTypes": {
+      "MERCHANT": "Merchant",
+      "CUSTOMER": "Customer"
+    },
+    "sources": {
+      "REFERRAL": "Referral",
+      "CAMPAIGN": "Campaign",
+      "COLD": "Cold",
+      "EVENT": "Event",
+      "OTHER": "Other"
+    },
+    "filters": {
+      "status": "Status",
+      "leadType": "Lead Type",
+      "source": "Source",
+      "createdDate": "Created Date"
+    },
+    "columns": {
+      "id": "ID",
+      "fullName": "Full Name",
+      "leadType": "Lead Type",
+      "status": "Status",
+      "source": "Source",
+      "phone": "Phone",
+      "email": "Email",
+      "createdAt": "Created"
+    },
+    "fields": {
+      "leadType": "Lead Type",
+      "selectLeadType": "Select type",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "e.g. Ahmad Al Saleh",
+      "phone": "Phone",
+      "email": "Email",
+      "source": "Source",
+      "selectSource": "Select source",
+      "status": "Status",
+      "notes": "Notes",
+      "notesPlaceholder": "Any additional notes...",
+      "assignedTo": "Assigned Sales User ID"
+    },
+    "details": {
+      "leadInfo": "Lead Information",
+      "quickInfo": "Quick Info",
+      "conversionInfo": "Conversion Info",
+      "convertedEntityType": "Entity Type",
+      "convertedEntityId": "Entity ID",
+      "updatedAt": "Updated At",
+      "notFound": "Sales lead not found."
+    },
+    "modals": {
+      "create": {
+        "title": "Create Sales Lead",
+        "confirmButton": "Create Lead",
+        "success": "Sales lead created successfully",
+        "error": "Failed to create sales lead"
+      }
     }
   },
   "debts": {

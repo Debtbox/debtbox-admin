@@ -27,10 +27,12 @@
     "businessApprovals": "موافقات الأعمال",
     "userManagement": "إدارة المستخدمين",
     "money": "الأموال والأرباح",
-    "customers": "العملاء",
-    "merchants": "التجار",
+    "customers": "إدارة العملاء",
+    "merchants": "إدارة التجار",
     "settings": "الإعدادات",
-    "supportTickets": "تذاكر الدعم"
+    "supportTickets": "تذاكر الدعم",
+    "debts": "إدارة الديون",
+    "salesLeads": "العملاء المحتملون"
   },
   "navbar": {
     "welcome": "مرحباً!"
@@ -463,6 +465,83 @@
       "MERCHANT": "تاجر",
       "CUSTOMER": "عميل",
       "INTERNAL": "داخلي"
+    }
+  },
+  "salesLeads": {
+    "title": "العملاء المحتملون",
+    "subtitle": "تتبع وإدارة مسار المبيعات",
+    "createButton": "إنشاء عميل محتمل",
+    "search": "البحث بالاسم أو البريد الإلكتروني أو الهاتف...",
+    "noLeads": "لم يتم العثور على عملاء محتملين",
+    "stats": {
+      "total": "إجمالي العملاء المحتملين",
+      "new": "عملاء محتملون جدد",
+      "converted": "تم التحويل"
+    },
+    "statuses": {
+      "NEW": "جديد",
+      "CONTACTED": "تم التواصل",
+      "INTERESTED": "مهتم",
+      "CONVERTED": "تم التحويل",
+      "LOST": "خسارة"
+    },
+    "leadTypes": {
+      "MERCHANT": "تاجر",
+      "CUSTOMER": "عميل"
+    },
+    "sources": {
+      "REFERRAL": "إحالة",
+      "CAMPAIGN": "حملة",
+      "COLD": "بارد",
+      "EVENT": "حدث",
+      "OTHER": "أخرى"
+    },
+    "filters": {
+      "status": "الحالة",
+      "leadType": "نوع العميل المحتمل",
+      "source": "المصدر",
+      "createdDate": "تاريخ الإنشاء"
+    },
+    "columns": {
+      "id": "الرقم",
+      "fullName": "الاسم الكامل",
+      "leadType": "النوع",
+      "status": "الحالة",
+      "source": "المصدر",
+      "phone": "الهاتف",
+      "email": "البريد الإلكتروني",
+      "createdAt": "تاريخ الإنشاء"
+    },
+    "fields": {
+      "leadType": "نوع العميل المحتمل",
+      "selectLeadType": "اختر النوع",
+      "fullName": "الاسم الكامل",
+      "fullNamePlaceholder": "مثال: أحمد الصالح",
+      "phone": "الهاتف",
+      "email": "البريد الإلكتروني",
+      "source": "المصدر",
+      "selectSource": "اختر المصدر",
+      "status": "الحالة",
+      "notes": "ملاحظات",
+      "notesPlaceholder": "أي ملاحظات إضافية...",
+      "assignedTo": "معرف مندوب المبيعات"
+    },
+    "details": {
+      "leadInfo": "معلومات العميل المحتمل",
+      "quickInfo": "معلومات سريعة",
+      "conversionInfo": "معلومات التحويل",
+      "convertedEntityType": "نوع الكيان",
+      "convertedEntityId": "معرف الكيان",
+      "updatedAt": "تاريخ التحديث",
+      "notFound": "لم يتم العثور على العميل المحتمل."
+    },
+    "modals": {
+      "create": {
+        "title": "إنشاء عميل محتمل",
+        "confirmButton": "إنشاء",
+        "success": "تم إنشاء العميل المحتمل بنجاح",
+        "error": "فشل في إنشاء العميل المحتمل"
+      }
     }
   },
   "debts": {

@@ -4,6 +4,7 @@ import { CustomersRoutes } from "@/features/customers";
 import { MerchantsRoutes } from "@/features/merchants";
 import { SupportTicketsRoutes } from "@/features/supportTickets";
 import { DebtsManagementRoutes } from "@/features/debtsManagement/";
+import { SalesLeadsRoutes } from "@/features/salesLeads";
 
 export const protectedRoutes = [
   {
@@ -34,6 +35,10 @@ export const protectedRoutes = [
       {
         path: "/debts-management*",
         element: <DebtsManagementRoutes />,
+      },
+      {
+        path: "/sales-leads*",
+        element: <SalesLeadsRoutes />,
       },
     ],
   },

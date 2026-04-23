@@ -7,6 +7,7 @@ import {
   Users,
   MessageSquare,
   CircleDollarSign,
+  TrendingUp,
 } from "lucide-react";
 import { sidebarLogo } from "@/assets/images";
 
@@ -50,6 +51,11 @@ const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
       name: t("navigation.debts", "Debts Management"),
       href: "/debts-management",
       icon: <CircleDollarSign className="w-5 h-5" />,
+    },
+    {
+      name: t("navigation.salesLeads", "Sales Leads"),
+      href: "/sales-leads",
+      icon: <TrendingUp className="w-5 h-5" />,
     },
   ];
 
