@@ -191,7 +191,7 @@ const DebtDetails = () => {
                   {t("debts.fields.merchant", "Merchant")}
                 </p>
                 <button
-                  onClick={() => navigate(`/merchants-management/${debt.merchant_id}`)}
+                  onClick={() => navigate(`/merchants/${debt.merchant_id}`)}
                   className="text-sm text-blue-600 hover:text-blue-800 font-medium text-start block"
                 >
                   {debt.merchant_full_name_en}
@@ -217,7 +217,7 @@ const DebtDetails = () => {
             title={t("debts.sections.customer", "Customer")}
           >
             <button
-              onClick={() => navigate(`/customers-management/${debt.customer_id}`)}
+              onClick={() => navigate(`/customers/${debt.customer_id}`)}
               className="text-sm text-blue-600 hover:text-blue-800 font-medium text-start block mb-0.5"
             >
               {debt.customer_full_name_en}

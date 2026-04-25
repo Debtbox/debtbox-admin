@@ -118,7 +118,7 @@ export const CustomersTable = ({ data, isLoading, pagination, onPageChange }: Cu
     <Button
       variant="ghost"
       size="sm"
-      onClick={() => navigate(`/customers-management/${record.id}`)}
+      onClick={() => navigate(`/customers/${record.id}`)}
       className="flex items-center gap-2"
     >
       <Eye className="w-4 h-4" />

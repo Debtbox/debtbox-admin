@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useGetDebts } from "../api/getDebts";
+import { useGetDebtsStats } from "../api/getDebtsStats";
 import {
   DebtsStats,
   DebtFilters,
@@ -44,23 +45,7 @@ const DebtsManagement = () => {
   );
 
   const debtsQuery = useGetDebts({ params: buildParams() });
-
-  const totalQ = useGetDebts({
-    params: { page: 0, limit: 1 },
-    config: { staleTime: 60_000 },
-  });
-  const activeQ = useGetDebts({
-    params: { page: 0, limit: 1, status: ["active"] },
-    config: { staleTime: 60_000 },
-  });
-  const overdueQ = useGetDebts({
-    params: { page: 0, limit: 1, status: ["overdue"] },
-    config: { staleTime: 60_000 },
-  });
-  const arrearsQ = useGetDebts({
-    params: { page: 0, limit: 1, status: ["in_arrears"] },
-    config: { staleTime: 60_000 },
-  });
+  const statsQuery = useGetDebtsStats({ config: { staleTime: 60_000 } });
 
   const handleFiltersChange = (f: DebtFiltersState) => {
     setFilters((prev) => ({ ...prev, ...f, page: 0 }));
@@ -78,10 +63,11 @@ const DebtsManagement = () => {
       </div>
 
       <DebtsStats
-        total={totalQ.data?.data.total ?? 0}
-        active={activeQ.data?.data.total ?? 0}
-        overdue={overdueQ.data?.data.total ?? 0}
-        inArrears={arrearsQ.data?.data.total ?? 0}
+        total={statsQuery.data?.data.totalDebts ?? 0}
+        active={statsQuery.data?.data.activeDebts ?? 0}
+        overdue={statsQuery.data?.data.overdueDebts ?? 0}
+        paid={statsQuery.data?.data.paidDebts ?? 0}
+        isLoading={statsQuery.isLoading}
         t={t}
       />
 

@@ -1,6 +1,6 @@
 import { axios } from "@/lib/axios";
 import { getLanguageFromCookie } from "@/utils/getLanguageFromCookies";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { MutationConfig } from "@/lib/react-query";
 import type {
   LeadType,
@@ -42,8 +42,13 @@ type UseCreateSalesLeadOptions = {
 export const useCreateSalesLead = ({
   config,
 }: UseCreateSalesLeadOptions = {}) => {
+  const queryClient = useQueryClient();
   return useMutation({
     ...config,
     mutationFn: createSalesLead,
+    onSuccess: (...args) => {
+      void queryClient.invalidateQueries({ queryKey: ["sales-leads-stats"] });
+      config?.onSuccess?.(...args);
+    },
   });
 };

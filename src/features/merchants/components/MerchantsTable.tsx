@@ -145,7 +145,7 @@ export const MerchantsTable = ({
     <Button
       variant="ghost"
       size="sm"
-      onClick={() => navigate(`/merchants-management/${record.id}`)}
+      onClick={() => navigate(`/merchants/${record.id}`)}
       className="flex items-center gap-2"
     >
       <Eye className="w-4 h-4" />

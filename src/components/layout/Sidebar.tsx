@@ -39,12 +39,12 @@ const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
     },
     {
       name: t("navigation.merchants", "Merchants Management"),
-      href: "/merchants-management",
+      href: "/merchants",
       icon: <Store className="w-5 h-5" />,
     },
     {
       name: t("navigation.customers", "Customers Management"),
-      href: "/customers-management",
+      href: "/customers",
       icon: <Users className="w-5 h-5" />,
     },
     {

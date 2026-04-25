@@ -4,6 +4,7 @@ import { Plus, Users, TrendingUp, CheckCircle } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/shared/Button";
 import { useGetSalesLeads } from "../api/getSalesLeads";
+import { useGetSalesLeadsStats } from "../api/getSalesLeadsStats";
 import {
   SalesLeadsFilters,
   SalesLeadsTable,
@@ -68,19 +69,7 @@ const SalesLeads = () => {
   );
 
   const leadsQuery = useGetSalesLeads({ params: buildParams() });
-
-  const totalQ = useGetSalesLeads({
-    params: { page: 0, limit: 1 },
-    config: { staleTime: 60_000 },
-  });
-  const newQ = useGetSalesLeads({
-    params: { page: 0, limit: 1, status: ["NEW"] },
-    config: { staleTime: 60_000 },
-  });
-  const convertedQ = useGetSalesLeads({
-    params: { page: 0, limit: 1, status: ["CONVERTED"] },
-    config: { staleTime: 60_000 },
-  });
+  const statsQuery = useGetSalesLeadsStats({ config: { staleTime: 60_000 } });
 
   const handleFiltersChange = (f: SalesLeadsFiltersState) => {
     setFilters((prev) => ({ ...prev, ...f, page: 0 }));
@@ -98,19 +87,19 @@ const SalesLeads = () => {
   const stats = [
     {
       label: t("salesLeads.stats.total", "Total Leads"),
-      value: totalQ.data?.data.total ?? 0,
+      value: statsQuery.data?.data.totalLeads ?? 0,
       icon: <Users className="w-6 h-6 text-blue-600" />,
       bg: "bg-blue-50",
     },
     {
       label: t("salesLeads.stats.new", "New Leads"),
-      value: newQ.data?.data.total ?? 0,
+      value: statsQuery.data?.data.newLeads ?? 0,
       icon: <TrendingUp className="w-6 h-6 text-yellow-600" />,
       bg: "bg-yellow-50",
     },
     {
       label: t("salesLeads.stats.converted", "Converted"),
-      value: convertedQ.data?.data.total ?? 0,
+      value: statsQuery.data?.data.convertedLeads ?? 0,
       icon: <CheckCircle className="w-6 h-6 text-green-600" />,
       bg: "bg-green-50",
     },
@@ -134,18 +123,30 @@ const SalesLeads = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className="bg-white rounded-lg border border-gray-200 p-5 flex items-center gap-4"
-          >
-            <div className={`${stat.bg} rounded-lg p-3`}>{stat.icon}</div>
-            <div>
-              <p className="text-sm text-gray-500">{stat.label}</p>
-              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-            </div>
-          </div>
-        ))}
+        {statsQuery.isLoading
+          ? [...Array(3)].map((_, i) => (
+              <div key={i} className="bg-white rounded-lg border border-gray-200 p-5 flex items-center gap-4 animate-pulse">
+                <div className="rounded-lg p-3 bg-gray-100">
+                  <div className="w-6 h-6 bg-gray-200 rounded" />
+                </div>
+                <div className="space-y-2">
+                  <div className="h-3.5 bg-gray-200 rounded w-20" />
+                  <div className="h-7 bg-gray-200 rounded w-12" />
+                </div>
+              </div>
+            ))
+          : stats.map((stat) => (
+              <div
+                key={stat.label}
+                className="bg-white rounded-lg border border-gray-200 p-5 flex items-center gap-4"
+              >
+                <div className={`${stat.bg} rounded-lg p-3`}>{stat.icon}</div>
+                <div>
+                  <p className="text-sm text-gray-500">{stat.label}</p>
+                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                </div>
+              </div>
+            ))}
       </div>
 
       <div className="mb-6">

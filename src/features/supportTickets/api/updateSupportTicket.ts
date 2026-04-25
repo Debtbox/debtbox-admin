@@ -2,7 +2,7 @@ import { axios } from '@/lib/axios';
 import { getLanguageFromCookie } from '@/utils/getLanguageFromCookies';
 import type { SupportTicketDTO } from '@/types/SupportTicketDTO';
 import type { SupportTicketPriority, SupportTicketType, RelatedEntityType } from '@/enums';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { MutationConfig } from '@/lib/react-query';
 
 export interface UpdateSupportTicketRequest {
@@ -33,8 +33,13 @@ type UseUpdateSupportTicketOptions = {
 };
 
 export const useUpdateSupportTicket = ({ config }: UseUpdateSupportTicketOptions = {}) => {
+  const queryClient = useQueryClient();
   return useMutation({
     ...config,
     mutationFn: updateSupportTicket,
+    onSuccess: (...args) => {
+      void queryClient.invalidateQueries({ queryKey: ["support-stats"] });
+      config?.onSuccess?.(...args);
+    },
   });
 };

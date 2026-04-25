@@ -27,11 +27,11 @@
     "businessApprovals": "Business Approvals",
     "userManagement": "User Management",
     "money": "Money & Profits",
-    "customers": "Customers Management",
-    "merchants": "Merchants Management",
+    "customers": "Customers",
+    "merchants": "Merchants",
     "settings": "Settings",
     "supportTickets": "Support Tickets",
-    "debts": "Debts Management",
+    "debts": "Debts",
     "salesLeads": "Sales Leads"
   },
   "navbar": {
@@ -545,7 +545,7 @@
     }
   },
   "debts": {
-    "title": "Debts Management",
+    "title": "Debts",
     "subtitle": "View and manage all debt records",
     "debtId": "Debt",
     "flagged": "Flagged",
@@ -557,7 +557,7 @@
       "total": "Total Debts",
       "active": "Active",
       "overdue": "Overdue",
-      "inArrears": "In Arrears"
+      "paid": "Paid"
     },
     "statuses": {
       "pending": "Pending",

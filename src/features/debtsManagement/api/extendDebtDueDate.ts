@@ -1,6 +1,6 @@
 import { axios } from "@/lib/axios";
 import { getLanguageFromCookie } from "@/utils/getLanguageFromCookies";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { MutationConfig } from "@/lib/react-query";
 
 export interface ExtendDebtDueDateRequest {
@@ -36,8 +36,13 @@ type UseExtendDebtDueDateOptions = {
 export const useExtendDebtDueDate = ({
   config,
 }: UseExtendDebtDueDateOptions = {}) => {
+  const queryClient = useQueryClient();
   return useMutation({
     ...config,
     mutationFn: extendDebtDueDate,
+    onSuccess: (...args) => {
+      void queryClient.invalidateQueries({ queryKey: ["debts-stats"] });
+      config?.onSuccess?.(...args);
+    },
   });
 };

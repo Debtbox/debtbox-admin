@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetSupportTickets } from "../api/getSupportTickets";
+import { useGetSupportStats } from "../api/getSupportStats";
 import type { SupportTicketStatus, SupportTicketPriority, SupportTicketType, SupportTicketRequesterType } from "@/enums";
 import { SupportTicketsStats, SupportTicketsFilters, SupportTicketsGrid } from "../components";
 import { Button } from "@/components/shared/Button";
@@ -49,16 +50,17 @@ export const SupportTickets = () => {
     },
   });
 
+  const { data: statsData, isLoading: statsLoading } = useGetSupportStats({ config: { staleTime: 60_000 } });
+
   const tickets = data?.data?.tickets || [];
   const totalTickets = data?.data?.total || 0;
   const totalPages = Math.ceil(totalTickets / itemsPerPage);
 
-  // Calculate stats from current page data
   const stats = {
-    total: totalTickets,
-    open: tickets.filter(t => t.status === "OPEN" || t.status === "NEW" || t.status === "REOPENED").length,
-    resolved: tickets.filter(t => t.status === "RESOLVED").length,
-    closed: tickets.filter(t => t.status === "CLOSED").length,
+    total: statsData?.data.totalTickets ?? 0,
+    open: statsData?.data.openTickets ?? 0,
+    resolved: statsData?.data.resolvedTickets ?? 0,
+    closed: statsData?.data.closedTickets ?? 0,
   };
 
   const handlePageChange = (page: number) => {
@@ -98,7 +100,7 @@ export const SupportTickets = () => {
       </div>
 
       {/* Stats */}
-      <SupportTicketsStats stats={stats} t={t} />
+      <SupportTicketsStats stats={stats} isLoading={statsLoading} t={t} />
 
       {/* Filters */}
       <SupportTicketsFilters

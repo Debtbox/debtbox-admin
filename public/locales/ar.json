@@ -557,7 +557,7 @@
       "total": "إجمالي الديون",
       "active": "نشط",
       "overdue": "متأخر",
-      "inArrears": "متعثر"
+      "paid": "مدفوع"
     },
     "statuses": {
       "pending": "معلق",
