@@ -20,7 +20,7 @@ import { CancelDebtModal } from "../components/CancelDebtModal";
 import { ExtendDueDateModal } from "../components/ExtendDueDateModal";
 import { FlagDebtModal } from "../components/FlagDebtModal";
 import { ResendNotificationModal } from "../components/ResendNotificationModal";
-import { formatDebtAmount, isDebtOverdue } from "../utils";
+import { formatDebtAmount, formatHalalaAmount, isDebtOverdue } from "../utils";
 
 const Field = ({ label, value }: { label: string; value: ReactNode }) => (
   <div>
@@ -148,12 +148,37 @@ const DebtDetails = () => {
             icon={<CreditCard className="w-5 h-5" />}
             title={t("debts.sections.debtDetails", "Debt Details")}
           >
-            <div className="mb-4">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
-                {t("debts.fields.amount", "Amount")}
-              </p>
-              <p className="text-3xl font-bold text-gray-900">{formatDebtAmount(debt.amount)}</p>
+            <div className="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="rounded-lg border border-gray-100 bg-gray-50 p-4">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                  {t("debts.fields.totalAmount", "Total Amount")}
+                </p>
+                <p className="text-2xl font-bold text-gray-900">{formatDebtAmount(debt.amount)}</p>
+              </div>
+              <div className="rounded-lg border border-red-100 bg-red-50 p-4">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                  {t("debts.fields.deductedFees", "Deducted Fees")}
+                </p>
+                <p className="text-lg font-semibold text-red-700">
+                  {formatHalalaAmount(debt.expected_total_deductions_halala) ?? "—"}
+                </p>
+              </div>
+              <div className="rounded-lg border border-green-100 bg-green-50 p-4">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                  {t("debts.fields.merchantNetAmount", "Merchant Net Amount")}
+                </p>
+                <p className="text-lg font-semibold text-green-700">
+                  {formatHalalaAmount(debt.expected_merchant_net_amount_halala) ?? "—"}
+                </p>
+              </div>
             </div>
+
+            <p className="mb-4 text-xs leading-5 text-gray-500">
+              {t(
+                "debts.feeExplanation",
+                "Deducted fees include Debtbox fees, VAT, payment provider fees, and other applicable deductions.",
+              )}
+            </p>
 
             <div className="grid grid-cols-2 gap-4">
               <Field label={t("debts.fields.dueDate", "Due Date")} value={

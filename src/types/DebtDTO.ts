@@ -22,6 +22,8 @@ export interface DebtDetailsDTO extends DebtDTO {
   review_flagged_at: string | null;
   review_flag_reason: string | null;
   review_flagged_by: number | null;
+  expected_total_deductions_halala: number | null;
+  expected_merchant_net_amount_halala: number | null;
   payment_date: string | null;
   payment_status: string | null;
   payment_method: string | null;
