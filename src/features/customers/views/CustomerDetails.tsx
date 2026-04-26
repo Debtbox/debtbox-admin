@@ -7,12 +7,15 @@ import { useUpdateCustomer } from "../api/updateCustomer";
 import { Button } from "@/components/shared";
 import { EditCustomerModal } from "../components/EditCustomerModal";
 import { formatDate } from "@/utils/formatDate";
+import { PERMISSIONS } from "@/auth/permissions";
+import { useCan } from "@/auth/rbac";
 
 export const CustomerDetails = () => {
   const { t, i18n } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [showEditModal, setShowEditModal] = useState(false);
+  const canUpdate = useCan(PERMISSIONS.CUSTOMER_UPDATE);
 
   const { data: response, isLoading, error, refetch } = useGetCustomer({ id: id! });
   const customer = response?.data;
@@ -76,10 +79,12 @@ export const CustomerDetails = () => {
             <p className="text-gray-600">{customer.email}</p>
           </div>
         </div>
-        <Button onClick={() => setShowEditModal(true)} className="flex items-center gap-2">
-          <Edit className="w-4 h-4" />
-          {t("common.edit", "Edit")}
-        </Button>
+        {canUpdate && (
+          <Button onClick={() => setShowEditModal(true)} className="flex items-center gap-2">
+            <Edit className="w-4 h-4" />
+            {t("common.edit", "Edit")}
+          </Button>
+        )}
       </div>
 
       {/* Status Badges */}
@@ -180,7 +185,7 @@ export const CustomerDetails = () => {
       </div>
 
       {/* Edit Modal */}
-      {showEditModal && (
+      {canUpdate && showEditModal && (
         <EditCustomerModal
           customer={customer}
           onClose={() => setShowEditModal(false)}

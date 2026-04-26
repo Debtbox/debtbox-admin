@@ -7,12 +7,15 @@ import { useUpdateMerchant } from "../api/updateMerchant";
 import { Button } from "@/components/shared";
 import { EditMerchantModal } from "../components/EditMerchantModal";
 import { formatDate } from "@/utils/formatDate";
+import { PERMISSIONS } from "@/auth/permissions";
+import { useCan } from "@/auth/rbac";
 
 export const MerchantDetails = () => {
   const { t, i18n } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [showEditModal, setShowEditModal] = useState(false);
+  const canUpdate = useCan(PERMISSIONS.MERCHANT_UPDATE);
 
   const { data: response, isLoading, error, refetch } = useGetMerchant({ id: id! });
   const merchant = response?.data;
@@ -95,13 +98,15 @@ export const MerchantDetails = () => {
             <p className="text-gray-600">{merchant.email}</p>
           </div>
         </div>
-        <Button
-          onClick={() => setShowEditModal(true)}
-          className="flex items-center gap-2"
-        >
-          <Edit className="w-4 h-4" />
-          {t("common.edit", "Edit")}
-        </Button>
+        {canUpdate && (
+          <Button
+            onClick={() => setShowEditModal(true)}
+            className="flex items-center gap-2"
+          >
+            <Edit className="w-4 h-4" />
+            {t("common.edit", "Edit")}
+          </Button>
+        )}
       </div>
 
       {/* Status Badges */}
@@ -276,7 +281,7 @@ export const MerchantDetails = () => {
       </div>
 
       {/* Edit Modal */}
-      {showEditModal && (
+      {canUpdate && showEditModal && (
         <EditMerchantModal
           merchant={merchant}
           onClose={() => setShowEditModal(false)}

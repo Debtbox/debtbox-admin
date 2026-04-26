@@ -4,6 +4,8 @@ import { Eye, CheckCircle, XCircle, Clock, AlertCircle } from "lucide-react";
 import { Button, Table } from "@/components/shared";
 import type { MerchantDTO } from "@/types/MerchantDTO";
 import { formatDate } from "@/utils/formatDate";
+import { PERMISSIONS } from "@/auth/permissions";
+import { useCan } from "@/auth/rbac";
 
 interface MerchantsTableProps {
   data: MerchantDTO[];
@@ -24,6 +26,7 @@ export const MerchantsTable = ({
 }: MerchantsTableProps) => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const canRead = useCan(PERMISSIONS.MERCHANT_READ);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -141,7 +144,7 @@ export const MerchantsTable = ({
     },
   ];
 
-  const actions = (record: MerchantDTO) => (
+  const actions = (record: MerchantDTO) => canRead ? (
     <Button
       variant="ghost"
       size="sm"
@@ -151,7 +154,7 @@ export const MerchantsTable = ({
       <Eye className="w-4 h-4" />
       {t("common.view", "View")}
     </Button>
-  );
+  ) : null;
 
   return (
     <Table
@@ -159,7 +162,7 @@ export const MerchantsTable = ({
       data={data}
       loading={isLoading}
       emptyText={t("merchants.noMerchants", "No merchants found")}
-      showActions={true}
+      showActions={canRead}
       actions={actions}
       pagination={{
         current: pagination.page + 1,

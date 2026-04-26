@@ -5,11 +5,15 @@ import {
   LayoutDashboard,
   Store,
   Users,
+  UserCog,
   MessageSquare,
   CircleDollarSign,
   TrendingUp,
 } from "lucide-react";
 import { sidebarLogo } from "@/assets/images";
+import { PERMISSIONS, DASHBOARD_PERMISSIONS } from "@/auth/permissions";
+import { canAny } from "@/auth/rbac";
+import { useUserStore } from "@/stores/UserStore";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -20,44 +24,58 @@ interface NavItem {
   name: string;
   href: string;
   icon: React.ReactNode;
+  permissions: readonly string[];
 }
 
 const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
   const { t } = useTranslation();
   const location = useLocation();
+  const user = useUserStore((state) => state.user);
 
   const navigation: NavItem[] = [
     {
       name: t("navigation.dashboard", "Dashboard"),
-      href: "/",
+      href: "/dashboard",
       icon: <LayoutDashboard className="w-5 h-5" />,
+      permissions: DASHBOARD_PERMISSIONS,
     },
     {
       name: t("navigation.supportTickets", "Support Tickets"),
       href: "/support-tickets",
       icon: <MessageSquare className="w-5 h-5" />,
+      permissions: [PERMISSIONS.TICKET_READ],
     },
     {
       name: t("navigation.merchants", "Merchants Management"),
       href: "/merchants",
       icon: <Store className="w-5 h-5" />,
+      permissions: [PERMISSIONS.MERCHANT_LIST],
     },
     {
       name: t("navigation.customers", "Customers Management"),
       href: "/customers",
       icon: <Users className="w-5 h-5" />,
+      permissions: [PERMISSIONS.CUSTOMER_LIST],
     },
     {
       name: t("navigation.debts", "Debts Management"),
       href: "/debts-management",
       icon: <CircleDollarSign className="w-5 h-5" />,
+      permissions: [PERMISSIONS.DEBT_LIST],
     },
     {
       name: t("navigation.salesLeads", "Sales Leads"),
       href: "/sales-leads",
       icon: <TrendingUp className="w-5 h-5" />,
+      permissions: [PERMISSIONS.SALES_LEAD_LIST],
     },
-  ];
+    {
+      name: t("navigation.systemUsers", "System Users"),
+      href: "/system-users",
+      icon: <UserCog className="w-5 h-5" />,
+      permissions: [PERMISSIONS.USER_LIST],
+    },
+  ].filter((item) => canAny(user, item.permissions));
 
   const isActive = (href: string) => {
     if (href === "/") {

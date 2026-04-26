@@ -7,10 +7,13 @@ import type { SupportTicketStatus, SupportTicketPriority, SupportTicketType, Sup
 import { SupportTicketsStats, SupportTicketsFilters, SupportTicketsGrid } from "../components";
 import { Button } from "@/components/shared/Button";
 import { Plus } from "lucide-react";
+import { PERMISSIONS } from "@/auth/permissions";
+import { useCan } from "@/auth/rbac";
 
 export const SupportTickets = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const canCreate = useCan(PERMISSIONS.TICKET_CREATE);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -92,10 +95,12 @@ export const SupportTickets = () => {
               {t("supportTickets.subtitle")}
             </p>
           </div>
-          <Button onClick={handleCreateTicket} variant="primary">
-            <Plus className="w-4 h-4 mr-2" />
-            {t("supportTickets.createTicket", "Create Ticket")}
-          </Button>
+          {canCreate && (
+            <Button onClick={handleCreateTicket} variant="primary">
+              <Plus className="w-4 h-4 mr-2" />
+              {t("supportTickets.createTicket", "Create Ticket")}
+            </Button>
+          )}
         </div>
       </div>
 

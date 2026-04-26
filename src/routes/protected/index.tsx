@@ -5,6 +5,10 @@ import { MerchantsRoutes } from "@/features/merchants";
 import { SupportTicketsRoutes } from "@/features/supportTickets";
 import { DebtsManagementRoutes } from "@/features/debtsManagement/";
 import { SalesLeadsRoutes } from "@/features/salesLeads";
+import { UserManagementRoutes } from "@/features/user-management";
+import { RequirePermission } from "./RequirePermission";
+import { PERMISSIONS, DASHBOARD_PERMISSIONS } from "@/auth/permissions";
+import { DefaultProtectedHome } from "./DefaultProtectedHome";
 
 export const protectedRoutes = [
   {
@@ -13,32 +17,64 @@ export const protectedRoutes = [
     children: [
       {
         path: "/support-tickets*",
-        element: <SupportTicketsRoutes />,
+        element: (
+          <RequirePermission permissions={[PERMISSIONS.TICKET_READ]}>
+            <SupportTicketsRoutes />
+          </RequirePermission>
+        ),
       },
       {
         path: "/",
-        element: <DashboardRoutes />,
+        element: <DefaultProtectedHome />,
       },
       {
         path: "/dashboard",
-        element: <DashboardRoutes />,
+        element: (
+          <RequirePermission permissions={DASHBOARD_PERMISSIONS}>
+            <DashboardRoutes />
+          </RequirePermission>
+        ),
       },
 
       {
         path: "/customers*",
-        element: <CustomersRoutes />,
+        element: (
+          <RequirePermission permissions={[PERMISSIONS.CUSTOMER_LIST, PERMISSIONS.CUSTOMER_READ]}>
+            <CustomersRoutes />
+          </RequirePermission>
+        ),
       },
       {
         path: "/merchants*",
-        element: <MerchantsRoutes />,
+        element: (
+          <RequirePermission permissions={[PERMISSIONS.MERCHANT_LIST, PERMISSIONS.MERCHANT_READ]}>
+            <MerchantsRoutes />
+          </RequirePermission>
+        ),
       },
       {
         path: "/debts-management*",
-        element: <DebtsManagementRoutes />,
+        element: (
+          <RequirePermission permissions={[PERMISSIONS.DEBT_LIST, PERMISSIONS.DEBT_READ]}>
+            <DebtsManagementRoutes />
+          </RequirePermission>
+        ),
       },
       {
         path: "/sales-leads*",
-        element: <SalesLeadsRoutes />,
+        element: (
+          <RequirePermission permissions={[PERMISSIONS.SALES_LEAD_LIST, PERMISSIONS.SALES_LEAD_READ]}>
+            <SalesLeadsRoutes />
+          </RequirePermission>
+        ),
+      },
+      {
+        path: "/system-users*",
+        element: (
+          <RequirePermission permissions={[PERMISSIONS.USER_LIST]}>
+            <UserManagementRoutes />
+          </RequirePermission>
+        ),
       },
     ],
   },

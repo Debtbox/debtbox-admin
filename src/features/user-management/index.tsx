@@ -1,416 +1,932 @@
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useQueryClient } from "@tanstack/react-query";
 import {
-  Search,
+  AlertTriangle,
+  CheckCircle,
+  Eye,
+  KeyRound,
+  LockOpen,
+  Pencil,
   Plus,
-  MoreVertical,
-  UserPlus,
+  Trash2,
   Shield,
-  UserX,
-  Mail,
-  Phone,
-  Calendar,
+  UserCog,
+  X,
+  XCircle,
 } from "lucide-react";
-import { useState } from "react";
+import { toast } from "sonner";
+import { Button, Checkbox, Input, Select, Table } from "@/components/shared";
+import type { TableColumn } from "@/components/shared/Table";
+import { useUserStore } from "@/stores/UserStore";
+import { PERMISSIONS } from "@/auth/permissions";
+import { can } from "@/auth/rbac";
+import { formatDate } from "@/utils/formatDate";
+import {
+  systemUsersQueryKey,
+  useActivateSystemUser,
+  useCreateSystemUser,
+  useDeactivateSystemUser,
+  useDeleteSystemUser,
+  useGetSystemRoles,
+  useGetSystemUser,
+  useGetSystemUsers,
+  useResetSystemUserPassword,
+  useUnlockSystemUser,
+  useUpdateSystemUser,
+  type CreateSystemUserRequest,
+  type SystemRole,
+  type SystemUser,
+  type UpdateSystemUserRequest,
+  type UserStatus,
+} from "./api/systemUsers";
 
-interface User {
-  id: string;
-  fullName: string;
-  email: string;
-  phone: string;
-  role: "admin" | "manager" | "support" | "viewer";
-  status: "active" | "inactive" | "suspended";
-  lastLogin: string;
-  createdAt: string;
-  avatar?: string;
+const PAGE_SIZE = 10;
+
+const userFormSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
+  phone: z.string().min(1, "Phone is required"),
+  password: z.string().optional(),
+  roleId: z.string().optional(),
+  status: z.string().optional(),
+  forcePasswordChange: z.boolean().optional(),
+});
+
+const resetPasswordSchema = z.object({
+  newPassword: z.string().min(1, "Password is required"),
+});
+
+type UserFormValues = z.infer<typeof userFormSchema>;
+type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
+
+type UserModalMode = "create" | "edit";
+
+interface SystemUserFormModalProps {
+  mode: UserModalMode;
+  user?: SystemUser | null;
+  roles: SystemRole[];
+  rolesLoading: boolean;
+  onClose: () => void;
+  onSubmit: (data: CreateSystemUserRequest | UpdateSystemUserRequest) => void;
+  isLoading: boolean;
 }
 
-const UserManagement = () => {
-  const { t } = useTranslation();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterRole, setFilterRole] = useState<
-    "all" | "admin" | "manager" | "support" | "viewer"
-  >("all");
-  const [filterStatus, setFilterStatus] = useState<
-    "all" | "active" | "inactive" | "suspended"
-  >("all");
+interface ConfirmAction {
+  title: string;
+  message: string;
+  confirmLabel: string;
+  tone?: "danger" | "warning";
+  onConfirm: () => void;
+  loading: boolean;
+}
 
-  // Static data
-  const users: User[] = [
-    {
-      id: "1",
-      fullName: "Ahmed Al-Mansouri",
-      email: "ahmed.almansouri@debtbox.sa",
-      phone: "+966 50 123 4567",
-      role: "admin",
-      status: "active",
-      lastLogin: "2024-01-15T10:30:00",
-      createdAt: "2023-06-15",
-    },
-    {
-      id: "2",
-      fullName: "Fatima Al-Zahra",
-      email: "fatima.alzahra@debtbox.sa",
-      phone: "+966 55 234 5678",
-      role: "manager",
-      status: "active",
-      lastLogin: "2024-01-15T09:15:00",
-      createdAt: "2023-07-20",
-    },
-    {
-      id: "3",
-      fullName: "Mohammed Al-Saud",
-      email: "mohammed.alsaud@debtbox.sa",
-      phone: "+966 54 345 6789",
-      role: "support",
-      status: "active",
-      lastLogin: "2024-01-14T16:45:00",
-      createdAt: "2023-08-10",
-    },
-    {
-      id: "4",
-      fullName: "Sara Al-Otaibi",
-      email: "sara.alotaibi@debtbox.sa",
-      phone: "+966 53 456 7890",
-      role: "support",
-      status: "inactive",
-      lastLogin: "2024-01-10T14:20:00",
-      createdAt: "2023-09-05",
-    },
-    {
-      id: "5",
-      fullName: "Khalid Al-Rashid",
-      email: "khalid.alrashid@debtbox.sa",
-      phone: "+966 52 567 8901",
-      role: "viewer",
-      status: "active",
-      lastLogin: "2024-01-15T11:00:00",
-      createdAt: "2023-10-12",
-    },
-    {
-      id: "6",
-      fullName: "Noura Al-Mutairi",
-      email: "noura.almutairi@debtbox.sa",
-      phone: "+966 51 678 9012",
-      role: "manager",
-      status: "suspended",
-      lastLogin: "2024-01-05T08:30:00",
-      createdAt: "2023-11-18",
-    },
+const getFullName = (user: SystemUser) =>
+  `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() || user.email;
+
+const getRoleName = (role?: SystemRole | null) => role?.name || role?.slug || "-";
+
+const getErrorMessage = (error: unknown, fallback: string) =>
+  (error as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+  (error as { message?: string })?.message ??
+  fallback;
+
+const isForbidden = (error: unknown) =>
+  (error as { response?: { status?: number } })?.response?.status === 403;
+
+const isLocked = (user: SystemUser) => Boolean(user.locked_until);
+
+const formatDateTime = (language: string, value?: string | null) => {
+  if (!value) return "-";
+
+  return formatDate(language, value, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+const StatusBadge = ({ status }: { status: UserStatus }) => {
+  const { t } = useTranslation();
+  const normalized = String(status).toUpperCase();
+  const colors =
+    normalized === "ACTIVE"
+      ? "bg-green-100 text-green-800 border-green-200"
+      : normalized === "INACTIVE"
+        ? "bg-gray-100 text-gray-800 border-gray-200"
+        : "bg-yellow-100 text-yellow-800 border-yellow-200";
+
+  return (
+    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${colors}`}>
+      {t(`userManagement.status.${normalized}`, normalized)}
+    </span>
+  );
+};
+
+const BooleanBadge = ({ value }: { value?: boolean }) => {
+  const { t } = useTranslation();
+
+  return (
+    <span
+      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${
+        value
+          ? "bg-green-100 text-green-800 border-green-200"
+          : "bg-gray-100 text-gray-800 border-gray-200"
+      }`}
+    >
+      {value ? t("common.yes", "Yes") : t("common.no", "No")}
+    </span>
+  );
+};
+
+const RowActionButton = ({
+  label,
+  icon,
+  onClick,
+  className = "",
+  disabled,
+}: {
+  label: string;
+  icon: ReactNode;
+  onClick: () => void;
+  className?: string;
+  disabled?: boolean;
+}) => (
+  <button
+    type="button"
+    title={label}
+    aria-label={label}
+    onClick={onClick}
+    disabled={disabled}
+    className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+  >
+    {icon}
+  </button>
+);
+
+const SystemUserFormModal = ({
+  mode,
+  user,
+  roles,
+  rolesLoading,
+  onClose,
+  onSubmit,
+  isLoading,
+}: SystemUserFormModalProps) => {
+  const { t } = useTranslation();
+  const isCreate = mode === "create";
+
+  const roleOptions = [
+    { value: "", label: t("userManagement.selectRole", "Select role") },
+    ...roles.map((role) => ({ value: String(role.id), label: role.name })),
   ];
 
-  const filteredUsers = users.filter((user) => {
-    const matchesSearch =
-      user.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.phone.includes(searchQuery);
-    const matchesRole = filterRole === "all" || user.role === filterRole;
-    const matchesStatus =
-      filterStatus === "all" || user.status === filterStatus;
-    return matchesSearch && matchesRole && matchesStatus;
+  const statusOptions = [
+    { value: "", label: t("common.selectOption", "Select...") },
+    { value: "ACTIVE", label: t("userManagement.status.ACTIVE", "Active") },
+    { value: "INACTIVE", label: t("userManagement.status.INACTIVE", "Inactive") },
+  ];
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<UserFormValues>({
+    resolver: zodResolver(userFormSchema),
+    defaultValues: {
+      firstName: user?.firstName ?? "",
+      lastName: user?.lastName ?? "",
+      email: user?.email ?? "",
+      phone: user?.phone ?? "",
+      password: "",
+      roleId: user?.role?.id ? String(user.role.id) : "",
+      status: user?.status ?? "",
+      forcePasswordChange: true,
+    },
   });
 
-  const getRoleBadge = (role: string) => {
-    const roleConfig = {
-      admin: {
-        label: t("userManagement.roles.admin", "Admin"),
-        color: "bg-purple-100 text-purple-800",
-      },
-      manager: {
-        label: t("userManagement.roles.manager", "Manager"),
-        color: "bg-blue-100 text-blue-800",
-      },
-      support: {
-        label: t("userManagement.roles.support", "Support"),
-        color: "bg-green-100 text-green-800",
-      },
-      viewer: {
-        label: t("userManagement.roles.viewer", "Viewer"),
-        color: "bg-gray-100 text-gray-800",
-      },
+  useEffect(() => {
+    reset({
+      firstName: user?.firstName ?? "",
+      lastName: user?.lastName ?? "",
+      email: user?.email ?? "",
+      phone: user?.phone ?? "",
+      password: "",
+      roleId: user?.role?.id ? String(user.role.id) : "",
+      status: user?.status ?? "",
+      forcePasswordChange: true,
+    });
+  }, [reset, user]);
+
+  const submit = (values: UserFormValues) => {
+    const roleId = values.roleId ? Number(values.roleId) : undefined;
+
+    if (isCreate) {
+      if (!values.password || !roleId) {
+        toast.error(t("userManagement.requiredFormFields", "Password and role are required."));
+        return;
+      }
+
+      onSubmit({
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: values.email,
+        phone: values.phone,
+        password: values.password,
+        roleId,
+        status: values.status || undefined,
+        forcePasswordChange: Boolean(values.forcePasswordChange),
+      });
+      return;
+    }
+
+    const payload: UpdateSystemUserRequest = {
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      phone: values.phone,
     };
-    const config =
-      roleConfig[role as keyof typeof roleConfig] || roleConfig.viewer;
-    return (
-      <span
-        className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold ${config.color}`}
-      >
-        <Shield className="w-3 h-3 mr-1" />
-        {config.label}
-      </span>
+
+    if (values.status) payload.status = values.status;
+    if (roleId) payload.roleId = roleId;
+    onSubmit(payload);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl max-w-2xl w-full shadow-2xl max-h-[90vh] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <div className="flex items-center gap-2">
+            <UserCog className="w-5 h-5 text-blue-600" />
+            <h2 className="text-lg font-semibold text-gray-900">
+              {isCreate
+                ? t("userManagement.createUser", "Create System User")
+                : t("userManagement.editUser", "Edit System User")}
+            </h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors rounded-lg p-1 hover:bg-gray-100"
+            type="button"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit(submit)} className="flex flex-col flex-1 overflow-hidden">
+          <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Input
+                label={t("userManagement.firstName", "First Name")}
+                error={errors.firstName}
+                {...register("firstName")}
+              />
+              <Input
+                label={t("userManagement.lastName", "Last Name")}
+                error={errors.lastName}
+                {...register("lastName")}
+              />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Input
+                type="email"
+                label={t("userManagement.email", "Email")}
+                error={errors.email}
+                {...register("email")}
+              />
+              <Input
+                label={t("userManagement.phone", "Phone")}
+                error={errors.phone}
+                {...register("phone")}
+              />
+            </div>
+            {isCreate && (
+              <Input
+                type="password"
+                label={t("userManagement.password", "Password")}
+                error={errors.password}
+                {...register("password", { required: isCreate })}
+              />
+            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Select
+                label={t("userManagement.role", "Role")}
+                options={roleOptions}
+                disabled={rolesLoading}
+                error={errors.roleId}
+                helperText={
+                  mode === "edit" && !user?.role
+                    ? t("userManagement.roleMayBeMissing", "Current role may be omitted by the detail API.")
+                    : undefined
+                }
+                {...register("roleId", { required: isCreate })}
+              />
+              <Select
+                label={t("userManagement.statusLabel", "Status")}
+                options={statusOptions}
+                error={errors.status}
+                {...register("status")}
+              />
+            </div>
+            {isCreate && (
+              <Checkbox
+                label={t("userManagement.forcePasswordChange", "Require password change on next login")}
+                {...register("forcePasswordChange")}
+              />
+            )}
+          </div>
+
+          <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-xl">
+            <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
+              {t("common.cancel", "Cancel")}
+            </Button>
+            <Button type="submit" loading={isLoading}>
+              {isCreate ? t("userManagement.createUser", "Create System User") : t("common.saveChanges", "Save Changes")}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+const UserDetailsModal = ({
+  user,
+  fallbackUser,
+  loading,
+  onClose,
+}: {
+  user?: SystemUser;
+  fallbackUser?: SystemUser | null;
+  loading: boolean;
+  onClose: () => void;
+}) => {
+  const { t, i18n } = useTranslation();
+  const displayUser = user ?? fallbackUser;
+  const role = user?.role ?? fallbackUser?.role;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl max-w-2xl w-full shadow-2xl max-h-[90vh] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <div className="flex items-center gap-2">
+            <Eye className="w-5 h-5 text-blue-600" />
+            <h2 className="text-lg font-semibold text-gray-900">
+              {t("userManagement.userDetails", "User Details")}
+            </h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors rounded-lg p-1 hover:bg-gray-100"
+            type="button"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="p-6 overflow-y-auto">
+          {loading || !displayUser ? (
+            <div className="py-10 text-center text-gray-500">{t("common.loading", "Loading...")}</div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <DetailItem label={t("userManagement.name", "Name")} value={getFullName(displayUser)} />
+              <DetailItem label={t("userManagement.email", "Email")} value={displayUser.email} />
+              <DetailItem label={t("userManagement.phone", "Phone")} value={displayUser.phone} />
+              <DetailItem label={t("userManagement.role", "Role")} value={getRoleName(role)} />
+              <DetailItem label={t("userManagement.statusLabel", "Status")} value={<StatusBadge status={displayUser.status} />} />
+              <DetailItem label={t("userManagement.mfa", "MFA")} value={<BooleanBadge value={displayUser.mfa_enabled} />} />
+              <DetailItem label={t("userManagement.lockedUntil", "Locked Until")} value={formatDateTime(i18n.language, displayUser.locked_until)} />
+              <DetailItem label={t("userManagement.lastLogin", "Last Login")} value={formatDateTime(i18n.language, displayUser.last_login_at)} />
+              <DetailItem label={t("userManagement.passwordChangedAt", "Password Changed At")} value={formatDateTime(i18n.language, displayUser.password_changed_at)} />
+              <DetailItem label={t("userManagement.createdAt", "Created At")} value={formatDateTime(i18n.language, displayUser.created_at)} />
+              <DetailItem label={t("userManagement.updatedAt", "Updated At")} value={formatDateTime(i18n.language, displayUser.updated_at)} />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const DetailItem = ({ label, value }: { label: string; value: ReactNode }) => (
+  <div className="rounded-lg border border-gray-200 p-3">
+    <div className="text-xs font-medium text-gray-500 uppercase mb-1">{label}</div>
+    <div className="text-sm text-gray-900 break-words">{value || "-"}</div>
+  </div>
+);
+
+const ConfirmationModal = ({ action, onClose }: { action: ConfirmAction; onClose: () => void }) => {
+  const { t } = useTranslation();
+  const isDanger = action.tone === "danger";
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl max-w-md w-full shadow-xl">
+        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className={`w-5 h-5 ${isDanger ? "text-red-600" : "text-yellow-600"}`} />
+            <h2 className="text-lg font-semibold text-gray-900">{action.title}</h2>
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors" type="button">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-4">
+          <p className="text-sm text-gray-700">{action.message}</p>
+          <div className="flex justify-end gap-3">
+            <Button type="button" variant="outline" onClick={onClose} disabled={action.loading}>
+              {t("common.cancel", "Cancel")}
+            </Button>
+            <Button
+              type="button"
+              loading={action.loading}
+              onClick={action.onConfirm}
+              className={isDanger ? "bg-red-600 hover:bg-red-700 focus:ring-red-500" : undefined}
+            >
+              {action.confirmLabel}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ResetPasswordModal = ({
+  user,
+  onClose,
+  onSubmit,
+  loading,
+}: {
+  user: SystemUser;
+  onClose: () => void;
+  onSubmit: (newPassword: string) => void;
+  loading: boolean;
+}) => {
+  const { t } = useTranslation();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ResetPasswordValues>({
+    resolver: zodResolver(resetPasswordSchema),
+  });
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl max-w-md w-full shadow-xl">
+        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+          <div className="flex items-center gap-2">
+            <KeyRound className="w-5 h-5 text-yellow-600" />
+            <h2 className="text-lg font-semibold text-gray-900">
+              {t("userManagement.resetPassword", "Reset Password")}
+            </h2>
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors" type="button">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <form
+          onSubmit={handleSubmit((values) => onSubmit(values.newPassword))}
+          className="p-6 space-y-4"
+        >
+          <div className="flex gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-yellow-800">
+              {t("userManagement.resetPasswordMessage", "This will replace the user's password and force a password change.")}
+            </p>
+          </div>
+          <p className="text-sm text-gray-600">{getFullName(user)}</p>
+          <Input
+            type="password"
+            label={t("userManagement.newPassword", "New Password")}
+            error={errors.newPassword}
+            {...register("newPassword")}
+          />
+          <div className="flex justify-end gap-3">
+            <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
+              {t("common.cancel", "Cancel")}
+            </Button>
+            <Button type="submit" loading={loading}>
+              {t("userManagement.resetPassword", "Reset Password")}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+const UserManagement = () => {
+  const { t, i18n } = useTranslation();
+  const queryClient = useQueryClient();
+  const currentUser = useUserStore((state) => state.user);
+  const canCreate = can(currentUser, PERMISSIONS.USER_CREATE);
+  const canRead = can(currentUser, PERMISSIONS.USER_READ);
+  const canUpdate = can(currentUser, PERMISSIONS.USER_UPDATE);
+  const canActivate = can(currentUser, PERMISSIONS.USER_ACTIVATE);
+  const canDeactivate = can(currentUser, PERMISSIONS.USER_DEACTIVATE);
+  const canDelete = can(currentUser, PERMISSIONS.USER_DELETE);
+  const canResetPassword = can(currentUser, PERMISSIONS.USER_RESET_PASSWORD);
+  const canUnlock = can(currentUser, PERMISSIONS.USER_UNLOCK);
+  const canUseRowActions =
+    canRead ||
+    canUpdate ||
+    canActivate ||
+    canDeactivate ||
+    canResetPassword ||
+    canUnlock ||
+    canDelete;
+  const [page, setPage] = useState(0);
+  const [modalMode, setModalMode] = useState<UserModalMode | null>(null);
+  const [selectedUser, setSelectedUser] = useState<SystemUser | null>(null);
+  const [detailsUser, setDetailsUser] = useState<SystemUser | null>(null);
+  const [confirmAction, setConfirmAction] = useState<ConfirmAction | null>(null);
+  const [resetPasswordUser, setResetPasswordUser] = useState<SystemUser | null>(null);
+
+  const usersQuery = useGetSystemUsers({
+    params: { page, limit: PAGE_SIZE },
+  });
+  const rolesQuery = useGetSystemRoles({
+    config: { enabled: modalMode !== null },
+  });
+  const detailQuery = useGetSystemUser({
+    id: detailsUser?.id ?? selectedUser?.id,
+    enabled: Boolean(detailsUser) || modalMode === "edit",
+  });
+
+  const createMutation = useCreateSystemUser();
+  const updateMutation = useUpdateSystemUser();
+  const activateMutation = useActivateSystemUser();
+  const deactivateMutation = useDeactivateSystemUser();
+  const deleteMutation = useDeleteSystemUser();
+  const unlockMutation = useUnlockSystemUser();
+  const resetPasswordMutation = useResetSystemUserPassword();
+
+  const users = useMemo(() => usersQuery.data?.data.users ?? [], [usersQuery.data]);
+  const total = usersQuery.data?.data.total ?? 0;
+  const roles = rolesQuery.data?.data ?? [];
+
+  const selectedForForm = useMemo(() => {
+    if (!selectedUser) return null;
+    const detailUser = detailQuery.data?.data;
+    const baseUser = detailUser?.id === selectedUser.id ? detailUser : selectedUser;
+
+    return {
+      ...baseUser,
+      role: baseUser.role ?? selectedUser.role ?? users.find((user) => user.id === selectedUser.id)?.role,
+    };
+  }, [detailQuery.data, selectedUser, users]);
+
+  const invalidateUsers = () => {
+    queryClient.invalidateQueries({ queryKey: systemUsersQueryKey });
+  };
+
+  const handleError = (error: unknown, fallback: string) => {
+    toast.error(getErrorMessage(error, fallback));
+  };
+
+  const handleCreateOrUpdate = (data: CreateSystemUserRequest | UpdateSystemUserRequest) => {
+    if (modalMode === "create") {
+      createMutation.mutate(data as CreateSystemUserRequest, {
+        onSuccess: () => {
+          toast.success(t("userManagement.createSuccess", "System user created successfully"));
+          setModalMode(null);
+          invalidateUsers();
+        },
+        onError: (error) => handleError(error, t("userManagement.createError", "Failed to create system user")),
+      });
+      return;
+    }
+
+    if (!selectedUser) return;
+    updateMutation.mutate(
+      { id: selectedUser.id, data: data as UpdateSystemUserRequest },
+      {
+        onSuccess: () => {
+          toast.success(t("userManagement.updateSuccess", "System user updated successfully"));
+          setModalMode(null);
+          setSelectedUser(null);
+          invalidateUsers();
+        },
+        onError: (error) => handleError(error, t("userManagement.updateError", "Failed to update system user")),
+      },
     );
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "active":
-        return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-            {t("userManagement.status.active", "Active")}
-          </span>
-        );
-      case "suspended":
-        return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
-            {t("userManagement.status.suspended", "Suspended")}
-          </span>
-        );
-      default:
-        return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800">
-            {t("userManagement.status.inactive", "Inactive")}
-          </span>
-        );
-    }
+  const handleActivate = (user: SystemUser) => {
+    activateMutation.mutate(user.id, {
+      onSuccess: () => {
+        toast.success(t("userManagement.activateSuccess", "System user activated successfully"));
+        invalidateUsers();
+      },
+      onError: (error) => handleError(error, t("userManagement.activateError", "Failed to activate system user")),
+    });
   };
 
-  const stats = [
+  const handleDeactivate = (user: SystemUser) => {
+    setConfirmAction({
+      title: t("userManagement.deactivateUser", "Deactivate User"),
+      message: t("userManagement.deactivateMessage", "This user will no longer be able to sign in."),
+      confirmLabel: t("userManagement.deactivate", "Deactivate"),
+      tone: "danger",
+      loading: false,
+      onConfirm: () => {
+        deactivateMutation.mutate(user.id, {
+          onSuccess: () => {
+            toast.success(t("userManagement.deactivateSuccess", "System user deactivated successfully"));
+            setConfirmAction(null);
+            invalidateUsers();
+          },
+          onError: (error) => handleError(error, t("userManagement.deactivateError", "Failed to deactivate system user")),
+        });
+      },
+    });
+  };
+
+  const handleUnlock = (user: SystemUser) => {
+    setConfirmAction({
+      title: t("userManagement.unlockUser", "Unlock User"),
+      message: t("userManagement.unlockMessage", "This will clear the user's account lockout."),
+      confirmLabel: t("userManagement.unlock", "Unlock"),
+      tone: "warning",
+      loading: false,
+      onConfirm: () => {
+        unlockMutation.mutate(user.id, {
+          onSuccess: () => {
+            toast.success(t("userManagement.unlockSuccess", "System user unlocked successfully"));
+            setConfirmAction(null);
+            invalidateUsers();
+          },
+          onError: (error) => handleError(error, t("userManagement.unlockError", "Failed to unlock system user")),
+        });
+      },
+    });
+  };
+
+  const handleDelete = (user: SystemUser) => {
+    setConfirmAction({
+      title: t("userManagement.deleteUser", "Delete User"),
+      message: t("userManagement.deleteMessage", "This user account will be permanently deleted."),
+      confirmLabel: t("common.delete", "Delete"),
+      tone: "danger",
+      loading: false,
+      onConfirm: () => {
+        deleteMutation.mutate(user.id, {
+          onSuccess: () => {
+            toast.success(t("userManagement.deleteSuccess", "System user deleted successfully"));
+            setConfirmAction(null);
+            invalidateUsers();
+          },
+          onError: (error) => handleError(error, t("userManagement.deleteError", "Failed to delete system user")),
+        });
+      },
+    });
+  };
+
+  const handleResetPassword = (newPassword: string) => {
+    if (!resetPasswordUser) return;
+    resetPasswordMutation.mutate(
+      { id: resetPasswordUser.id, newPassword },
+      {
+        onSuccess: () => {
+          toast.success(t("userManagement.resetPasswordSuccess", "Password reset successfully"));
+          setResetPasswordUser(null);
+        },
+        onError: (error) => handleError(error, t("userManagement.resetPasswordError", "Failed to reset password")),
+      },
+    );
+  };
+
+  const columns: TableColumn<SystemUser>[] = [
     {
-      label: t("userManagement.totalUsers", "Total Users"),
-      value: users.length,
-      icon: UserPlus,
-      color: "text-blue-600 bg-blue-50",
+      key: "name",
+      title: t("userManagement.name", "Name"),
+      dataIndex: "firstName",
+      render: (_value: unknown, record: SystemUser) => (
+        <div>
+          <div className="text-sm font-medium text-gray-900">{getFullName(record)}</div>
+          <div className="text-xs text-gray-500">ID: {record.id}</div>
+        </div>
+      ),
     },
     {
-      label: t("userManagement.activeUsers", "Active"),
-      value: users.filter((u) => u.status === "active").length,
-      icon: Shield,
-      color: "text-green-600 bg-green-50",
+      key: "email",
+      title: t("userManagement.email", "Email"),
+      dataIndex: "email",
+      render: (value: unknown) => <span className="text-sm text-gray-900">{String(value ?? "-")}</span>,
     },
     {
-      label: t("userManagement.inactiveUsers", "Inactive"),
-      value: users.filter((u) => u.status === "inactive").length,
-      icon: UserX,
-      color: "text-gray-600 bg-gray-50",
+      key: "phone",
+      title: t("userManagement.phone", "Phone"),
+      dataIndex: "phone",
+      render: (value: unknown) => <span className="text-sm text-gray-900">{String(value ?? "-")}</span>,
     },
     {
-      label: t("userManagement.suspendedUsers", "Suspended"),
-      value: users.filter((u) => u.status === "suspended").length,
-      icon: UserX,
-      color: "text-red-600 bg-red-50",
+      key: "role",
+      title: t("userManagement.role", "Role"),
+      dataIndex: "role",
+      render: (_value: unknown, record: SystemUser) => (
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border bg-blue-50 text-blue-800 border-blue-200">
+          <Shield className="w-3 h-3" />
+          {getRoleName(record.role)}
+        </span>
+      ),
+    },
+    {
+      key: "status",
+      title: t("userManagement.statusLabel", "Status"),
+      dataIndex: "status",
+      render: (value: unknown) => <StatusBadge status={String(value)} />,
+    },
+    {
+      key: "createdAt",
+      title: t("userManagement.createdAt", "Created At"),
+      dataIndex: "created_at",
+      render: (value: unknown) => (
+        <span className="text-sm text-gray-500">
+          {value
+            ? formatDate(i18n.language, value as string, {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })
+            : "-"}
+        </span>
+      ),
     },
   ];
 
+  const actions = (record: SystemUser) => {
+    const isCurrentUser = String(record.id) === String(currentUser?.id);
+    const isActive = String(record.status).toUpperCase() === "ACTIVE";
+
+    return (
+      <div className="flex min-w-max items-center justify-end gap-1.5">
+        {canRead && (
+          <RowActionButton
+            label={t("common.view", "View")}
+            onClick={() => setDetailsUser(record)}
+            icon={<Eye className="w-4 h-4" />}
+          />
+        )}
+        {canUpdate && (
+          <RowActionButton
+            label={t("common.edit", "Edit")}
+            onClick={() => {
+              setSelectedUser(record);
+              setModalMode("edit");
+            }}
+            icon={<Pencil className="w-4 h-4" />}
+          />
+        )}
+        {isActive ? (
+          canDeactivate && !isCurrentUser && (
+            <RowActionButton
+              label={t("userManagement.deactivate", "Deactivate")}
+              onClick={() => handleDeactivate(record)}
+              icon={<XCircle className="w-4 h-4" />}
+              className="text-red-700 hover:border-red-200 hover:bg-red-50 hover:text-red-800"
+            />
+          )
+        ) : (
+          canActivate && (
+            <RowActionButton
+              label={t("userManagement.activate", "Activate")}
+              onClick={() => handleActivate(record)}
+              disabled={activateMutation.isPending}
+              icon={<CheckCircle className="w-4 h-4" />}
+              className="text-green-700 hover:border-green-200 hover:bg-green-50 hover:text-green-800"
+            />
+          )
+        )}
+        {canResetPassword && (
+          <RowActionButton
+            label={t("userManagement.resetPassword", "Reset Password")}
+            onClick={() => setResetPasswordUser(record)}
+            icon={<KeyRound className="w-4 h-4" />}
+          />
+        )}
+        {canUnlock && isLocked(record) && (
+          <RowActionButton
+            label={t("userManagement.unlock", "Unlock")}
+            onClick={() => handleUnlock(record)}
+            icon={<LockOpen className="w-4 h-4" />}
+            className="text-yellow-700 hover:border-yellow-200 hover:bg-yellow-50 hover:text-yellow-800"
+          />
+        )}
+        {canDelete && !isCurrentUser && (
+          <RowActionButton
+            label={t("common.delete", "Delete")}
+            onClick={() => handleDelete(record)}
+            icon={<Trash2 className="w-4 h-4" />}
+            className="text-red-700 hover:border-red-200 hover:bg-red-50 hover:text-red-800"
+          />
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
-            {t("userManagement.title", "User Management")}
+            {t("userManagement.title", "System Users")}
           </h1>
           <p className="text-gray-600 mt-1">
-            {t(
-              "userManagement.subtitle",
-              "Manage system users and their permissions"
-            )}
+            {t("userManagement.subtitle", "Manage internal dashboard users and access")}
           </p>
         </div>
-        <button className="mt-4 sm:mt-0 bg-primary text-white px-5 py-2.5 rounded-lg hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all flex items-center space-x-2 shadow-md hover:shadow-lg">
-          <Plus className="w-4 h-4" />
-          <span>{t("userManagement.addUser", "Add User")}</span>
-        </button>
+        {canCreate && (
+          <Button
+            onClick={() => {
+              setSelectedUser(null);
+              setModalMode("create");
+            }}
+            className="flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            {t("userManagement.addUser", "Add User")}
+          </Button>
+        )}
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <div
-              key={stat.label}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-1">
-                    {stat.label}
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {stat.value}
-                  </p>
-                </div>
-                <div className={`${stat.color} p-3 rounded-lg`}>
-                  <Icon className="w-6 h-6" />
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Filters and Search */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder={t(
-                "userManagement.searchPlaceholder",
-                "Search users..."
-              )}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-            />
-          </div>
-          <div className="flex gap-2 flex-wrap">
-            <select
-              value={filterRole}
-              onChange={(e) =>
-                setFilterRole(
-                  e.target.value as
-                    | "all"
-                    | "admin"
-                    | "manager"
-                    | "support"
-                    | "viewer"
-                )
-              }
-              className="px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-            >
-              <option value="all">
-                {t("userManagement.allRoles", "All Roles")}
-              </option>
-              <option value="admin">
-                {t("userManagement.roles.admin", "Admin")}
-              </option>
-              <option value="manager">
-                {t("userManagement.roles.manager", "Manager")}
-              </option>
-              <option value="support">
-                {t("userManagement.roles.support", "Support")}
-              </option>
-              <option value="viewer">
-                {t("userManagement.roles.viewer", "Viewer")}
-              </option>
-            </select>
-            <select
-              value={filterStatus}
-              onChange={(e) =>
-                setFilterStatus(
-                  e.target.value as "all" | "active" | "inactive" | "suspended"
-                )
-              }
-              className="px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-            >
-              <option value="all">
-                {t("userManagement.allStatuses", "All Statuses")}
-              </option>
-              <option value="active">
-                {t("userManagement.status.active", "Active")}
-              </option>
-              <option value="inactive">
-                {t("userManagement.status.inactive", "Inactive")}
-              </option>
-              <option value="suspended">
-                {t("userManagement.status.suspended", "Suspended")}
-              </option>
-            </select>
-          </div>
+      {usersQuery.isError && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          {isForbidden(usersQuery.error)
+            ? t("userManagement.forbidden", "You do not have permission to view system users.")
+            : getErrorMessage(usersQuery.error, t("userManagement.loadError", "Failed to load system users"))}
         </div>
-      </div>
+      )}
 
-      {/* Users Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  {t("userManagement.user", "User")}
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  {t("userManagement.contact", "Contact")}
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  {t("userManagement.role", "Role")}
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  {t("userManagement.statusLabel", "Status")}
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  {t("userManagement.lastLogin", "Last Login")}
-                </th>
-                <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  {t("common.actions", "Actions")}
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredUsers.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center">
-                    <p className="text-gray-500">
-                      {t("userManagement.noUsers", "No users found")}
-                    </p>
-                  </td>
-                </tr>
-              ) : (
-                filteredUsers.map((user) => (
-                  <tr
-                    key={user.id}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center mr-3">
-                          <span className="text-primary font-semibold">
-                            {user.fullName.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
-                        <div>
-                          <div className="text-sm font-semibold text-gray-900">
-                            {user.fullName}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {t("userManagement.joined", "Joined")}{" "}
-                            {new Date(user.createdAt).toLocaleDateString()}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900 space-y-1">
-                        <div className="flex items-center text-gray-600">
-                          <Mail className="w-3 h-3 mr-1" />
-                          {user.email}
-                        </div>
-                        <div className="flex items-center text-gray-600">
-                          <Phone className="w-3 h-3 mr-1" />
-                          {user.phone}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {getRoleBadge(user.role)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {getStatusBadge(user.status)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center text-sm text-gray-500">
-                        <Calendar className="w-3 h-3 mr-1" />
-                        {new Date(user.lastLogin).toLocaleString()}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex items-center justify-end space-x-2">
-                        <button className="text-primary hover:text-primary-dark font-medium">
-                          {t("common.edit", "Edit")}
-                        </button>
-                        <button className="text-gray-400 hover:text-gray-600">
-                          <MoreVertical className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <Table
+        columns={columns}
+        data={users}
+        loading={usersQuery.isLoading}
+        emptyText={t("userManagement.noUsers", "No users found")}
+        className="border border-gray-200 shadow-sm [&_table]:min-w-[920px] [&_td]:whitespace-nowrap [&_th]:whitespace-nowrap"
+        showActions={canUseRowActions}
+        actions={actions}
+        pagination={{
+          current: page + 1,
+          pageSize: PAGE_SIZE,
+          total,
+          onChange: (nextPage) => setPage(nextPage - 1),
+        }}
+      />
+
+      {modalMode && (
+        <SystemUserFormModal
+          mode={modalMode}
+          user={selectedForForm}
+          roles={roles}
+          rolesLoading={rolesQuery.isLoading}
+          onClose={() => {
+            setModalMode(null);
+            setSelectedUser(null);
+          }}
+          onSubmit={handleCreateOrUpdate}
+          isLoading={createMutation.isPending || updateMutation.isPending}
+        />
+      )}
+
+      {detailsUser && (
+        <UserDetailsModal
+          user={detailQuery.data?.data}
+          fallbackUser={detailsUser}
+          loading={detailQuery.isLoading}
+          onClose={() => setDetailsUser(null)}
+        />
+      )}
+
+      {confirmAction && (
+        <ConfirmationModal
+          action={{
+            ...confirmAction,
+            loading: deactivateMutation.isPending || unlockMutation.isPending || deleteMutation.isPending,
+          }}
+          onClose={() => setConfirmAction(null)}
+        />
+      )}
+
+      {resetPasswordUser && (
+        <ResetPasswordModal
+          user={resetPasswordUser}
+          onClose={() => setResetPasswordUser(null)}
+          onSubmit={handleResetPassword}
+          loading={resetPasswordMutation.isPending}
+        />
+      )}
     </div>
   );
 };

@@ -32,7 +32,8 @@
     "settings": "الإعدادات",
     "supportTickets": "تذاكر الدعم",
     "debts": "إدارة الديون",
-    "salesLeads": "العملاء المحتملون"
+    "salesLeads": "العملاء المحتملون",
+    "systemUsers": "مستخدمو النظام"
   },
   "navbar": {
     "welcome": "مرحباً!"
@@ -79,8 +80,8 @@
     "reject": "رفض"
   },
   "userManagement": {
-    "title": "إدارة المستخدمين",
-    "subtitle": "إدارة مستخدمي النظام وصلاحياتهم",
+    "title": "مستخدمو النظام",
+    "subtitle": "إدارة مستخدمي لوحة التحكم الداخليين والوصول",
     "totalUsers": "إجمالي المستخدمين",
     "activeUsers": "نشط",
     "inactiveUsers": "غير نشط",
@@ -97,16 +98,66 @@
     "status": {
       "active": "نشط",
       "inactive": "غير نشط",
-      "suspended": "معلق"
+      "suspended": "معلق",
+      "ACTIVE": "نشط",
+      "INACTIVE": "غير نشط",
+      "SUSPENDED": "معلق"
     },
+    "name": "الاسم",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "password": "كلمة المرور",
+    "newPassword": "كلمة المرور الجديدة",
     "user": "المستخدم",
     "contact": "جهة الاتصال",
     "role": "الدور",
+    "selectRole": "اختر الدور",
     "statusLabel": "الحالة",
+    "mfa": "المصادقة متعددة العوامل",
+    "lockedUntil": "مقفل حتى",
     "lastLogin": "آخر تسجيل دخول",
+    "passwordChangedAt": "تم تغيير كلمة المرور في",
+    "createdAt": "تاريخ الإنشاء",
+    "updatedAt": "تاريخ التحديث",
     "noUsers": "لم يتم العثور على مستخدمين",
     "joined": "انضم",
-    "addUser": "إضافة مستخدم"
+    "addUser": "إضافة مستخدم",
+    "createUser": "إنشاء مستخدم نظام",
+    "editUser": "تعديل مستخدم النظام",
+    "userDetails": "تفاصيل المستخدم",
+    "forcePasswordChange": "طلب تغيير كلمة المرور عند تسجيل الدخول التالي",
+    "roleMayBeMissing": "قد لا تُرجع واجهة تفاصيل المستخدم الدور الحالي.",
+    "activate": "تفعيل",
+    "deactivate": "تعطيل",
+    "deactivateUser": "تعطيل المستخدم",
+    "deactivateMessage": "لن يتمكن هذا المستخدم من تسجيل الدخول.",
+    "resetPassword": "إعادة تعيين كلمة المرور",
+    "resetPasswordShort": "إعادة التعيين",
+    "resetPasswordMessage": "سيتم استبدال كلمة مرور المستخدم وطلب تغييرها.",
+    "unlock": "إلغاء القفل",
+    "unlockUser": "إلغاء قفل المستخدم",
+    "unlockMessage": "سيؤدي هذا إلى مسح قفل حساب المستخدم.",
+    "deleteUser": "حذف المستخدم",
+    "deleteMessage": "سيتم حذف حساب هذا المستخدم نهائياً.",
+    "requiredFormFields": "كلمة المرور والدور مطلوبان.",
+    "forbidden": "ليست لديك صلاحية عرض مستخدمي النظام.",
+    "loadError": "فشل تحميل مستخدمي النظام",
+    "createSuccess": "تم إنشاء مستخدم النظام بنجاح",
+    "createError": "فشل إنشاء مستخدم النظام",
+    "updateSuccess": "تم تحديث مستخدم النظام بنجاح",
+    "updateError": "فشل تحديث مستخدم النظام",
+    "activateSuccess": "تم تفعيل مستخدم النظام بنجاح",
+    "activateError": "فشل تفعيل مستخدم النظام",
+    "deactivateSuccess": "تم تعطيل مستخدم النظام بنجاح",
+    "deactivateError": "فشل تعطيل مستخدم النظام",
+    "resetPasswordSuccess": "تمت إعادة تعيين كلمة المرور بنجاح",
+    "resetPasswordError": "فشل إعادة تعيين كلمة المرور",
+    "unlockSuccess": "تم إلغاء قفل مستخدم النظام بنجاح",
+    "unlockError": "فشل إلغاء قفل مستخدم النظام",
+    "deleteSuccess": "تم حذف مستخدم النظام بنجاح",
+    "deleteError": "فشل حذف مستخدم النظام"
   },
   "money": {
     "title": "الأموال والأرباح",
@@ -311,6 +362,10 @@
     "expired": "انتهت الجلسة",
     "expiredMessage": "انتهت جلستك. يرجى تسجيل الدخول مرة أخرى."
   },
+  "rbac": {
+    "forbiddenTitle": "تم رفض الوصول",
+    "forbiddenMessage": "ليست لديك صلاحية لعرض هذه الصفحة."
+  },
   "common": {
     "loading": "جارٍ التحميل...",
     "actions": "الإجراءات",
@@ -318,6 +373,7 @@
     "viewAll": "عرض الكل",
     "view": "عرض",
     "edit": "تعديل",
+    "delete": "حذف",
     "back": "رجوع",
     "save": "حفظ",
     "saveChanges": "حفظ التغييرات",

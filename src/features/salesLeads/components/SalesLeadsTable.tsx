@@ -7,6 +7,8 @@ import { cn } from "@/utils/cn";
 import type { SalesLeadDTO } from "@/types/SalesLeadDTO";
 import { SalesLeadStatusBadge } from "./SalesLeadStatusBadge";
 import { getLeadTypeColor } from "../utils";
+import { PERMISSIONS } from "@/auth/permissions";
+import { useCan } from "@/auth/rbac";
 
 interface SalesLeadsTableProps {
   data: SalesLeadDTO[];
@@ -27,6 +29,7 @@ export const SalesLeadsTable = ({
 }: SalesLeadsTableProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const canRead = useCan(PERMISSIONS.SALES_LEAD_READ);
 
   const formatDate = (dateStr: string) =>
     new Date(dateStr).toLocaleDateString("en-US", {
@@ -124,8 +127,8 @@ export const SalesLeadsTable = ({
       loading={isLoading}
       rowKey="id"
       emptyText={t("salesLeads.noLeads", "No sales leads found")}
-      showActions
-      actions={(record) => (
+      showActions={canRead}
+      actions={(record) => canRead ? (
         <Button
           variant="ghost"
           size="sm"
@@ -133,7 +136,7 @@ export const SalesLeadsTable = ({
         >
           <Eye className="w-4 h-4" />
         </Button>
-      )}
+      ) : null}
       pagination={{
         current: pagination.page + 1,
         pageSize: pagination.limit,

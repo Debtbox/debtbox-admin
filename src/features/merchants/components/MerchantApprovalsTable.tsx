@@ -5,6 +5,8 @@ import { Button, Table } from "@/components/shared";
 import { useApproveManualRegistration } from "../api/approveManualRegisteration";
 import { useRejectManualRegistration } from "../api/rejectManualRegisteration";
 import type { MerchantPendingApprovalsDTO } from "@/types/MerchantDTO";
+import { PERMISSIONS } from "@/auth/permissions";
+import { useCan } from "@/auth/rbac";
 
 interface MerchantApprovalsTableProps {
   data: MerchantPendingApprovalsDTO[];
@@ -31,6 +33,8 @@ export const MerchantApprovalsTable = ({
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [reviewNote, setReviewNote] = useState("");
+  const canApprove = useCan(PERMISSIONS.MERCHANT_APPROVE);
+  const canReject = useCan(PERMISSIONS.MERCHANT_REJECT);
 
   const approveMutation = useApproveManualRegistration({
     config: {
@@ -87,7 +91,7 @@ export const MerchantApprovalsTable = ({
       key: "name",
       title: t("merchants.name", "Name"),
       dataIndex: "full_name_en",
-      render: (_value: any, record: any) => (
+      render: (_value: unknown, record: MerchantPendingApprovalsDTO) => (
         <div>
           <div className="text-sm font-medium text-gray-900">
             {record.full_name_en || record.full_name_ar}
@@ -100,17 +104,17 @@ export const MerchantApprovalsTable = ({
       key: "email",
       title: t("merchants.email", "Email"),
       dataIndex: "email",
-      render: (_value: any) => (
-        <div className="text-sm text-gray-900">{_value}</div>
+      render: (value: unknown) => (
+        <div className="text-sm text-gray-900">{String(value ?? "-")}</div>
       ),
     },
     {
       key: "registrationMethod",
       title: "Registration Method",
       dataIndex: "registration_method",
-      render: (value: any) => (
+      render: (value: unknown) => (
         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-          {String(t(`merchants.registrationMethod.${value}`, value))}
+          {String(t(`merchants.registrationMethod.${String(value)}`, String(value)))}
         </span>
       ),
     },
@@ -118,9 +122,9 @@ export const MerchantApprovalsTable = ({
       key: "createdAt",
       title: t("merchants.createdAt", "Created"),
       dataIndex: "created_at",
-      render: (value: any) => (
+      render: (value: unknown) => (
         <div className="text-sm text-gray-500">
-          {new Date(value).toLocaleDateString()}
+          {new Date(value as string).toLocaleDateString()}
         </div>
       ),
     },
@@ -128,7 +132,7 @@ export const MerchantApprovalsTable = ({
       key: "idCard",
       title: t("merchants.idCard", "ID Card"),
       dataIndex: "id_card_attachment_key",
-      render: (value: any, record: any) =>
+      render: (value: unknown, record: MerchantPendingApprovalsDTO) =>
         value ? (
           <Button
             variant="ghost"
@@ -143,26 +147,30 @@ export const MerchantApprovalsTable = ({
     },
   ];
 
-  const actions = (record: any) => (
+  const actions = (record: MerchantPendingApprovalsDTO) => (
     <div className="flex gap-2">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => handleApprove(record)}
-        className="flex items-center gap-2 text-green-600 border-green-300 hover:bg-green-50"
-      >
-        <CheckCircle className="w-4 h-4" />
-        {t("merchants.approve", "Approve")}
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => handleReject(record)}
-        className="flex items-center gap-2 text-red-600 border-red-300 hover:bg-red-50"
-      >
-        <XCircle className="w-4 h-4" />
-        {t("merchants.reject", "Reject")}
-      </Button>
+      {canApprove && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => handleApprove(record)}
+          className="flex items-center gap-2 text-green-600 border-green-300 hover:bg-green-50"
+        >
+          <CheckCircle className="w-4 h-4" />
+          {t("merchants.approve", "Approve")}
+        </Button>
+      )}
+      {canReject && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => handleReject(record)}
+          className="flex items-center gap-2 text-red-600 border-red-300 hover:bg-red-50"
+        >
+          <XCircle className="w-4 h-4" />
+          {t("merchants.reject", "Reject")}
+        </Button>
+      )}
     </div>
   );
 
@@ -173,7 +181,7 @@ export const MerchantApprovalsTable = ({
         data={data}
         loading={isLoading}
         emptyText={t("merchants.noPendingApprovals", "No pending approvals")}
-        showActions={true}
+        showActions={canApprove || canReject}
         actions={actions}
         pagination={{
           current: pagination.page + 1,

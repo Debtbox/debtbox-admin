@@ -4,6 +4,8 @@ import { Eye, CheckCircle, XCircle, Clock, AlertCircle } from "lucide-react";
 import { Button, Table } from "@/components/shared";
 import type { CustomerDTO } from "@/types/CustomerDTO";
 import { formatDate } from "@/utils/formatDate";
+import { PERMISSIONS } from "@/auth/permissions";
+import { useCan } from "@/auth/rbac";
 
 interface CustomersTableProps {
   data: CustomerDTO[];
@@ -15,6 +17,7 @@ interface CustomersTableProps {
 export const CustomersTable = ({ data, isLoading, pagination, onPageChange }: CustomersTableProps) => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const canRead = useCan(PERMISSIONS.CUSTOMER_READ);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -114,7 +117,7 @@ export const CustomersTable = ({ data, isLoading, pagination, onPageChange }: Cu
     },
   ];
 
-  const actions = (record: CustomerDTO) => (
+  const actions = (record: CustomerDTO) => canRead ? (
     <Button
       variant="ghost"
       size="sm"
@@ -124,7 +127,7 @@ export const CustomersTable = ({ data, isLoading, pagination, onPageChange }: Cu
       <Eye className="w-4 h-4" />
       {t("common.view", "View")}
     </Button>
-  );
+  ) : null;
 
   return (
     <Table
@@ -132,7 +135,7 @@ export const CustomersTable = ({ data, isLoading, pagination, onPageChange }: Cu
       data={data}
       loading={isLoading}
       emptyText={t("customers.noCustomers", "No customers found")}
-      showActions={true}
+      showActions={canRead}
       actions={actions}
       pagination={{
         current: pagination.page + 1,

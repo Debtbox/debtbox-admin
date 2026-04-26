@@ -9,13 +9,17 @@ import { mapProfileToStore } from '../types/auth';
  */
 export const ProfileSync = () => {
   const setUser = useUserStore((s) => s.setUser);
-  const { data, isSuccess } = useProfile();
+  const setProfileLoaded = useUserStore((s) => s.setProfileLoaded);
+  const { data, isSuccess, isError } = useProfile();
 
   useEffect(() => {
     if (isSuccess && data?.data) {
       setUser(mapProfileToStore(data.data));
     }
-  }, [isSuccess, data, setUser]);
+    if (isError) {
+      setProfileLoaded(true);
+    }
+  }, [isSuccess, isError, data, setUser, setProfileLoaded]);
 
   return null;
 };
