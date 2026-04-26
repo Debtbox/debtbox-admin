@@ -5,6 +5,8 @@ import { Button, Table } from "@/components/shared";
 import { useApproveCustomerRegistration } from "../api/approveCustomerRegistration";
 import { useRejectCustomerRegistration } from "../api/rejectCustomerRegistration";
 import type { CustomerDTO } from "@/types/CustomerDTO";
+import { PERMISSIONS } from "@/auth/permissions";
+import { useCan } from "@/auth/rbac";
 
 interface CustomerApprovalsTableProps {
   data: CustomerDTO[];
@@ -26,6 +28,8 @@ export const CustomerApprovalsTable = ({
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [reviewNote, setReviewNote] = useState("");
+  const canApprove = useCan(PERMISSIONS.CUSTOMER_APPROVE);
+  const canReject = useCan(PERMISSIONS.CUSTOMER_REJECT);
 
   const approveMutation = useApproveCustomerRegistration({
     config: {
@@ -107,24 +111,28 @@ export const CustomerApprovalsTable = ({
 
   const actions = (record: CustomerDTO) => (
     <div className="flex gap-2">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => { setSelectedCustomer(record); setShowApproveModal(true); }}
-        className="flex items-center gap-2 text-green-600 border-green-300 hover:bg-green-50"
-      >
-        <CheckCircle className="w-4 h-4" />
-        {t("customers.approve", "Approve")}
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => { setSelectedCustomer(record); setShowRejectModal(true); }}
-        className="flex items-center gap-2 text-red-600 border-red-300 hover:bg-red-50"
-      >
-        <XCircle className="w-4 h-4" />
-        {t("customers.reject", "Reject")}
-      </Button>
+      {canApprove && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => { setSelectedCustomer(record); setShowApproveModal(true); }}
+          className="flex items-center gap-2 text-green-600 border-green-300 hover:bg-green-50"
+        >
+          <CheckCircle className="w-4 h-4" />
+          {t("customers.approve", "Approve")}
+        </Button>
+      )}
+      {canReject && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => { setSelectedCustomer(record); setShowRejectModal(true); }}
+          className="flex items-center gap-2 text-red-600 border-red-300 hover:bg-red-50"
+        >
+          <XCircle className="w-4 h-4" />
+          {t("customers.reject", "Reject")}
+        </Button>
+      )}
     </div>
   );
 
@@ -135,7 +143,7 @@ export const CustomerApprovalsTable = ({
         data={data}
         loading={isLoading}
         emptyText={t("customers.noPendingApprovals", "No pending approvals")}
-        showActions={true}
+        showActions={canApprove || canReject}
         actions={actions}
         pagination={{
           current: pagination.page + 1,

@@ -21,6 +21,8 @@ import { ExtendDueDateModal } from "../components/ExtendDueDateModal";
 import { FlagDebtModal } from "../components/FlagDebtModal";
 import { ResendNotificationModal } from "../components/ResendNotificationModal";
 import { formatDebtAmount, formatHalalaAmount, isDebtOverdue } from "../utils";
+import { PERMISSIONS } from "@/auth/permissions";
+import { useCan, useCanAny } from "@/auth/rbac";
 
 const Field = ({ label, value }: { label: string; value: ReactNode }) => (
   <div>
@@ -62,6 +64,18 @@ const DebtDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const canExtend = useCan(PERMISSIONS.DEBT_EXTEND_DUE_DATE);
+  const canFlag = useCan(PERMISSIONS.DEBT_FLAG_REVIEW);
+  const canResend = useCan(PERMISSIONS.DEBT_RESEND_NOTIFICATIONS);
+  const canCancel = useCan(PERMISSIONS.DEBT_CANCEL);
+  const canReadMerchant = useCan(PERMISSIONS.MERCHANT_READ);
+  const canReadCustomer = useCan(PERMISSIONS.CUSTOMER_READ);
+  const canUseActions = useCanAny([
+    PERMISSIONS.DEBT_EXTEND_DUE_DATE,
+    PERMISSIONS.DEBT_FLAG_REVIEW,
+    PERMISSIONS.DEBT_RESEND_NOTIFICATIONS,
+    PERMISSIONS.DEBT_CANCEL,
+  ]);
 
   const { data, isLoading, isError, refetch } = useGetDebt({ id: id! });
   const debt = data?.data;
@@ -215,12 +229,16 @@ const DebtDetails = () => {
                 <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                   {t("debts.fields.merchant", "Merchant")}
                 </p>
-                <button
-                  onClick={() => navigate(`/merchants/${debt.merchant_id}`)}
-                  className="text-sm text-blue-600 hover:text-blue-800 font-medium text-start block"
-                >
-                  {debt.merchant_full_name_en}
-                </button>
+                {canReadMerchant ? (
+                  <button
+                    onClick={() => navigate(`/merchants/${debt.merchant_id}`)}
+                    className="text-sm text-blue-600 hover:text-blue-800 font-medium text-start block"
+                  >
+                    {debt.merchant_full_name_en}
+                  </button>
+                ) : (
+                  <p className="text-sm text-gray-900 font-medium">{debt.merchant_full_name_en}</p>
+                )}
                 <p className="text-sm text-gray-500">{debt.merchant_full_name_ar}</p>
                 <p className="text-xs text-gray-400 mt-0.5">ID: {debt.merchant_id}</p>
               </div>
@@ -241,12 +259,16 @@ const DebtDetails = () => {
             icon={<User className="w-5 h-5" />}
             title={t("debts.sections.customer", "Customer")}
           >
-            <button
-              onClick={() => navigate(`/customers/${debt.customer_id}`)}
-              className="text-sm text-blue-600 hover:text-blue-800 font-medium text-start block mb-0.5"
-            >
-              {debt.customer_full_name_en}
-            </button>
+            {canReadCustomer ? (
+              <button
+                onClick={() => navigate(`/customers/${debt.customer_id}`)}
+                className="text-sm text-blue-600 hover:text-blue-800 font-medium text-start block mb-0.5"
+              >
+                {debt.customer_full_name_en}
+              </button>
+            ) : (
+              <p className="text-sm text-gray-900 font-medium mb-0.5">{debt.customer_full_name_en}</p>
+            )}
             <p className="text-sm text-gray-500">{debt.customer_full_name_ar}</p>
             <p className="text-xs text-gray-400 mt-0.5">ID: {debt.customer_id}</p>
           </SectionCard>
@@ -316,23 +338,25 @@ const DebtDetails = () => {
             <h3 className="text-base font-semibold text-gray-900 mb-4">
               {t("debts.sections.actions", "Actions")}
             </h3>
-            {!isActionable ? (
+            {!isActionable || !canUseActions ? (
               <p className="text-sm text-gray-400">
                 {t("debts.noActionsAvailable", "No actions available for this debt.")}
               </p>
             ) : (
               <div className="space-y-3">
-                <Button
-                  variant="outline"
-                  fullWidth
-                  onClick={() => setShowExtend(true)}
-                  className="justify-start gap-2"
-                >
-                  <CalendarPlus className="w-4 h-4" />
-                  {t("debts.actions.extendDueDate", "Extend Due Date")}
-                </Button>
+                {canExtend && (
+                  <Button
+                    variant="outline"
+                    fullWidth
+                    onClick={() => setShowExtend(true)}
+                    className="justify-start gap-2"
+                  >
+                    <CalendarPlus className="w-4 h-4" />
+                    {t("debts.actions.extendDueDate", "Extend Due Date")}
+                  </Button>
+                )}
 
-                {!debt.review_flagged_at && (
+                {canFlag && !debt.review_flagged_at && (
                   <Button
                     variant="outline"
                     fullWidth
@@ -344,25 +368,29 @@ const DebtDetails = () => {
                   </Button>
                 )}
 
-                <Button
-                  variant="outline"
-                  fullWidth
-                  onClick={() => setShowResend(true)}
-                  className="justify-start gap-2"
-                >
-                  <Bell className="w-4 h-4" />
-                  {t("debts.actions.resendNotification", "Resend Notification")}
-                </Button>
+                {canResend && (
+                  <Button
+                    variant="outline"
+                    fullWidth
+                    onClick={() => setShowResend(true)}
+                    className="justify-start gap-2"
+                  >
+                    <Bell className="w-4 h-4" />
+                    {t("debts.actions.resendNotification", "Resend Notification")}
+                  </Button>
+                )}
 
-                <Button
-                  variant="outline"
-                  fullWidth
-                  onClick={() => setShowCancel(true)}
-                  className="justify-start gap-2 text-red-600 border-red-200 hover:bg-red-50"
-                >
-                  <XCircle className="w-4 h-4" />
-                  {t("debts.actions.cancelDebt", "Cancel Debt")}
-                </Button>
+                {canCancel && (
+                  <Button
+                    variant="outline"
+                    fullWidth
+                    onClick={() => setShowCancel(true)}
+                    className="justify-start gap-2 text-red-600 border-red-200 hover:bg-red-50"
+                  >
+                    <XCircle className="w-4 h-4" />
+                    {t("debts.actions.cancelDebt", "Cancel Debt")}
+                  </Button>
+                )}
               </div>
             )}
           </div>
@@ -396,7 +424,7 @@ const DebtDetails = () => {
       </div>
 
       {/* Modals */}
-      {showCancel && (
+      {canCancel && showCancel && (
         <CancelDebtModal
           debtId={debt.id}
           debtTitle={debt.title}
@@ -404,7 +432,7 @@ const DebtDetails = () => {
           onSuccess={handleActionSuccess}
         />
       )}
-      {showExtend && (
+      {canExtend && showExtend && (
         <ExtendDueDateModal
           debtId={debt.id}
           currentDueDate={debt.due_date}
@@ -412,14 +440,14 @@ const DebtDetails = () => {
           onSuccess={handleActionSuccess}
         />
       )}
-      {showFlag && (
+      {canFlag && showFlag && (
         <FlagDebtModal
           debtId={debt.id}
           onClose={() => setShowFlag(false)}
           onSuccess={handleActionSuccess}
         />
       )}
-      {showResend && (
+      {canResend && showResend && (
         <ResendNotificationModal
           debtId={debt.id}
           onClose={() => setShowResend(false)}

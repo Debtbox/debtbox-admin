@@ -11,12 +11,15 @@ import {
   CreateSalesLeadModal,
   type SalesLeadsFiltersState,
 } from "../components";
+import { PERMISSIONS } from "@/auth/permissions";
+import { useCan } from "@/auth/rbac";
 
 const LEADS_PER_PAGE = 10;
 
 const SalesLeads = () => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const canCreate = useCan(PERMISSIONS.SALES_LEAD_CREATE);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
 
@@ -116,10 +119,12 @@ const SalesLeads = () => {
             {t("salesLeads.subtitle", "Track and manage your sales pipeline")}
           </p>
         </div>
-        <Button onClick={() => setShowCreateModal(true)}>
-          <Plus className="w-4 h-4 me-2" />
-          {t("salesLeads.createButton", "Create Lead")}
-        </Button>
+        {canCreate && (
+          <Button onClick={() => setShowCreateModal(true)}>
+            <Plus className="w-4 h-4 me-2" />
+            {t("salesLeads.createButton", "Create Lead")}
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
@@ -167,7 +172,7 @@ const SalesLeads = () => {
         onPageChange={handlePageChange}
       />
 
-      {showCreateModal && (
+      {canCreate && showCreateModal && (
         <CreateSalesLeadModal
           onClose={() => setShowCreateModal(false)}
           onSuccess={handleCreateSuccess}

@@ -6,6 +6,8 @@ import { Button } from "@/components/shared/Button";
 import type { DebtDTO } from "@/types/DebtDTO";
 import { DebtStatusBadge } from "./DebtStatusBadge";
 import { formatDebtAmount, isDebtOverdue } from "../utils";
+import { PERMISSIONS } from "@/auth/permissions";
+import { useCan } from "@/auth/rbac";
 
 interface DebtsTableProps {
   data: DebtDTO[];
@@ -21,6 +23,7 @@ interface DebtsTableProps {
 export const DebtsTable = ({ data, isLoading, pagination, onPageChange }: DebtsTableProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const canRead = useCan(PERMISSIONS.DEBT_READ);
 
   const formatDate = (dateStr: string) =>
     new Date(dateStr).toLocaleDateString("en-US", {
@@ -117,8 +120,8 @@ export const DebtsTable = ({ data, isLoading, pagination, onPageChange }: DebtsT
       loading={isLoading}
       rowKey="id"
       emptyText={t("debts.noDebts")}
-      showActions
-      actions={(record) => (
+      showActions={canRead}
+      actions={(record) => canRead ? (
         <Button
           variant="ghost"
           size="sm"
@@ -126,7 +129,7 @@ export const DebtsTable = ({ data, isLoading, pagination, onPageChange }: DebtsT
         >
           <Eye className="w-4 h-4" />
         </Button>
-      )}
+      ) : null}
       pagination={{
         current: pagination.page + 1,
         pageSize: pagination.limit,

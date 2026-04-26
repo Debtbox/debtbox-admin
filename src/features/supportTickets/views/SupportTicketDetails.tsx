@@ -14,6 +14,8 @@ import type { SupportTicketDTO, SupportTicketMessageDTO } from "@/types/SupportT
 import type { UpdateSupportTicketRequest } from "../api/updateSupportTicket";
 import type { AddSupportTicketMessageRequest } from "../api/addSupportTicketMessage";
 import type { SupportTicketPriority, SupportTicketType, SupportTicketStatus, RelatedEntityType } from "@/enums";
+import { PERMISSIONS } from "@/auth/permissions";
+import { useCan, useCanAny } from "@/auth/rbac";
 
 export const SupportTicketDetails = () => {
   const { t } = useTranslation();
@@ -24,6 +26,17 @@ export const SupportTicketDetails = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [showMessageModal, setShowMessageModal] = useState(false);
+  const canUpdate = useCan(PERMISSIONS.TICKET_UPDATE);
+  const canChangeStatus = useCan(PERMISSIONS.TICKET_CHANGE_STATUS);
+  const canAddReply = useCan(PERMISSIONS.TICKET_ADD_REPLY);
+  const canAddInternalNote = useCan(PERMISSIONS.TICKET_ADD_INTERNAL_NOTE);
+  const canViewInternalNotes = useCan(PERMISSIONS.TICKET_VIEW_INTERNAL_NOTES);
+  const canUseActions = useCanAny([
+    PERMISSIONS.TICKET_UPDATE,
+    PERMISSIONS.TICKET_CHANGE_STATUS,
+    PERMISSIONS.TICKET_ADD_REPLY,
+    PERMISSIONS.TICKET_ADD_INTERNAL_NOTE,
+  ]);
 
   const { data, isLoading, error, refetch } = useGetSupportTicketDetails({
     id: id!,
@@ -58,7 +71,9 @@ export const SupportTicketDetails = () => {
   });
 
   const ticket = data?.data.ticket;
-  const messages = data?.data.messages || [];
+  const messages = (data?.data.messages || []).filter(
+    (message) => !message.isInternalNote || canViewInternalNotes,
+  );
   const requester = data?.data.requester;
 
   if (isLoading) {
@@ -126,32 +141,40 @@ export const SupportTicketDetails = () => {
         <h1 className="text-3xl font-bold text-gray-900">{ticket.subject}</h1>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-3 mt-4">
-          <Button
-            onClick={() => setShowEditModal(true)}
-            variant="outline"
-            size="sm"
-          >
-            <Edit className="w-4 h-4 mr-2" />
-            {t("common.edit", "Edit")}
-          </Button>
-          <Button
-            onClick={() => setShowStatusModal(true)}
-            variant="outline"
-            size="sm"
-          >
-            <Settings className="w-4 h-4 mr-2" />
-            {t("supportTickets.changeStatus", "Change Status")}
-          </Button>
-          <Button
-            onClick={() => setShowMessageModal(true)}
-            variant="primary"
-            size="sm"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            {t("supportTickets.addMessage", "Add Message")}
-          </Button>
-        </div>
+        {canUseActions && (
+          <div className="flex flex-wrap items-center gap-3 mt-4">
+            {canUpdate && (
+              <Button
+                onClick={() => setShowEditModal(true)}
+                variant="outline"
+                size="sm"
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                {t("common.edit", "Edit")}
+              </Button>
+            )}
+            {canChangeStatus && (
+              <Button
+                onClick={() => setShowStatusModal(true)}
+                variant="outline"
+                size="sm"
+              >
+                <Settings className="w-4 h-4 mr-2" />
+                {t("supportTickets.changeStatus", "Change Status")}
+              </Button>
+            )}
+            {(canAddReply || canAddInternalNote) && (
+              <Button
+                onClick={() => setShowMessageModal(true)}
+                variant="primary"
+                size="sm"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                {t("supportTickets.addMessage", "Add Message")}
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -452,7 +475,7 @@ export const SupportTicketDetails = () => {
       </div>
 
       {/* Edit Ticket Modal */}
-      {showEditModal && (
+      {canUpdate && showEditModal && (
         <EditTicketModal
           ticket={ticket}
           onClose={() => setShowEditModal(false)}
@@ -462,7 +485,7 @@ export const SupportTicketDetails = () => {
       )}
 
       {/* Change Status Modal */}
-      {showStatusModal && (
+      {canChangeStatus && showStatusModal && (
         <ChangeStatusModal
           currentStatus={ticket.status}
           onClose={() => setShowStatusModal(false)}
@@ -472,11 +495,12 @@ export const SupportTicketDetails = () => {
       )}
 
       {/* Add Message Modal */}
-      {showMessageModal && (
+      {(canAddReply || canAddInternalNote) && showMessageModal && (
         <AddMessageModal
           onClose={() => setShowMessageModal(false)}
           onSubmit={(data) => addMessageMutation.mutate({ id: ticket.id, data })}
           isLoading={addMessageMutation.isPending}
+          canAddInternalNote={canAddInternalNote}
         />
       )}
     </div>
@@ -649,11 +673,13 @@ const ChangeStatusModal = ({
 const AddMessageModal = ({
   onClose,
   onSubmit,
-  isLoading
+  isLoading,
+  canAddInternalNote,
 }: {
   onClose: () => void;
   onSubmit: (data: AddSupportTicketMessageRequest) => void;
   isLoading: boolean;
+  canAddInternalNote: boolean;
 }) => {
   const { t } = useTranslation();
   const { register, handleSubmit, formState: { errors } } = useForm<AddSupportTicketMessageRequest>({
@@ -680,17 +706,19 @@ const AddMessageModal = ({
               {...register("body", { required: "Message is required" })}
             />
 
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="isInternalNote"
-                {...register("isInternalNote")}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              <label htmlFor="isInternalNote" className="text-sm text-gray-700">
-                {t("supportTickets.internalNote", "Internal Note")}
-              </label>
-            </div>
+            {canAddInternalNote && (
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="isInternalNote"
+                  {...register("isInternalNote")}
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <label htmlFor="isInternalNote" className="text-sm text-gray-700">
+                  {t("supportTickets.internalNote", "Internal Note")}
+                </label>
+              </div>
+            )}
 
             <div className="flex items-center justify-end gap-3 pt-4">
               <Button type="button" variant="outline" onClick={onClose}>

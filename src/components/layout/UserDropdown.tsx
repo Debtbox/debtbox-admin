@@ -77,7 +77,7 @@ const UserDropdown = () => {
             </p>
             {user?.role && (
               <p className="text-xs text-primary font-medium mt-1">
-                {user.role}
+                {user.role.name}
               </p>
             )}
             {user?.phone && (

@@ -8,14 +8,18 @@ import { useGetMerchantPendingApprovals } from "../api/getMerchantPendingApprova
 import { MerchantsTable } from "../components/MerchantsTable";
 import { MerchantApprovalsTable } from "../components/MerchantApprovalsTable";
 import { MerchantFilters } from "../components/MerchantFilters";
+import { PERMISSIONS } from "@/auth/permissions";
+import { useCan, useCanAny } from "@/auth/rbac";
 
 export const Merchants = () => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
+  const canList = useCan(PERMISSIONS.MERCHANT_LIST);
+  const canReview = useCanAny([PERMISSIONS.MERCHANT_APPROVE, PERMISSIONS.MERCHANT_REJECT]);
 
   const [activeTab, setActiveTab] = useState<"merchants" | "approvals">(
-    (searchParams.get('tab') as "merchants" | "approvals") || "merchants"
+    (searchParams.get('tab') as "merchants" | "approvals") || (canList ? "merchants" : "approvals")
   );
 
   const [filters, setFilters] = useState<{
@@ -43,6 +47,11 @@ export const Merchants = () => {
     setSearchParams(newSearchParams, { replace: true });
   }, [activeTab, searchParams, setSearchParams]);
 
+  useEffect(() => {
+    if (activeTab === "approvals" && !canReview) setActiveTab("merchants");
+    if (activeTab === "merchants" && !canList && canReview) setActiveTab("approvals");
+  }, [activeTab, canList, canReview]);
+
   const merchantsQuery = useGetMerchants({
     params: activeTab === "merchants" ? filters : undefined,
   });
@@ -57,14 +66,16 @@ export const Merchants = () => {
       label: t("merchants.merchants", "Merchants"),
       icon: Building2,
       count: merchantsQuery.data?.data.total || 0,
+      visible: canList,
     },
     {
       id: "approvals" as const,
       label: t("merchants.approvals", "Pending Approvals"),
       icon: Clock,
       count: approvalsQuery.data?.data.total || 0,
+      visible: canReview,
     },
-  ];
+  ].filter((tab) => tab.visible);
 
   return (
     <div className="p-6">
@@ -115,7 +126,7 @@ export const Merchants = () => {
       </div>
 
       {/* Content */}
-      {activeTab === "merchants" && (
+      {activeTab === "merchants" && canList && (
         <MerchantsTable
           data={merchantsQuery.data?.data.data || []}
           isLoading={merchantsQuery.isLoading}
@@ -128,7 +139,7 @@ export const Merchants = () => {
         />
       )}
 
-      {activeTab === "approvals" && (
+      {activeTab === "approvals" && canReview && (
         <MerchantApprovalsTable
           data={approvalsQuery.data?.data.data || []}
           isLoading={approvalsQuery.isLoading}

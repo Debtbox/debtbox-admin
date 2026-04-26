@@ -15,9 +15,9 @@ export interface AuthRole {
   userType: string;
   name: string;
   slug: string;
-  description: string;
-  is_system_role: boolean;
-  permissions: AuthPermission[];
+  description?: string;
+  is_system_role?: boolean;
+  permissions?: AuthPermission[];
   created_at: string;
   updated_at: string;
 }
@@ -31,6 +31,7 @@ export interface AuthUser {
   phone: string;
   status: string;
   role: AuthRole;
+  permissions?: string[];
   mfa_enabled: boolean;
 }
 
@@ -67,7 +68,8 @@ export interface AdminProfileData {
   mfa_enabled: boolean;
   force_password_change: boolean;
   last_login_at: string | null;
-  role: AuthRole;
+  role: Pick<AuthRole, "id" | "name" | "slug" | "userType"> | null;
+  permissions?: string[];
   created_at: string;
   updated_at: string;
   // Backend may return; we do not use in store/UI
@@ -88,10 +90,26 @@ export interface StoreUser {
   full_name_en: string;
   full_name_ar: string;
   email: string;
-  role: string;
+  role: {
+    id: number;
+    name: string;
+    slug: string;
+    userType: string;
+  } | null;
+  permissions: string[];
   phone?: string;
   status?: string;
   last_login_at?: string | null;
+}
+
+function mapRole(role?: Pick<AuthRole, "id" | "name" | "slug" | "userType"> | null): StoreUser["role"] {
+  if (!role) return null;
+  return {
+    id: role.id,
+    name: role.name,
+    slug: role.slug,
+    userType: role.userType,
+  };
 }
 
 /** Map API user (login/refresh) to app UserStore shape */
@@ -102,7 +120,8 @@ export function mapAuthUserToStore(user: AuthUser): StoreUser {
     full_name_en: fullName,
     full_name_ar: fullName,
     email: user.email,
-    role: user.role?.name ?? user.role?.userType ?? '',
+    role: mapRole(user.role),
+    permissions: user.permissions ?? user.role?.permissions?.map((permission) => `${permission.resource}:${permission.action}`) ?? [],
     phone: user.phone,
     status: user.status,
   };
@@ -116,7 +135,8 @@ export function mapProfileToStore(profile: AdminProfileData): StoreUser {
     full_name_en: fullName,
     full_name_ar: fullName,
     email: profile.email,
-    role: profile.role?.name ?? profile.role?.userType ?? '',
+    role: mapRole(profile.role),
+    permissions: profile.permissions ?? [],
     phone: profile.phone || undefined,
     status: profile.status,
     last_login_at: profile.last_login_at ?? undefined,

@@ -8,14 +8,18 @@ import { useGetCustomerPendingApprovals } from "../api/getCustomerPendingApprova
 import { CustomersTable } from "../components/CustomersTable";
 import { CustomerApprovalsTable } from "../components/CustomerApprovalsTable";
 import { CustomerFilters } from "../components/CustomerFilters";
+import { PERMISSIONS } from "@/auth/permissions";
+import { useCan, useCanAny } from "@/auth/rbac";
 
 const Customers = () => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
+  const canList = useCan(PERMISSIONS.CUSTOMER_LIST);
+  const canReview = useCanAny([PERMISSIONS.CUSTOMER_APPROVE, PERMISSIONS.CUSTOMER_REJECT]);
 
   const [activeTab, setActiveTab] = useState<"customers" | "approvals">(
-    (searchParams.get("tab") as "customers" | "approvals") || "customers",
+    (searchParams.get("tab") as "customers" | "approvals") || (canList ? "customers" : "approvals"),
   );
 
   const [filters, setFilters] = useState<{
@@ -48,6 +52,11 @@ const Customers = () => {
     setSearchParams(newParams, { replace: true });
   }, [activeTab, searchParams, setSearchParams]);
 
+  useEffect(() => {
+    if (activeTab === "approvals" && !canReview) setActiveTab("customers");
+    if (activeTab === "customers" && !canList && canReview) setActiveTab("approvals");
+  }, [activeTab, canList, canReview]);
+
   const customersQuery = useGetCustomers({
     params: activeTab === "customers" ? filters : undefined,
   });
@@ -62,14 +71,16 @@ const Customers = () => {
       label: t("customers.customers", "Customers"),
       icon: Users,
       count: customersQuery.data?.data.total || 0,
+      visible: canList,
     },
     {
       id: "approvals" as const,
       label: t("customers.approvals", "Pending Approvals"),
       icon: Clock,
       count: approvalsQuery.data?.data.total || 0,
+      visible: canReview,
     },
-  ];
+  ].filter((tab) => tab.visible);
 
   return (
     <div className="p-6">
@@ -120,7 +131,7 @@ const Customers = () => {
       </div>
 
       {/* Content */}
-      {activeTab === "customers" && (
+      {activeTab === "customers" && canList && (
         <CustomersTable
           data={customersQuery.data?.data.data || []}
           isLoading={customersQuery.isLoading}
@@ -133,7 +144,7 @@ const Customers = () => {
         />
       )}
 
-      {activeTab === "approvals" && (
+      {activeTab === "approvals" && canReview && (
         <CustomerApprovalsTable
           data={approvalsQuery.data?.data.data || []}
           isLoading={approvalsQuery.isLoading}

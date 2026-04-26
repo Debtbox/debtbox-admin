@@ -88,6 +88,8 @@ axios.interceptors.response.use(
       // Let login page handle (e.g. wrong credentials)
     } else if (status === 401) {
       useSessionStore.getState().handleSessionExpiry();
+    } else if (status === 403) {
+      toast.error('You do not have permission to perform this action.');
     } else if (status === 400) {
       // Let components handle specific error messages
     }

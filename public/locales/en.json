@@ -32,7 +32,8 @@
     "settings": "Settings",
     "supportTickets": "Support Tickets",
     "debts": "Debts",
-    "salesLeads": "Sales Leads"
+    "salesLeads": "Sales Leads",
+    "systemUsers": "System Users"
   },
   "navbar": {
     "welcome": "Welcome!"
@@ -79,8 +80,8 @@
     "reject": "Reject"
   },
   "userManagement": {
-    "title": "User Management",
-    "subtitle": "Manage system users and their permissions",
+    "title": "System Users",
+    "subtitle": "Manage internal dashboard users and access",
     "totalUsers": "Total Users",
     "activeUsers": "Active",
     "inactiveUsers": "Inactive",
@@ -97,16 +98,66 @@
     "status": {
       "active": "Active",
       "inactive": "Inactive",
-      "suspended": "Suspended"
+      "suspended": "Suspended",
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "SUSPENDED": "Suspended"
     },
+    "name": "Name",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone",
+    "password": "Password",
+    "newPassword": "New Password",
     "user": "User",
     "contact": "Contact",
     "role": "Role",
+    "selectRole": "Select role",
     "statusLabel": "Status",
+    "mfa": "MFA",
+    "lockedUntil": "Locked Until",
     "lastLogin": "Last Login",
+    "passwordChangedAt": "Password Changed At",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
     "noUsers": "No users found",
     "joined": "Joined",
-    "addUser": "Add User"
+    "addUser": "Add User",
+    "createUser": "Create System User",
+    "editUser": "Edit System User",
+    "userDetails": "User Details",
+    "forcePasswordChange": "Require password change on next login",
+    "roleMayBeMissing": "Current role may be omitted by the detail API.",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "deactivateUser": "Deactivate User",
+    "deactivateMessage": "This user will no longer be able to sign in.",
+    "resetPassword": "Reset Password",
+    "resetPasswordShort": "Reset",
+    "resetPasswordMessage": "This will replace the user's password and force a password change.",
+    "unlock": "Unlock",
+    "unlockUser": "Unlock User",
+    "unlockMessage": "This will clear the user's account lockout.",
+    "deleteUser": "Delete User",
+    "deleteMessage": "This user account will be permanently deleted.",
+    "requiredFormFields": "Password and role are required.",
+    "forbidden": "You do not have permission to view system users.",
+    "loadError": "Failed to load system users",
+    "createSuccess": "System user created successfully",
+    "createError": "Failed to create system user",
+    "updateSuccess": "System user updated successfully",
+    "updateError": "Failed to update system user",
+    "activateSuccess": "System user activated successfully",
+    "activateError": "Failed to activate system user",
+    "deactivateSuccess": "System user deactivated successfully",
+    "deactivateError": "Failed to deactivate system user",
+    "resetPasswordSuccess": "Password reset successfully",
+    "resetPasswordError": "Failed to reset password",
+    "unlockSuccess": "System user unlocked successfully",
+    "unlockError": "Failed to unlock system user",
+    "deleteSuccess": "System user deleted successfully",
+    "deleteError": "Failed to delete system user"
   },
   "money": {
     "title": "Money & Profits",
@@ -311,6 +362,10 @@
     "expired": "Session Expired",
     "expiredMessage": "Your session has expired. Please log in again."
   },
+  "rbac": {
+    "forbiddenTitle": "Access denied",
+    "forbiddenMessage": "You do not have permission to view this page."
+  },
   "common": {
     "loading": "Loading...",
     "actions": "Actions",
@@ -318,6 +373,7 @@
     "viewAll": "View All",
     "view": "View",
     "edit": "Edit",
+    "delete": "Delete",
     "back": "Back",
     "save": "Save",
     "saveChanges": "Save Changes",
