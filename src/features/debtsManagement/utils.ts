@@ -16,5 +16,11 @@ export const formatDebtAmount = (amount: string | number): string =>
     maximumFractionDigits: 2,
   })}`;
 
+export const formatHalalaAmount = (amount: number | string | null | undefined): string | null => {
+  if (amount === null || amount === undefined) return null;
+
+  return formatDebtAmount(Number(amount) / 100);
+};
+
 export const isDebtOverdue = (dueDate: string, status: string): boolean =>
   !["paid", "cancelled"].includes(status) && new Date(dueDate) < new Date();

@@ -593,6 +593,9 @@
     },
     "fields": {
       "amount": "Amount",
+      "totalAmount": "Total Amount",
+      "deductedFees": "Deducted Fees",
+      "merchantNetAmount": "Merchant Net Amount",
       "status": "Status",
       "dueDate": "Due Date",
       "createdAt": "Created At",
@@ -609,6 +612,7 @@
       "flagReason": "Reason",
       "flaggedBy": "Flagged By"
     },
+    "feeExplanation": "Deducted fees include Debtbox fees, VAT, payment provider fees, and other applicable deductions.",
     "actions": {
       "extendDueDate": "Extend Due Date",
       "flagForReview": "Flag for Review",

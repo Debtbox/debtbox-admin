@@ -593,6 +593,9 @@
     },
     "fields": {
       "amount": "المبلغ",
+      "totalAmount": "إجمالي المبلغ",
+      "deductedFees": "الرسوم المخصومة",
+      "merchantNetAmount": "صافي مبلغ التاجر",
       "status": "الحالة",
       "dueDate": "تاريخ الاستحقاق",
       "createdAt": "تاريخ الإنشاء",
@@ -609,6 +612,7 @@
       "flagReason": "السبب",
       "flaggedBy": "أبلغ عنه"
     },
+    "feeExplanation": "تشمل الرسوم المخصومة رسوم Debtbox وضريبة القيمة المضافة ورسوم مزود الدفع وأي خصومات أخرى مطبقة.",
     "actions": {
       "extendDueDate": "تمديد تاريخ الاستحقاق",
       "flagForReview": "إحالة للمراجعة",

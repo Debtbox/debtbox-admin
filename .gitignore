@@ -32,6 +32,7 @@ dist-ssr
 
 # local env files
 .env*.local
+.env
 
 # Only allow the styles.css in public folder to be committed   
 !public/errors/assets/styles/style.css
