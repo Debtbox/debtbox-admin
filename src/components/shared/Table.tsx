@@ -122,7 +122,12 @@ const Table = <T extends object>({
   }
 
   return (
-    <div className={clsx("bg-white rounded-2xl overflow-hidden", className)}>
+    <div
+      className={clsx(
+        "bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm [&_table]:min-w-[920px] [&_td]:whitespace-nowrap [&_th]:whitespace-nowrap",
+        className,
+      )}
+    >
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50">
