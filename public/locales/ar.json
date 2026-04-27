@@ -33,7 +33,8 @@
     "supportTickets": "تذاكر الدعم",
     "debts": "إدارة الديون",
     "salesLeads": "العملاء المحتملون",
-    "systemUsers": "مستخدمو النظام"
+    "systemUsers": "مستخدمو النظام",
+    "payouts": "المدفوعات"
   },
   "navbar": {
     "welcome": "مرحباً!"
@@ -710,6 +711,85 @@
         "confirmButton": "إعادة الإرسال",
         "success": "تم إرسال الإشعار بنجاح",
         "error": "فشل في إرسال الإشعار"
+      }
+    }
+  },
+  "payouts": {
+    "title": "المدفوعات",
+    "subtitle": "عرض وإدارة سجلات الدفع",
+    "payoutId": "دفعة",
+    "noPayouts": "لا توجد دفعات",
+    "errorLoading": "فشل في تحميل تفاصيل الدفعة.",
+    "noActionsAvailable": "لا توجد إجراءات متاحة لهذه الدفعة.",
+    "statuses": {
+      "DRAFT": "مسودة",
+      "READY": "جاهزة",
+      "PROCESSING": "قيد المعالجة",
+      "PAID": "مدفوعة",
+      "SETTLED": "مُسوَّاة",
+      "PARTIALLY_SETTLED": "مُسوَّاة جزئيًا",
+      "FAILED": "فشلت"
+    },
+    "filters": {
+      "status": "الحالة",
+      "merchantIdPlaceholder": "تصفية برقم التاجر..."
+    },
+    "columns": {
+      "id": "الرقم",
+      "status": "الحالة",
+      "payoutMethod": "الطريقة",
+      "merchant": "التاجر",
+      "period": "الفترة",
+      "netAmount": "المبلغ الصافي",
+      "settlementDate": "تاريخ التسوية"
+    },
+    "sections": {
+      "payoutDetails": "تفاصيل الدفعة",
+      "merchant": "التاجر",
+      "settlement": "تفاصيل التسوية",
+      "items": "عناصر الدفع",
+      "quickInfo": "معلومات الدفعة",
+      "actions": "الإجراءات"
+    },
+    "fields": {
+      "payoutMethod": "طريقة الدفع",
+      "status": "الحالة",
+      "periodStart": "بداية الفترة",
+      "periodEnd": "نهاية الفترة",
+      "netAmount": "المبلغ الصافي",
+      "paymentId": "رقم الدفعة",
+      "paymentStatus": "حالة الدفع",
+      "merchantNet": "صافي التاجر",
+      "debtboxFee": "رسوم ديبتبوكس",
+      "providerFee": "رسوم مزود الخدمة",
+      "feeType": "نوع الرسوم",
+      "settledAt": "تاريخ التسوية",
+      "settledBy": "تمت التسوية بواسطة",
+      "amountTransferred": "المبلغ المحوَّل",
+      "externalRef": "المرجع الخارجي",
+      "note": "ملاحظة التسوية",
+      "proof": "مرجع الإثبات",
+      "merchantName": "التاجر"
+    },
+    "actions": {
+      "markSettled": "تحديد كمُسوَّاة"
+    },
+    "modals": {
+      "markSettled": {
+        "title": "تحديد الدفعة كمُسوَّاة",
+        "description": "هذا يسجل أن الدفعة تمت تسويتها يدويًا خارج ديبتبوكس. لن يتم تنفيذ أي تحويل مصرفي.",
+        "amountLabel": "المبلغ المحوَّل (ريال)",
+        "amountPlaceholder": "اتركه فارغًا لاستخدام المبلغ الصافي الكامل",
+        "refLabel": "مرجع التحويل الخارجي",
+        "refPlaceholder": "مثال: BANK-TRX-12345",
+        "noteLabel": "ملاحظة التسوية",
+        "notePlaceholder": "مثال: تمت التسوية يدويًا بواسطة المحاسب.",
+        "proofLabel": "مرجع الإثبات",
+        "proofPlaceholder": "مثال: oss://bucket/path/to/proof.pdf",
+        "confirm": "تحديد كمُسوَّاة",
+        "cancel": "إلغاء",
+        "success": "تم تحديد الدفعة كمُسوَّاة",
+        "error": "فشل في تحديد الدفعة كمُسوَّاة"
       }
     }
   }

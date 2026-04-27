@@ -6,6 +6,7 @@ import { SupportTicketsRoutes } from "@/features/supportTickets";
 import { DebtsManagementRoutes } from "@/features/debtsManagement/";
 import { SalesLeadsRoutes } from "@/features/salesLeads";
 import { UserManagementRoutes } from "@/features/user-management";
+import { PayoutsRoutes } from "@/features/payouts";
 import { RequirePermission } from "./RequirePermission";
 import { PERMISSIONS, DASHBOARD_PERMISSIONS } from "@/auth/permissions";
 import { DefaultProtectedHome } from "./DefaultProtectedHome";
@@ -73,6 +74,14 @@ export const protectedRoutes = [
         element: (
           <RequirePermission permissions={[PERMISSIONS.USER_LIST]}>
             <UserManagementRoutes />
+          </RequirePermission>
+        ),
+      },
+      {
+        path: "/payouts*",
+        element: (
+          <RequirePermission permissions={[PERMISSIONS.PAYMENT_LIST, PERMISSIONS.PAYMENT_READ]}>
+            <PayoutsRoutes />
           </RequirePermission>
         ),
       },

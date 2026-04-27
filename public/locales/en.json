@@ -33,7 +33,8 @@
     "supportTickets": "Support Tickets",
     "debts": "Debts",
     "salesLeads": "Sales Leads",
-    "systemUsers": "System Users"
+    "systemUsers": "System Users",
+    "payouts": "Payouts"
   },
   "navbar": {
     "welcome": "Welcome!"
@@ -710,6 +711,85 @@
         "confirmButton": "Resend",
         "success": "Notification sent successfully",
         "error": "Failed to send notification"
+      }
+    }
+  },
+  "payouts": {
+    "title": "Payouts",
+    "subtitle": "View and manage payout ledger entries",
+    "payoutId": "Payout",
+    "noPayouts": "No payouts found",
+    "errorLoading": "Failed to load payout details.",
+    "noActionsAvailable": "No actions available for this payout.",
+    "statuses": {
+      "DRAFT": "Draft",
+      "READY": "Ready",
+      "PROCESSING": "Processing",
+      "PAID": "Paid",
+      "SETTLED": "Settled",
+      "PARTIALLY_SETTLED": "Partially Settled",
+      "FAILED": "Failed"
+    },
+    "filters": {
+      "status": "Status",
+      "merchantIdPlaceholder": "Filter by Merchant ID..."
+    },
+    "columns": {
+      "id": "ID",
+      "status": "Status",
+      "payoutMethod": "Method",
+      "merchant": "Merchant",
+      "period": "Period",
+      "netAmount": "Net Amount",
+      "settlementDate": "Settlement Date"
+    },
+    "sections": {
+      "payoutDetails": "Payout Details",
+      "merchant": "Merchant",
+      "settlement": "Settlement Details",
+      "items": "Payment Items",
+      "quickInfo": "Payout Information",
+      "actions": "Actions"
+    },
+    "fields": {
+      "payoutMethod": "Payout Method",
+      "status": "Status",
+      "periodStart": "Period Start",
+      "periodEnd": "Period End",
+      "netAmount": "Net Amount",
+      "paymentId": "Payment ID",
+      "paymentStatus": "Payment Status",
+      "merchantNet": "Merchant Net",
+      "debtboxFee": "Debtbox Fee",
+      "providerFee": "Provider Fee",
+      "feeType": "Fee Type",
+      "settledAt": "Settled At",
+      "settledBy": "Settled By",
+      "amountTransferred": "Amount Transferred",
+      "externalRef": "External Reference",
+      "note": "Settlement Note",
+      "proof": "Proof Reference",
+      "merchantName": "Merchant"
+    },
+    "actions": {
+      "markSettled": "Mark as Settled"
+    },
+    "modals": {
+      "markSettled": {
+        "title": "Mark Payout as Settled",
+        "description": "This records that the payout was manually settled outside of Debtbox. No bank transfer will be executed.",
+        "amountLabel": "Amount Transferred (SAR)",
+        "amountPlaceholder": "Leave empty to use full net amount",
+        "refLabel": "External Transfer Reference",
+        "refPlaceholder": "e.g. BANK-TRX-12345",
+        "noteLabel": "Settlement Note",
+        "notePlaceholder": "e.g. Settled manually by accountant.",
+        "proofLabel": "Proof Reference",
+        "proofPlaceholder": "e.g. oss://bucket/path/to/proof.pdf",
+        "confirm": "Mark as Settled",
+        "cancel": "Cancel",
+        "success": "Payout marked as settled",
+        "error": "Failed to mark payout as settled"
       }
     }
   }

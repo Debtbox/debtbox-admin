@@ -9,6 +9,7 @@ import {
   MessageSquare,
   CircleDollarSign,
   TrendingUp,
+  Wallet,
 } from "lucide-react";
 import { sidebarLogo } from "@/assets/images";
 import { PERMISSIONS, DASHBOARD_PERMISSIONS } from "@/auth/permissions";
@@ -68,6 +69,12 @@ const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
       href: "/sales-leads",
       icon: <TrendingUp className="w-5 h-5" />,
       permissions: [PERMISSIONS.SALES_LEAD_LIST],
+    },
+    {
+      name: t("navigation.payouts", "Payouts"),
+      href: "/payouts",
+      icon: <Wallet className="w-5 h-5" />,
+      permissions: [PERMISSIONS.PAYMENT_LIST],
     },
     {
       name: t("navigation.systemUsers", "System Users"),
