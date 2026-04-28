@@ -769,7 +769,11 @@
       "externalRef": "External Reference",
       "note": "Settlement Note",
       "proof": "Proof Reference",
-      "merchantName": "Merchant"
+      "merchantName": "Merchant",
+      "debt": "Debt",
+      "includedInFee": "Incl. in fee",
+      "proofPreview": "Preview",
+      "proofDownload": "Download"
     },
     "actions": {
       "markSettled": "Mark as Settled"
@@ -779,7 +783,7 @@
         "title": "Mark Payout as Settled",
         "description": "This records that the payout was manually settled outside of Debtbox. No bank transfer will be executed.",
         "amountLabel": "Amount Transferred (SAR)",
-        "amountPlaceholder": "Leave empty to use full net amount",
+        "amountPlaceholder": "e.g. 173.90",
         "refLabel": "External Transfer Reference",
         "refPlaceholder": "e.g. BANK-TRX-12345",
         "noteLabel": "Settlement Note",

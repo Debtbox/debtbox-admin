@@ -1,8 +1,9 @@
+import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
-import { Info, X } from "lucide-react";
+import { Info, X, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/shared/Button";
 import { Input } from "@/components/shared/Input";
@@ -13,14 +14,15 @@ import { formatHalala } from "../utils";
 const schema = z.object({
   amountTransferredSar: z
     .string()
-    .optional()
-    .refine(
-      (val) => !val || (!isNaN(Number(val)) && Number(val) > 0),
-      { message: "Must be a positive number" },
-    ),
-  externalTransferReference: z.string().optional(),
+    .min(1, "Amount is required")
+    .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+      message: "Must be a positive number",
+    }),
+  externalTransferReference: z.string().min(1, "Reference is required"),
   settlementNote: z.string().optional(),
-  proofReference: z.string().optional(),
+  proofFile: z
+    .instanceof(FileList)
+    .refine((files) => files.length > 0, "Proof file is required"),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -40,26 +42,29 @@ export const MarkSettledModal = ({
 }: MarkSettledModalProps) => {
   const { t } = useTranslation();
   const { mutate, isPending } = useMarkPayoutSettled();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
+  const selectedFile = watch("proofFile");
+  const fileName = selectedFile?.[0]?.name;
+
   const onSubmit = (values: FormValues) => {
-    const amountHalala = values.amountTransferredSar
-      ? Math.round(Number(values.amountTransferredSar) * 100)
-      : undefined;
+    const amountHalala = Math.round(Number(values.amountTransferredSar) * 100);
 
     mutate(
       {
         id: payoutId,
         data: {
           amountTransferredHalala: amountHalala,
-          externalTransferReference: values.externalTransferReference || undefined,
+          externalTransferReference: values.externalTransferReference,
           settlementNote: values.settlementNote || undefined,
-          proofReference: values.proofReference || undefined,
+          proofFile: values.proofFile[0],
         },
       },
       {
@@ -76,6 +81,8 @@ export const MarkSettledModal = ({
       },
     );
   };
+
+  const fileRegister = register("proofFile");
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -109,19 +116,13 @@ export const MarkSettledModal = ({
 
           <Input
             label={t("payouts.modals.markSettled.amountLabel", "Amount Transferred (SAR)")}
-            placeholder={t(
-              "payouts.modals.markSettled.amountPlaceholder",
-              "Leave empty to use full net amount",
-            )}
+            placeholder={t("payouts.modals.markSettled.amountPlaceholder", "e.g. 173.90")}
             error={errors.amountTransferredSar}
             {...register("amountTransferredSar")}
           />
 
           <Input
-            label={t(
-              "payouts.modals.markSettled.refLabel",
-              "External Transfer Reference",
-            )}
+            label={t("payouts.modals.markSettled.refLabel", "External Transfer Reference")}
             placeholder={t("payouts.modals.markSettled.refPlaceholder", "e.g. BANK-TRX-12345")}
             error={errors.externalTransferReference}
             {...register("externalTransferReference")}
@@ -138,15 +139,42 @@ export const MarkSettledModal = ({
             {...register("settlementNote")}
           />
 
-          <Input
-            label={t("payouts.modals.markSettled.proofLabel", "Proof Reference")}
-            placeholder={t(
-              "payouts.modals.markSettled.proofPlaceholder",
-              "e.g. oss://bucket/path/to/proof.pdf",
+          {/* File upload */}
+          <div>
+            <p className="text-sm font-medium text-gray-700 mb-1.5">
+              {t("payouts.modals.markSettled.proofLabel", "Proof Document")}
+              <span className="text-red-500 ms-0.5">*</span>
+            </p>
+            <div
+              className="flex items-center gap-3 border border-dashed border-gray-300 rounded-lg p-4 cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload className="w-5 h-5 text-gray-400 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                {fileName ? (
+                  <p className="text-sm text-gray-900 truncate">{fileName}</p>
+                ) : (
+                  <p className="text-sm text-gray-400">
+                    {t("payouts.modals.markSettled.proofPlaceholder", "Click to upload proof file")}
+                  </p>
+                )}
+              </div>
+            </div>
+            <input
+              type="file"
+              className="hidden"
+              ref={(el) => {
+                fileRegister.ref(el);
+                (fileInputRef as React.MutableRefObject<HTMLInputElement | null>).current = el;
+              }}
+              name={fileRegister.name}
+              onChange={fileRegister.onChange}
+              onBlur={fileRegister.onBlur}
+            />
+            {errors.proofFile && (
+              <p className="mt-1 text-xs text-red-500">{errors.proofFile.message}</p>
             )}
-            error={errors.proofReference}
-            {...register("proofReference")}
-          />
+          </div>
 
           <div className="flex justify-end gap-3 pt-2">
             <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>

@@ -8,6 +8,8 @@ import {
   Building2,
   Receipt,
   CheckCircle,
+  Download,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/shared/Button";
 import { PERMISSIONS } from "@/auth/permissions";
@@ -85,10 +87,7 @@ const PayoutDetails = () => {
   }
 
   const isSettleable = SETTLEABLE_STATUSES.includes(payout.status);
-  const hasSettlement =
-    payout.manualSettlement?.settledAt ||
-    payout.manualSettlement?.externalTransferReference ||
-    payout.manualSettlement?.settlementNote;
+  const hasSettlement = !!payout.manualSettlement?.settledAt;
 
   return (
     <div className="p-6">
@@ -172,6 +171,9 @@ const PayoutDetails = () => {
                         {t("payouts.fields.paymentId", "Payment ID")}
                       </th>
                       <th className="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                        {t("payouts.fields.debt", "Debt")}
+                      </th>
+                      <th className="text-left py-2 px-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">
                         {t("payouts.fields.paymentStatus", "Status")}
                       </th>
                       <th className="text-right py-2 px-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">
@@ -194,6 +196,12 @@ const PayoutDetails = () => {
                         <td className="py-2.5 px-3 font-mono text-xs text-gray-500">
                           #{item.paymentId}
                         </td>
+                        <td className="py-2.5 px-3">
+                          <p className="text-sm text-gray-900 max-w-[160px] truncate">{item.debt.title}</p>
+                          <p className="text-xs text-gray-400">
+                            SAR {item.debt.totalAmount} · ID: {item.debt.id}
+                          </p>
+                        </td>
                         <td className="py-2.5 px-3 text-gray-700">{item.paymentStatus}</td>
                         <td className="py-2.5 px-3 text-right font-medium text-green-700">
                           {formatHalala(item.merchantNetAmountHalala)}
@@ -202,7 +210,12 @@ const PayoutDetails = () => {
                           {formatHalala(item.debtboxFeeHalala)}
                         </td>
                         <td className="py-2.5 px-3 text-right text-gray-600">
-                          {formatHalala(item.providerFeeTotalHalala)}
+                          <span>{formatHalala(item.providerFeeTotalHalala)}</span>
+                          {item.providerFeeIncludedInDebtboxFee && (
+                            <span className="block text-xs text-gray-400">
+                              {t("payouts.fields.includedInFee", "incl. in fee")}
+                            </span>
+                          )}
                         </td>
                         <td className="py-2.5 px-3 text-xs text-gray-500">
                           {item.providerFeeTypeApplied}
@@ -248,8 +261,36 @@ const PayoutDetails = () => {
                   value={payout.manualSettlement.settlementNote}
                 />
                 <Field
-                  label={t("payouts.fields.proof", "Proof Reference")}
-                  value={payout.manualSettlement.proofReference}
+                  label={t("payouts.fields.proof", "Proof")}
+                  value={
+                    payout.manualSettlement.proofPreviewUrl ||
+                    payout.manualSettlement.proofDownloadUrl ? (
+                      <div className="flex items-center gap-3">
+                        {payout.manualSettlement.proofPreviewUrl && (
+                          <a
+                            href={payout.manualSettlement.proofPreviewUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            {t("payouts.fields.proofPreview", "Preview")}
+                          </a>
+                        )}
+                        {payout.manualSettlement.proofDownloadUrl && (
+                          <a
+                            href={payout.manualSettlement.proofDownloadUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                            {t("payouts.fields.proofDownload", "Download")}
+                          </a>
+                        )}
+                      </div>
+                    ) : payout.manualSettlement.proofReference ?? null
+                  }
                 />
               </div>
             </SectionCard>

@@ -769,7 +769,11 @@
       "externalRef": "المرجع الخارجي",
       "note": "ملاحظة التسوية",
       "proof": "مرجع الإثبات",
-      "merchantName": "التاجر"
+      "merchantName": "التاجر",
+      "debt": "الدين",
+      "includedInFee": "مشمول في الرسوم",
+      "proofPreview": "معاينة",
+      "proofDownload": "تحميل"
     },
     "actions": {
       "markSettled": "تحديد كمُسوَّاة"

@@ -5,10 +5,10 @@ import { getLanguageFromCookie } from "@/utils/getLanguageFromCookies";
 import type { GetPayoutResponse } from "./getPayout";
 
 export interface MarkSettledRequest {
-  amountTransferredHalala?: number;
-  externalTransferReference?: string;
+  amountTransferredHalala: number;
+  externalTransferReference: string;
   settlementNote?: string;
-  proofReference?: string;
+  proofFile: File;
 }
 
 export const markPayoutSettled = ({
@@ -19,8 +19,16 @@ export const markPayoutSettled = ({
   data: MarkSettledRequest;
 }): Promise<GetPayoutResponse> => {
   const language = getLanguageFromCookie();
-  return axios.post(`/admin/payouts/${id}/mark-settled`, data, {
-    headers: { "Accept-Language": language },
+  const formData = new FormData();
+  formData.append("amountTransferredHalala", data.amountTransferredHalala.toString());
+  formData.append("externalTransferReference", data.externalTransferReference);
+  if (data.settlementNote) formData.append("settlementNote", data.settlementNote);
+  formData.append("proofReference", data.proofFile);
+
+  // Content-Type must be unset so the browser sets multipart/form-data with the correct boundary.
+  // The Axios instance defaults to application/json which would break FormData.
+  return axios.post(`/admin/payouts/${id}/mark-settled`, formData, {
+    headers: { "Accept-Language": language, "Content-Type": undefined },
   });
 };
 

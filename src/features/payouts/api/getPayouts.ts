@@ -8,9 +8,15 @@ export interface PayoutItem {
   id: number;
   paymentId: number;
   paymentStatus: string;
+  debt: {
+    id: number;
+    title: string;
+    totalAmount: string;
+  };
   merchantNetAmountHalala: number;
   debtboxFeeHalala: number;
   providerFeeTotalHalala: number;
+  providerFeeIncludedInDebtboxFee: boolean;
   providerFeeTypeApplied: string;
 }
 
@@ -21,6 +27,8 @@ export interface ManualSettlement {
   externalTransferReference: string | null;
   settlementNote: string | null;
   proofReference: string | null;
+  proofPreviewUrl: string | null;
+  proofDownloadUrl: string | null;
 }
 
 export interface PayoutDTO {
