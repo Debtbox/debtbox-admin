@@ -795,6 +795,32 @@
         "success": "تم تحديد الدفعة كمُسوَّاة",
         "error": "فشل في تحديد الدفعة كمُسوَّاة"
       }
+    },
+    "tabs": {
+      "payouts": "المدفوعات",
+      "payments": "سجلات الدفع"
+    }
+  },
+  "payments": {
+    "subtitle": "عرض جميع سجلات الدفع المحاسبية",
+    "noPayments": "لا توجد مدفوعات",
+    "statuses": {
+      "succeeded": "ناجح",
+      "pending": "قيد الانتظار",
+      "failed": "فشل",
+      "refunded": "مسترد"
+    },
+    "columns": {
+      "id": "الرقم",
+      "status": "الحالة",
+      "debt": "الدين",
+      "merchant": "التاجر",
+      "grossAmount": "الإجمالي",
+      "deductions": "الخصومات",
+      "netAmount": "الصافي",
+      "method": "الطريقة",
+      "payouts": "الدفعات",
+      "paidAt": "تاريخ الدفع"
     }
   }
 }

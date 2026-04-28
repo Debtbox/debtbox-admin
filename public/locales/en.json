@@ -795,6 +795,32 @@
         "success": "Payout marked as settled",
         "error": "Failed to mark payout as settled"
       }
+    },
+    "tabs": {
+      "payouts": "Payouts",
+      "payments": "Payments"
+    }
+  },
+  "payments": {
+    "subtitle": "View all payment accounting records",
+    "noPayments": "No payments found",
+    "statuses": {
+      "succeeded": "Succeeded",
+      "pending": "Pending",
+      "failed": "Failed",
+      "refunded": "Refunded"
+    },
+    "columns": {
+      "id": "ID",
+      "status": "Status",
+      "debt": "Debt",
+      "merchant": "Merchant",
+      "grossAmount": "Gross",
+      "deductions": "Deductions",
+      "netAmount": "Net Amount",
+      "method": "Method",
+      "payouts": "Payouts",
+      "paidAt": "Paid At"
     }
   }
 }
