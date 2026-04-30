@@ -12,7 +12,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { sidebarLogo } from "@/assets/images";
-import { PERMISSIONS, DASHBOARD_PERMISSIONS } from "@/auth/permissions";
+import { PERMISSIONS, DASHBOARD_PERMISSIONS, SALES_PERMISSIONS } from "@/auth/permissions";
 import { canAny } from "@/auth/rbac";
 import { useUserStore } from "@/stores/UserStore";
 
@@ -68,7 +68,7 @@ const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
       name: t("navigation.salesLeads", "Sales Leads"),
       href: "/sales-leads",
       icon: <TrendingUp className="w-5 h-5" />,
-      permissions: [PERMISSIONS.SALES_LEAD_LIST],
+      permissions: [...SALES_PERMISSIONS, PERMISSIONS.DASHBOARD_SALES_READ],
     },
     {
       name: t("navigation.payouts", "Payouts"),

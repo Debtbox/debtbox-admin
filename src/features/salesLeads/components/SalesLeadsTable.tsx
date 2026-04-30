@@ -1,57 +1,53 @@
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Eye } from "lucide-react";
+import { Eye, Edit2, UserPlus, CheckCircle } from "lucide-react";
 import Table, { type TableColumn } from "@/components/shared/Table";
 import { Button } from "@/components/shared/Button";
 import { cn } from "@/utils/cn";
-import type { SalesLeadDTO } from "@/types/SalesLeadDTO";
+import type { SalesLead } from "@/types/SalesLeadDTO";
 import { SalesLeadStatusBadge } from "./SalesLeadStatusBadge";
-import { getLeadTypeColor } from "../utils";
-import { PERMISSIONS } from "@/auth/permissions";
-import { useCan } from "@/auth/rbac";
+import {
+  formatSalesDate,
+  getLeadTypeColor,
+  getSalesUserDisplay,
+} from "../utils";
 
 interface SalesLeadsTableProps {
-  data: SalesLeadDTO[];
+  data: SalesLead[];
   isLoading: boolean;
   pagination: {
     page: number;
     limit: number;
     total: number;
   };
+  canRead: boolean;
+  canUpdate: boolean;
+  canAssign: boolean;
   onPageChange: (page: number) => void;
+  onEdit: (lead: SalesLead) => void;
+  onAssign: (lead: SalesLead) => void;
+  onConvert: (lead: SalesLead) => void;
 }
 
 export const SalesLeadsTable = ({
   data,
   isLoading,
   pagination,
+  canRead,
+  canUpdate,
+  canAssign,
   onPageChange,
+  onEdit,
+  onAssign,
+  onConvert,
 }: SalesLeadsTableProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const canRead = useCan(PERMISSIONS.SALES_LEAD_READ);
 
-  const formatDate = (dateStr: string) =>
-    new Date(dateStr).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-
-  const columns: TableColumn<SalesLeadDTO>[] = [
-    {
-      key: "id",
-      title: t("salesLeads.columns.id"),
-      dataIndex: "id",
-      render: (value) => (
-        <span className="text-xs text-gray-500 font-mono">
-          {(value as string).slice(0, 8)}…
-        </span>
-      ),
-    },
+  const columns: TableColumn<SalesLead>[] = [
     {
       key: "fullName",
-      title: t("salesLeads.columns.fullName"),
+      title: t("salesLeads.columns.fullName", "Full Name"),
       dataIndex: "fullName",
       render: (value) => (
         <span className="font-medium text-gray-900 max-w-[180px] block truncate">
@@ -61,7 +57,7 @@ export const SalesLeadsTable = ({
     },
     {
       key: "leadType",
-      title: t("salesLeads.columns.leadType"),
+      title: t("salesLeads.columns.leadType", "Lead Type"),
       dataIndex: "leadType",
       render: (value) => (
         <span
@@ -75,14 +71,30 @@ export const SalesLeadsTable = ({
       ),
     },
     {
-      key: "status",
-      title: t("salesLeads.columns.status"),
-      dataIndex: "status",
-      render: (value) => <SalesLeadStatusBadge status={value as string} />,
+      key: "phone",
+      title: t("salesLeads.columns.phone", "Phone"),
+      dataIndex: "phone",
+      render: (value) => <span className="text-gray-600">{(value as string | null) ?? "—"}</span>,
+    },
+    {
+      key: "email",
+      title: t("salesLeads.columns.email", "Email"),
+      dataIndex: "email",
+      render: (value) => (
+        <span className="text-gray-600 max-w-[160px] block truncate">
+          {(value as string | null) ?? "—"}
+        </span>
+      ),
+    },
+    {
+      key: "crNumber",
+      title: t("salesLeads.columns.crNumber", "CR Number"),
+      dataIndex: "crNumber",
+      render: (value) => <span className="text-gray-600">{(value as string | null) ?? "—"}</span>,
     },
     {
       key: "source",
-      title: t("salesLeads.columns.source"),
+      title: t("salesLeads.columns.source", "Source"),
       dataIndex: "source",
       render: (value) => (
         <span className="text-sm text-gray-600">
@@ -91,52 +103,63 @@ export const SalesLeadsTable = ({
       ),
     },
     {
-      key: "phone",
-      title: t("salesLeads.columns.phone"),
-      dataIndex: "phone",
-      render: (value) => (
-        <span className="text-sm text-gray-600">
-          {(value as string | null) ?? "—"}
-        </span>
-      ),
+      key: "status",
+      title: t("salesLeads.columns.status", "Status"),
+      dataIndex: "status",
+      render: (value) => <SalesLeadStatusBadge status={value as string} />,
     },
     {
-      key: "email",
-      title: t("salesLeads.columns.email"),
-      dataIndex: "email",
-      render: (value) => (
-        <span className="text-sm text-gray-600 max-w-[160px] block truncate">
-          {(value as string | null) ?? "—"}
+      key: "assignedSalesUserId",
+      title: t("salesLeads.columns.assignedTo", "Sales User"),
+      dataIndex: "assignedSalesUserId",
+      render: (_value, record) => (
+        <span className="text-gray-600">
+          {getSalesUserDisplay(record.assignedSalesUser, record.assignedSalesUserId)}
         </span>
       ),
     },
     {
       key: "createdAt",
-      title: t("salesLeads.columns.createdAt"),
+      title: t("salesLeads.columns.createdAt", "Created At"),
       dataIndex: "created_at",
-      render: (value) => (
-        <span className="text-gray-600">{formatDate(value as string)}</span>
-      ),
+      render: (value) => <span className="text-gray-600">{formatSalesDate(value as string)}</span>,
     },
   ];
 
+  const showActions = canRead || canUpdate || canAssign;
+
   return (
-    <Table<SalesLeadDTO>
+    <Table<SalesLead>
       columns={columns}
       data={data}
       loading={isLoading}
       rowKey="id"
       emptyText={t("salesLeads.noLeads", "No sales leads found")}
-      showActions={canRead}
-      actions={(record) => canRead ? (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate(`/sales-leads/${record.id}`)}
-        >
-          <Eye className="w-4 h-4" />
-        </Button>
-      ) : null}
+      showActions={showActions}
+      actions={(record) => (
+        <div className="flex justify-end gap-1">
+          {canRead && (
+            <Button variant="ghost" size="sm" onClick={() => navigate(`/sales-leads/${record.id}`)}>
+              <Eye className="w-4 h-4" />
+            </Button>
+          )}
+          {canUpdate && (
+            <Button variant="ghost" size="sm" onClick={() => onEdit(record)}>
+              <Edit2 className="w-4 h-4" />
+            </Button>
+          )}
+          {canAssign && (
+            <Button variant="ghost" size="sm" onClick={() => onAssign(record)}>
+              <UserPlus className="w-4 h-4" />
+            </Button>
+          )}
+          {canUpdate && record.status !== "CONVERTED" && (
+            <Button variant="ghost" size="sm" onClick={() => onConvert(record)}>
+              <CheckCircle className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
+      )}
       pagination={{
         current: pagination.page + 1,
         pageSize: pagination.limit,

@@ -1,90 +1,72 @@
 import { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Users, TrendingUp, CheckCircle } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/shared/Button";
-import { useGetSalesLeads } from "../api/getSalesLeads";
-import { useGetSalesLeadsStats } from "../api/getSalesLeadsStats";
+import { PERMISSIONS } from "@/auth/permissions";
+import { useCan } from "@/auth/rbac";
+import { useUserStore } from "@/stores/UserStore";
+import type { LeadSource, LeadStatus, LeadType, SalesLead } from "@/types/SalesLeadDTO";
 import {
   SalesLeadsFilters,
   SalesLeadsTable,
   CreateSalesLeadModal,
+  AssignLeadModal,
+  ConvertLeadModal,
+  SalesSectionTabs,
   type SalesLeadsFiltersState,
 } from "../components";
-import { PERMISSIONS } from "@/auth/permissions";
-import { useCan } from "@/auth/rbac";
+import { useListSalesLeads, useSalesLeadStats } from "../api/sales";
+import { isSalesAdminRole } from "../utils";
 
 const LEADS_PER_PAGE = 10;
 
 const SalesLeads = () => {
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
+  const user = useUserStore((state) => state.user);
+  const canManageAllSales = isSalesAdminRole(user?.role?.slug);
   const canCreate = useCan(PERMISSIONS.SALES_LEAD_CREATE);
+  const canRead = useCan(PERMISSIONS.SALES_LEAD_READ);
+  const canUpdate = useCan(PERMISSIONS.SALES_LEAD_UPDATE);
+  const canAssign = useCan(PERMISSIONS.SALES_LEAD_ASSIGN);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
-
-  const [filters, setFilters] = useState<
-    SalesLeadsFiltersState & { page: number; limit: number }
-  >({
+  const [editingLead, setEditingLead] = useState<SalesLead | null>(null);
+  const [assigningLead, setAssigningLead] = useState<SalesLead | null>(null);
+  const [convertingLead, setConvertingLead] = useState<SalesLead | null>(null);
+  const [filters, setFilters] = useState<SalesLeadsFiltersState & { page: number; limit: number }>({
     page: 0,
     limit: LEADS_PER_PAGE,
     search: "",
     status: [],
     leadType: [],
     source: [],
+    assignedSalesUserId: "",
+    crNumber: "",
     startDate: "",
     endDate: "",
   });
 
-  const buildParams = useCallback(
-    (overrides?: Partial<typeof filters>) => {
-      const f = { ...filters, ...overrides };
-      return {
-        page: f.page,
-        limit: f.limit,
-        search: f.search || undefined,
-        status: f.status.length
-          ? (f.status as (
-              | "NEW"
-              | "CONTACTED"
-              | "INTERESTED"
-              | "CONVERTED"
-              | "LOST"
-            )[])
-          : undefined,
-        leadType: f.leadType.length
-          ? (f.leadType as ("MERCHANT" | "CUSTOMER")[])
-          : undefined,
-        source: f.source.length
-          ? (f.source as (
-              | "REFERRAL"
-              | "CAMPAIGN"
-              | "COLD"
-              | "EVENT"
-              | "OTHER"
-            )[])
-          : undefined,
-        startDate: f.startDate || undefined,
-        endDate: f.endDate || undefined,
-      };
-    },
-    [filters],
-  );
+  const buildQuery = useCallback(() => ({
+    page: filters.page,
+    limit: filters.limit,
+    search: filters.search || undefined,
+    status: filters.status.length ? (filters.status as LeadStatus[]) : undefined,
+    leadType: filters.leadType[0] ? (filters.leadType[0] as LeadType) : undefined,
+    source: filters.source.length ? (filters.source as LeadSource[]) : undefined,
+    assignedSalesUserId:
+      canManageAllSales && filters.assignedSalesUserId
+        ? Number(filters.assignedSalesUserId)
+        : undefined,
+    crNumber: filters.crNumber || undefined,
+    startDate: filters.startDate || undefined,
+    endDate: filters.endDate || undefined,
+  }), [canManageAllSales, filters]);
 
-  const leadsQuery = useGetSalesLeads({ params: buildParams() });
-  const statsQuery = useGetSalesLeadsStats({ config: { staleTime: 60_000 } });
+  const leadsQuery = useListSalesLeads({ query: buildQuery() });
+  const statsQuery = useSalesLeadStats({ staleTime: 60_000 });
 
-  const handleFiltersChange = (f: SalesLeadsFiltersState) => {
-    setFilters((prev) => ({ ...prev, ...f, page: 0 }));
-  };
-
-  const handlePageChange = (page: number) => {
-    setFilters((prev) => ({ ...prev, page }));
-  };
-
-  const handleCreateSuccess = () => {
-    setShowCreateModal(false);
-    void queryClient.invalidateQueries({ queryKey: ["sales-leads"] });
+  const handleFiltersChange = (next: SalesLeadsFiltersState) => {
+    setFilters((prev) => ({ ...prev, ...next, page: 0 }));
   };
 
   const stats = [
@@ -110,7 +92,8 @@ const SalesLeads = () => {
 
   return (
     <div className="p-6">
-      <div className="mb-6 flex items-start justify-between">
+      <SalesSectionTabs />
+      <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-1">
             {t("salesLeads.title", "Sales Leads")}
@@ -128,35 +111,21 @@ const SalesLeads = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        {statsQuery.isLoading
-          ? [...Array(3)].map((_, i) => (
-              <div key={i} className="bg-white rounded-lg border border-gray-200 p-5 flex items-center gap-4 animate-pulse">
-                <div className="rounded-lg p-3 bg-gray-100">
-                  <div className="w-6 h-6 bg-gray-200 rounded" />
-                </div>
-                <div className="space-y-2">
-                  <div className="h-3.5 bg-gray-200 rounded w-20" />
-                  <div className="h-7 bg-gray-200 rounded w-12" />
-                </div>
-              </div>
-            ))
-          : stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="bg-white rounded-lg border border-gray-200 p-5 flex items-center gap-4"
-              >
-                <div className={`${stat.bg} rounded-lg p-3`}>{stat.icon}</div>
-                <div>
-                  <p className="text-sm text-gray-500">{stat.label}</p>
-                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                </div>
-              </div>
-            ))}
+        {stats.map((stat) => (
+          <div key={stat.label} className="bg-white rounded-lg border border-gray-200 p-5 flex items-center gap-4">
+            <div className={`${stat.bg} rounded-lg p-3`}>{stat.icon}</div>
+            <div>
+              <p className="text-sm text-gray-500">{stat.label}</p>
+              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className="mb-6">
         <SalesLeadsFilters
           filters={filters}
+          canManageAllSales={canManageAllSales}
           onFiltersChange={handleFiltersChange}
         />
       </div>
@@ -169,14 +138,37 @@ const SalesLeads = () => {
           limit: filters.limit,
           total: leadsQuery.data?.data.total ?? 0,
         }}
-        onPageChange={handlePageChange}
+        canRead={canRead}
+        canUpdate={canUpdate}
+        canAssign={canAssign}
+        onPageChange={(page) => setFilters((prev) => ({ ...prev, page }))}
+        onEdit={setEditingLead}
+        onAssign={setAssigningLead}
+        onConvert={setConvertingLead}
       />
 
       {canCreate && showCreateModal && (
         <CreateSalesLeadModal
           onClose={() => setShowCreateModal(false)}
-          onSuccess={handleCreateSuccess}
+          onSuccess={() => setShowCreateModal(false)}
         />
+      )}
+      {canUpdate && editingLead && (
+        <CreateSalesLeadModal
+          lead={editingLead}
+          onClose={() => setEditingLead(null)}
+          onSuccess={() => setEditingLead(null)}
+        />
+      )}
+      {canAssign && assigningLead && (
+        <AssignLeadModal
+          lead={assigningLead}
+          canUnassign={canManageAllSales}
+          onClose={() => setAssigningLead(null)}
+        />
+      )}
+      {canUpdate && convertingLead && (
+        <ConvertLeadModal lead={convertingLead} onClose={() => setConvertingLead(null)} />
       )}
     </div>
   );
