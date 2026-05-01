@@ -3,3 +3,8 @@ export { SalesLeadsTable } from "./SalesLeadsTable";
 export { SalesLeadsFilters } from "./SalesLeadsFilters";
 export type { SalesLeadsFiltersState } from "./SalesLeadsFilters";
 export { CreateSalesLeadModal } from "./CreateSalesLeadModal";
+export { AssignLeadModal } from "./AssignLeadModal";
+export { ConvertLeadModal } from "./ConvertLeadModal";
+export { SalesUserSelect } from "./SalesUserSelect";
+export { CreateSalesAssignmentModal } from "./CreateSalesAssignmentModal";
+export { SalesSectionTabs } from "./SalesSectionTabs";

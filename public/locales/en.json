@@ -405,6 +405,7 @@
     "to": "To",
     "dateRange": "Date Range",
     "cancel": "Cancel",
+    "all": "All",
     "buttons": {
       "logout": "Logout",
       "login": "Login",
@@ -557,6 +558,8 @@
       "status": "Status",
       "leadType": "Lead Type",
       "source": "Source",
+      "crNumber": "CR Number",
+      "assignedSalesUser": "Sales User",
       "createdDate": "Created Date"
     },
     "columns": {
@@ -567,6 +570,8 @@
       "source": "Source",
       "phone": "Phone",
       "email": "Email",
+      "crNumber": "CR Number",
+      "assignedTo": "Sales User",
       "createdAt": "Created"
     },
     "fields": {
@@ -576,12 +581,18 @@
       "fullNamePlaceholder": "e.g. Ahmad Al Saleh",
       "phone": "Phone",
       "email": "Email",
+      "crNumber": "CR Number",
       "source": "Source",
       "selectSource": "Select source",
       "status": "Status",
       "notes": "Notes",
       "notesPlaceholder": "Any additional notes...",
-      "assignedTo": "Assigned Sales User ID"
+      "assignedTo": "Assigned Sales User",
+      "unassigned": "Unassigned"
+    },
+    "actions": {
+      "assign": "Assign",
+      "convert": "Convert"
     },
     "details": {
       "leadInfo": "Lead Information",
@@ -597,9 +608,61 @@
         "title": "Create Sales Lead",
         "confirmButton": "Create Lead",
         "success": "Sales lead created successfully",
-        "error": "Failed to create sales lead"
+        "error": "Failed to save sales lead"
+      },
+      "edit": {
+        "title": "Edit Sales Lead",
+        "success": "Sales lead updated successfully"
+      },
+      "assign": {
+        "title": "Assign Lead",
+        "success": "Lead assignment updated",
+        "error": "Failed to update assignment"
+      },
+      "convert": {
+        "title": "Convert Lead",
+        "success": "Lead converted successfully",
+        "error": "Failed to convert lead"
       }
     }
+  },
+  "salesDashboard": {
+    "title": "Sales Dashboard",
+    "totalLeads": "Total Leads",
+    "assignedLeads": "Assigned Leads",
+    "convertedLeads": "Converted Leads",
+    "activeMerchants": "Active Merchants",
+    "incentiveTier": "Incentive Tier",
+    "incentiveAmount": "Incentive Amount",
+    "leadsByStatus": "Leads by Status"
+  },
+  "salesAssignments": {
+    "title": "Sales Assignments",
+    "create": "Create Assignment",
+    "createTitle": "Create Assignment",
+    "createSuccess": "Sales assignment created",
+    "createError": "Failed to create assignment",
+    "deactivateSuccess": "Assignment deactivated",
+    "deactivateError": "Failed to deactivate assignment",
+    "salesUser": "Sales User",
+    "entityType": "Entity Type",
+    "entityId": "Entity ID",
+    "assignedAt": "Assigned At",
+    "isActive": "Active",
+    "unassignedAt": "Unassigned At",
+    "empty": "No sales assignments found"
+  },
+  "salesPerformance": {
+    "title": "Sales Performance",
+    "month": "Month",
+    "totalAssignedMerchants": "Assigned Merchants",
+    "activeMerchants": "Active Merchants",
+    "merchantsWithPayments": "Merchants With Payments",
+    "totalDebtCount": "Debt Count",
+    "totalDebtAmount": "Total Debt Amount",
+    "totalPaidAmount": "Total Paid Amount",
+    "incentiveTier": "Incentive Tier",
+    "incentiveAmount": "Incentive Amount"
   },
   "debts": {
     "title": "Debts",

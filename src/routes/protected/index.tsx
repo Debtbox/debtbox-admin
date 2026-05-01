@@ -8,7 +8,7 @@ import { SalesLeadsRoutes } from "@/features/salesLeads";
 import { UserManagementRoutes } from "@/features/user-management";
 import { PayoutsRoutes } from "@/features/payouts";
 import { RequirePermission } from "./RequirePermission";
-import { PERMISSIONS, DASHBOARD_PERMISSIONS } from "@/auth/permissions";
+import { PERMISSIONS, DASHBOARD_PERMISSIONS, SALES_PERMISSIONS } from "@/auth/permissions";
 import { DefaultProtectedHome } from "./DefaultProtectedHome";
 
 export const protectedRoutes = [
@@ -64,7 +64,7 @@ export const protectedRoutes = [
       {
         path: "/sales-leads*",
         element: (
-          <RequirePermission permissions={[PERMISSIONS.SALES_LEAD_LIST, PERMISSIONS.SALES_LEAD_READ]}>
+          <RequirePermission permissions={[...SALES_PERMISSIONS, PERMISSIONS.SALES_LEAD_READ, PERMISSIONS.DASHBOARD_SALES_READ]}>
             <SalesLeadsRoutes />
           </RequirePermission>
         ),

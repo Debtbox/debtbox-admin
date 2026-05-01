@@ -1,79 +1,58 @@
 import { useTranslation } from "react-i18next";
 import { FilterBar, type FilterGroupDef } from "@/components/shared/FilterBar";
+import { Input } from "@/components/shared/Input";
+import { SalesUserSelect } from "./SalesUserSelect";
 
 export interface SalesLeadsFiltersState {
   search: string;
   status: string[];
   leadType: string[];
   source: string[];
+  assignedSalesUserId: string;
+  crNumber: string;
   startDate: string;
   endDate: string;
 }
 
 interface SalesLeadsFiltersProps {
   filters: SalesLeadsFiltersState;
+  canManageAllSales: boolean;
   onFiltersChange: (f: SalesLeadsFiltersState) => void;
 }
 
 export const SalesLeadsFilters = ({
   filters,
+  canManageAllSales,
   onFiltersChange,
 }: SalesLeadsFiltersProps) => {
   const { t } = useTranslation();
 
-  const statusGroup: FilterGroupDef = {
-    key: "status",
-    label: t("salesLeads.filters.status", "Status"),
-    options: [
-      { value: "NEW", label: t("salesLeads.statuses.NEW", "New") },
-      {
-        value: "CONTACTED",
-        label: t("salesLeads.statuses.CONTACTED", "Contacted"),
-      },
-      {
-        value: "INTERESTED",
-        label: t("salesLeads.statuses.INTERESTED", "Interested"),
-      },
-      {
-        value: "CONVERTED",
-        label: t("salesLeads.statuses.CONVERTED", "Converted"),
-      },
-      { value: "LOST", label: t("salesLeads.statuses.LOST", "Lost") },
-    ],
-  };
-
-  const leadTypeGroup: FilterGroupDef = {
-    key: "leadType",
-    label: t("salesLeads.filters.leadType", "Lead Type"),
-    options: [
-      {
-        value: "MERCHANT",
-        label: t("salesLeads.leadTypes.MERCHANT", "Merchant"),
-      },
-      {
-        value: "CUSTOMER",
-        label: t("salesLeads.leadTypes.CUSTOMER", "Customer"),
-      },
-    ],
-  };
-
-  const sourceGroup: FilterGroupDef = {
-    key: "source",
-    label: t("salesLeads.filters.source", "Source"),
-    options: [
-      {
-        value: "REFERRAL",
-        label: t("salesLeads.sources.REFERRAL", "Referral"),
-      },
-      {
-        value: "CAMPAIGN",
-        label: t("salesLeads.sources.CAMPAIGN", "Campaign"),
-      },
-      { value: "COLD", label: t("salesLeads.sources.COLD", "Cold") },
-      { value: "EVENT", label: t("salesLeads.sources.EVENT", "Event") },
-      { value: "OTHER", label: t("salesLeads.sources.OTHER", "Other") },
-    ],
-  };
+  const filterGroups: FilterGroupDef[] = [
+    {
+      key: "status",
+      label: t("salesLeads.filters.status", "Status"),
+      options: ["NEW", "CONTACTED", "INTERESTED", "CONVERTED", "LOST"].map((status) => ({
+        value: status,
+        label: t(`salesLeads.statuses.${status}`, status),
+      })),
+    },
+    {
+      key: "leadType",
+      label: t("salesLeads.filters.leadType", "Lead Type"),
+      options: ["MERCHANT", "CUSTOMER"].map((type) => ({
+        value: type,
+        label: t(`salesLeads.leadTypes.${type}`, type),
+      })),
+    },
+    {
+      key: "source",
+      label: t("salesLeads.filters.source", "Source"),
+      options: ["REFERRAL", "CAMPAIGN", "COLD", "EVENT", "OTHER"].map((source) => ({
+        value: source,
+        label: t(`salesLeads.sources.${source}`, source),
+      })),
+    },
+  ];
 
   const filterValues: Record<string, string | string[]> = {
     status: filters.status,
@@ -93,28 +72,51 @@ export const SalesLeadsFilters = ({
       status: [],
       leadType: [],
       source: [],
+      assignedSalesUserId: "",
+      crNumber: "",
       startDate: "",
       endDate: "",
     });
   };
 
   return (
-    <FilterBar
-      searchPlaceholder={t(
-        "salesLeads.search",
-        "Search by name, email, or phone...",
-      )}
-      searchValue={filters.search}
-      onSearchChange={(value) => onFiltersChange({ ...filters, search: value })}
-      filterGroups={[statusGroup, leadTypeGroup, sourceGroup]}
-      dateRange={{
-        fromKey: "startDate",
-        toKey: "endDate",
-        label: t("salesLeads.filters.createdDate", "Created Date"),
-      }}
-      values={filterValues}
-      onChange={handleFilterChange}
-      onClearAll={handleClearAll}
-    />
+    <div className="space-y-3">
+      <FilterBar
+        searchPlaceholder={t(
+          "salesLeads.search",
+          "Search by name, email, or phone...",
+        )}
+        searchValue={filters.search}
+        onSearchChange={(value) => onFiltersChange({ ...filters, search: value })}
+        filterGroups={filterGroups}
+        dateRange={{
+          fromKey: "startDate",
+          toKey: "endDate",
+          label: t("salesLeads.filters.createdDate", "Created Date"),
+        }}
+        values={filterValues}
+        onChange={handleFilterChange}
+        onClearAll={handleClearAll}
+      />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <Input
+          label={t("salesLeads.filters.crNumber", "CR Number")}
+          value={filters.crNumber}
+          onChange={(event) =>
+            onFiltersChange({ ...filters, crNumber: event.target.value })
+          }
+        />
+        {canManageAllSales && (
+          <SalesUserSelect
+            label={t("salesLeads.filters.assignedSalesUser", "Sales User")}
+            value={filters.assignedSalesUserId}
+            onChange={(value) =>
+              onFiltersChange({ ...filters, assignedSalesUserId: value })
+            }
+            allowUnassigned
+          />
+        )}
+      </div>
+    </div>
   );
 };

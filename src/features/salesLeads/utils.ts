@@ -16,3 +16,58 @@ export const getLeadTypeColor = (type: string): string =>
       CUSTOMER: "bg-teal-100 text-teal-800 border-teal-200",
     }) as Record<string, string>
   )[type] ?? "bg-gray-100 text-gray-600 border-gray-200";
+
+export const isSalesAdminRole = (slug?: string | null): boolean =>
+  slug === "admin" || slug === "superadmin";
+
+export const getSalesUserDisplay = (
+  user:
+    | {
+        id: number;
+        firstName?: string | null;
+        lastName?: string | null;
+        email?: string | null;
+      }
+    | null
+    | undefined,
+  fallbackId?: number | null,
+): string => {
+  if (!user) return fallbackId ? String(fallbackId) : "—";
+  const name = `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim();
+  return name || user.email || String(user.id);
+};
+
+export const formatSalesDate = (dateStr: string | null | undefined): string => {
+  if (!dateStr) return "—";
+  return new Date(dateStr).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
+
+export const formatSalesDateTime = (dateStr: string | null | undefined): string => {
+  if (!dateStr) return "—";
+  return new Date(dateStr).toLocaleString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+export const formatSalesAmount = (
+  amount: string | number | null | undefined,
+): string => {
+  if (amount === null || amount === undefined) return "—";
+  return `SAR ${Number(amount).toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+};
+
+export const formatSalesHalala = (amount: number | null | undefined): string => {
+  if (amount === null || amount === undefined) return "—";
+  return formatSalesAmount(amount / 100);
+};

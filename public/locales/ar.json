@@ -405,6 +405,7 @@
     "to": "إلى",
     "dateRange": "نطاق التاريخ",
     "cancel": "إلغاء",
+    "all": "الكل",
     "buttons": {
       "logout": "تسجيل الخروج",
       "login": "تسجيل الدخول",
@@ -557,6 +558,8 @@
       "status": "الحالة",
       "leadType": "نوع العميل المحتمل",
       "source": "المصدر",
+      "crNumber": "رقم السجل التجاري",
+      "assignedSalesUser": "مندوب المبيعات",
       "createdDate": "تاريخ الإنشاء"
     },
     "columns": {
@@ -567,6 +570,8 @@
       "source": "المصدر",
       "phone": "الهاتف",
       "email": "البريد الإلكتروني",
+      "crNumber": "رقم السجل التجاري",
+      "assignedTo": "مندوب المبيعات",
       "createdAt": "تاريخ الإنشاء"
     },
     "fields": {
@@ -576,12 +581,18 @@
       "fullNamePlaceholder": "مثال: أحمد الصالح",
       "phone": "الهاتف",
       "email": "البريد الإلكتروني",
+      "crNumber": "رقم السجل التجاري",
       "source": "المصدر",
       "selectSource": "اختر المصدر",
       "status": "الحالة",
       "notes": "ملاحظات",
       "notesPlaceholder": "أي ملاحظات إضافية...",
-      "assignedTo": "معرف مندوب المبيعات"
+      "assignedTo": "مندوب المبيعات",
+      "unassigned": "غير معين"
+    },
+    "actions": {
+      "assign": "تعيين",
+      "convert": "تحويل"
     },
     "details": {
       "leadInfo": "معلومات العميل المحتمل",
@@ -597,9 +608,61 @@
         "title": "إنشاء عميل محتمل",
         "confirmButton": "إنشاء",
         "success": "تم إنشاء العميل المحتمل بنجاح",
-        "error": "فشل في إنشاء العميل المحتمل"
+        "error": "فشل في حفظ العميل المحتمل"
+      },
+      "edit": {
+        "title": "تعديل العميل المحتمل",
+        "success": "تم تحديث العميل المحتمل بنجاح"
+      },
+      "assign": {
+        "title": "تعيين العميل المحتمل",
+        "success": "تم تحديث التعيين",
+        "error": "فشل في تحديث التعيين"
+      },
+      "convert": {
+        "title": "تحويل العميل المحتمل",
+        "success": "تم تحويل العميل المحتمل بنجاح",
+        "error": "فشل في تحويل العميل المحتمل"
       }
     }
+  },
+  "salesDashboard": {
+    "title": "لوحة المبيعات",
+    "totalLeads": "إجمالي العملاء المحتملين",
+    "assignedLeads": "العملاء المعينون",
+    "convertedLeads": "العملاء المحولون",
+    "activeMerchants": "التجار النشطون",
+    "incentiveTier": "شريحة الحافز",
+    "incentiveAmount": "مبلغ الحافز",
+    "leadsByStatus": "العملاء حسب الحالة"
+  },
+  "salesAssignments": {
+    "title": "تعيينات المبيعات",
+    "create": "إنشاء تعيين",
+    "createTitle": "إنشاء تعيين",
+    "createSuccess": "تم إنشاء تعيين المبيعات",
+    "createError": "فشل في إنشاء التعيين",
+    "deactivateSuccess": "تم إلغاء تفعيل التعيين",
+    "deactivateError": "فشل في إلغاء تفعيل التعيين",
+    "salesUser": "مندوب المبيعات",
+    "entityType": "نوع الكيان",
+    "entityId": "معرف الكيان",
+    "assignedAt": "وقت التعيين",
+    "isActive": "نشط",
+    "unassignedAt": "وقت إلغاء التعيين",
+    "empty": "لا توجد تعيينات مبيعات"
+  },
+  "salesPerformance": {
+    "title": "أداء المبيعات",
+    "month": "الشهر",
+    "totalAssignedMerchants": "التجار المعينون",
+    "activeMerchants": "التجار النشطون",
+    "merchantsWithPayments": "تجار لديهم مدفوعات",
+    "totalDebtCount": "عدد الديون",
+    "totalDebtAmount": "إجمالي مبلغ الدين",
+    "totalPaidAmount": "إجمالي المبلغ المدفوع",
+    "incentiveTier": "شريحة الحافز",
+    "incentiveAmount": "مبلغ الحافز"
   },
   "debts": {
     "title": "إدارة الديون",
