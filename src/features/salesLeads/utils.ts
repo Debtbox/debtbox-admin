@@ -71,3 +71,11 @@ export const formatSalesHalala = (amount: number | null | undefined): string => 
   if (amount === null || amount === undefined) return "—";
   return formatSalesAmount(amount / 100);
 };
+
+export const formatIncentiveTier = (
+  tier: { minActiveMerchants: number; maxActiveMerchants: number; amount: number } | string | null | undefined,
+): string => {
+  if (!tier) return "—";
+  if (typeof tier === "string") return tier;
+  return `${tier.minActiveMerchants}–${tier.maxActiveMerchants} merchants`;
+};
