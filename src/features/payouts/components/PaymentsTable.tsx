@@ -1,6 +1,11 @@
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { Eye } from "lucide-react";
 import { cn } from "@/utils/cn";
 import Table, { type TableColumn } from "@/components/shared/Table";
+import { Button } from "@/components/shared/Button";
+import { PERMISSIONS } from "@/auth/permissions";
+import { useCan } from "@/auth/rbac";
 import type { PaymentDTO } from "../api/getPayments";
 import { formatHalala, formatDate } from "../utils";
 
@@ -49,6 +54,8 @@ interface PaymentsTableProps {
 
 export const PaymentsTable = ({ data, isLoading, pagination, onPageChange }: PaymentsTableProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const canRead = useCan(PERMISSIONS.PAYMENT_READ);
 
   const columns: TableColumn<PaymentDTO>[] = [
     {
@@ -159,6 +166,19 @@ export const PaymentsTable = ({ data, isLoading, pagination, onPageChange }: Pay
       loading={isLoading}
       rowKey="id"
       emptyText={t("payments.noPayments")}
+      onRowClick={(row) => navigate(`/payments/${row.id}`)}
+      showActions={canRead}
+      actions={(record) =>
+        canRead ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate(`/payouts/payments/${record.id}`)}
+          >
+            <Eye className="w-4 h-4" />
+          </Button>
+        ) : null
+      }
       pagination={{
         current: pagination.page + 1,
         pageSize: pagination.limit,

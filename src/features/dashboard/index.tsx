@@ -72,10 +72,8 @@ const ApprovalsSkeleton = () => (
 
 const Dashboard = () => {
   const { t } = useTranslation();
-  const canViewCustomers = useCan(PERMISSIONS.CUSTOMER_LIST);
-  const canViewMerchants = useCan(PERMISSIONS.MERCHANT_LIST);
-  const canViewDebts = useCan(PERMISSIONS.DEBT_LIST);
-  const { data, isLoading } = useGetDashboardStats({ config: { staleTime: 60_000 } });
+  const canGeneral = useCan(PERMISSIONS.DASHBOARD_READ);
+  const { data, isLoading } = useGetDashboardStats({ config: { staleTime: 60_000, enabled: canGeneral } });
 
   const d = data?.data;
 
@@ -86,7 +84,6 @@ const Dashboard = () => {
       icon: Users,
       color: "text-blue-600 bg-blue-50",
       link: "/customers",
-      visible: canViewCustomers,
     },
     {
       name: t("dashboard.totalMerchants", "Total Merchants"),
@@ -94,7 +91,6 @@ const Dashboard = () => {
       icon: Store,
       color: "text-green-600 bg-green-50",
       link: "/merchants",
-      visible: canViewMerchants,
     },
     {
       name: t("dashboard.totalTransactions", "Total Transactions"),
@@ -102,7 +98,6 @@ const Dashboard = () => {
       icon: TrendingUp,
       color: "text-purple-600 bg-purple-50",
       link: "/debts-management",
-      visible: canViewDebts,
     },
     {
       name: t("dashboard.totalRevenue", "Total Revenue"),
@@ -110,9 +105,8 @@ const Dashboard = () => {
       icon: DollarSign,
       color: "text-orange-600 bg-orange-50",
       link: "/debts-management",
-      visible: canViewDebts,
     },
-  ].filter((stat) => stat.visible);
+  ];
 
   const chartData = (d?.revenueGrowth ?? []).map((entry) => ({
     month: entry.month,
@@ -134,6 +128,9 @@ const Dashboard = () => {
         </p>
       </div>
 
+      {/* General stats — requires dashboard:read */}
+      {canGeneral && (
+        <>
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {isLoading
@@ -263,6 +260,8 @@ const Dashboard = () => {
           </>
         )}
       </div>
+        </>
+      )}
     </div>
   );
 };

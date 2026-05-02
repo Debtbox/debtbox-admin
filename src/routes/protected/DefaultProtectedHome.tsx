@@ -1,10 +1,16 @@
 import { Navigate } from "react-router-dom";
 import { useUserStore } from "@/stores/UserStore";
-import { canAny } from "@/auth/rbac";
+import { canAny, isSuperadmin } from "@/auth/rbac";
 import { DASHBOARD_PERMISSIONS, PERMISSIONS } from "@/auth/permissions";
 import { Forbidden, PermissionLoading } from "@/components/shared/Forbidden";
 
-const HOME_CANDIDATES = [
+interface HomeCandidate {
+  to: string;
+  permissions?: readonly string[];
+  superadminOnly?: boolean;
+}
+
+const HOME_CANDIDATES: HomeCandidate[] = [
   { to: "/dashboard", permissions: DASHBOARD_PERMISSIONS },
   { to: "/support-tickets", permissions: [PERMISSIONS.TICKET_READ] },
   { to: "/customers", permissions: [PERMISSIONS.CUSTOMER_LIST] },
@@ -12,7 +18,8 @@ const HOME_CANDIDATES = [
   { to: "/merchants", permissions: [PERMISSIONS.MERCHANT_LIST] },
   { to: "/sales-leads", permissions: [PERMISSIONS.SALES_LEAD_LIST] },
   { to: "/system-users", permissions: [PERMISSIONS.USER_LIST] },
-] as const;
+  { to: "/recovery", superadminOnly: true },
+];
 
 export const DefaultProtectedHome = () => {
   const user = useUserStore((state) => state.user);
@@ -20,6 +27,8 @@ export const DefaultProtectedHome = () => {
 
   if (!isProfileLoaded) return <PermissionLoading />;
 
-  const destination = HOME_CANDIDATES.find((item) => canAny(user, item.permissions));
+  const destination = HOME_CANDIDATES.find((item) =>
+    item.superadminOnly ? isSuperadmin(user) : canAny(user, item.permissions ?? []),
+  );
   return destination ? <Navigate to={destination.to} replace /> : <Forbidden />;
 };

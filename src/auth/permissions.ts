@@ -60,6 +60,7 @@ export const PERMISSIONS = {
   BUSINESS_UPDATE: "business:update",
 
   TICKET_CREATE: "ticket:create",
+  TICKET_LIST: "ticket:list",
   TICKET_READ: "ticket:read",
   TICKET_UPDATE: "ticket:update",
   TICKET_ASSIGN: "ticket:assign",

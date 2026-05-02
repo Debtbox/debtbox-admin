@@ -12,9 +12,11 @@ import {
   Flag,
   Bell,
   XCircle,
+  Calculator,
 } from "lucide-react";
 import { Button } from "@/components/shared/Button";
 import { useGetDebt } from "../api/getDebt";
+import { useGetDebtFeePreview } from "../api/getDebtFeePreview";
 import { DebtStatusBadge } from "../components/DebtStatusBadge";
 import { CancelDebtModal } from "../components/CancelDebtModal";
 import { ExtendDueDateModal } from "../components/ExtendDueDateModal";
@@ -79,6 +81,10 @@ const DebtDetails = () => {
 
   const { data, isLoading, isError, refetch } = useGetDebt({ id: id! });
   const debt = data?.data;
+
+  const { data: feePreviewData, isLoading: isFeePreviewLoading, isError: isFeePreviewError } =
+    useGetDebtFeePreview({ id: id! });
+  const feePreview = feePreviewData?.data;
 
   const [showCancel, setShowCancel] = useState(false);
   const [showExtend, setShowExtend] = useState(false);
@@ -271,6 +277,68 @@ const DebtDetails = () => {
             )}
             <p className="text-sm text-gray-500">{debt.customer_full_name_ar}</p>
             <p className="text-xs text-gray-400 mt-0.5">ID: {debt.customer_id}</p>
+          </SectionCard>
+
+          {/* Fee Preview */}
+          <SectionCard
+            icon={<Calculator className="w-5 h-5" />}
+            title={t("debts.sections.feePreview", "Fee Preview")}
+          >
+            {isFeePreviewLoading ? (
+              <div className="grid grid-cols-2 gap-3 animate-pulse">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="rounded-lg border border-gray-100 bg-gray-50 p-4">
+                    <div className="h-3 bg-gray-200 rounded w-24 mb-2" />
+                    <div className="h-5 bg-gray-200 rounded w-20" />
+                  </div>
+                ))}
+              </div>
+            ) : isFeePreviewError || !feePreview ? (
+              <p className="text-sm text-gray-400">
+                {t("debts.feePreviewUnavailable", "Fee preview unavailable.")}
+              </p>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-lg border border-gray-100 bg-gray-50 p-4">
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                      {t("debts.fields.debtboxFee", "Debtbox Fee")}
+                    </p>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {formatHalalaAmount(feePreview.expectedDebtboxFeeHalala) ?? "—"}
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-gray-100 bg-gray-50 p-4">
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                      {t("debts.fields.instantPayoutFee", "Instant Payout Fee")}
+                    </p>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {formatHalalaAmount(feePreview.expectedInstantPayoutFeeHalala) ?? "—"}
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-red-100 bg-red-50 p-4">
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                      {t("debts.fields.totalDeductions", "Total Deductions")}
+                    </p>
+                    <p className="text-lg font-semibold text-red-700">
+                      {formatHalalaAmount(feePreview.expectedTotalDeductionsHalala) ?? "—"}
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-green-100 bg-green-50 p-4">
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                      {t("debts.fields.merchantNetAmount", "Merchant Net")}
+                    </p>
+                    <p className="text-lg font-semibold text-green-700">
+                      {formatHalalaAmount(feePreview.expectedMerchantNetAmountHalala) ?? "—"}
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-3 text-xs text-gray-400">
+                  {t("debts.feeSnapshotAt", "Snapshot at")}:{" "}
+                  {formatDate(feePreview.feeSnapshotAt)}
+                </p>
+              </>
+            )}
           </SectionCard>
 
           {/* Payment & History */}

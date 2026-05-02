@@ -6,6 +6,7 @@ import { RequirePermission } from "@/routes/protected/RequirePermission";
 const Payouts = lazy(() => import("../views/Payouts"));
 const PayoutDetails = lazy(() => import("../views/PayoutDetails"));
 const Payments = lazy(() => import("../views/Payments"));
+const PaymentDetails = lazy(() => import("../views/PaymentDetails"));
 
 export const PayoutsRoutes = () => {
   return (
@@ -19,7 +20,22 @@ export const PayoutsRoutes = () => {
         }
       />
       <Route
-        path="/payments"
+        path="/:id"
+        element={
+          <RequirePermission permissions={[PERMISSIONS.PAYMENT_READ]}>
+            <PayoutDetails />
+          </RequirePermission>
+        }
+      />
+    </Routes>
+  );
+};
+
+export const PaymentsRoutes = () => {
+  return (
+    <Routes>
+      <Route
+        path="/"
         element={
           <RequirePermission permissions={[PERMISSIONS.PAYMENT_LIST]}>
             <Payments />
@@ -30,7 +46,7 @@ export const PayoutsRoutes = () => {
         path="/:id"
         element={
           <RequirePermission permissions={[PERMISSIONS.PAYMENT_READ]}>
-            <PayoutDetails />
+            <PaymentDetails />
           </RequirePermission>
         }
       />

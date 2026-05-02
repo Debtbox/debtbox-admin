@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { useGetPayouts } from "../api/getPayouts";
 import type { PayoutStatus } from "../utils";
 import { PayoutFilters, PayoutsTable, type PayoutFiltersState } from "../components";
-import { SectionTabs } from "../components/SectionTabs";
 
 const PAYOUTS_PER_PAGE = 10;
 
@@ -47,8 +46,6 @@ const Payouts = () => {
         <h1 className="text-3xl font-bold text-gray-900 mb-1">{t("payouts.title")}</h1>
         <p className="text-gray-500 text-sm">{t("payouts.subtitle")}</p>
       </div>
-
-      <SectionTabs />
 
       <div className="mb-6">
         <PayoutFilters

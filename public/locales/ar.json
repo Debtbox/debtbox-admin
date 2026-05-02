@@ -34,7 +34,9 @@
     "debts": "إدارة الديون",
     "salesLeads": "العملاء المحتملون",
     "systemUsers": "مستخدمو النظام",
-    "payouts": "المدفوعات"
+    "payouts": "المدفوعات",
+    "payments": "سجلات الدفع",
+    "recoveryConsole": "وحدة الاسترداد"
   },
   "navbar": {
     "welcome": "مرحباً!"
@@ -405,6 +407,7 @@
     "to": "إلى",
     "dateRange": "نطاق التاريخ",
     "cancel": "إلغاء",
+    "last": "آخر",
     "all": "الكل",
     "buttons": {
       "logout": "تسجيل الخروج",
@@ -709,7 +712,8 @@
       "paymentHistory": "الدفع والسجل",
       "quickInfo": "معلومات الدين",
       "actions": "الإجراءات",
-      "reviewFlag": "مُحدَّد للمراجعة"
+      "reviewFlag": "مُحدَّد للمراجعة",
+      "feePreview": "معاينة الرسوم"
     },
     "fields": {
       "amount": "المبلغ",
@@ -730,9 +734,15 @@
       "overdueActionsCount": "إجراءات التأخر",
       "flaggedAt": "تاريخ الإبلاغ",
       "flagReason": "السبب",
-      "flaggedBy": "أبلغ عنه"
+      "flaggedBy": "أبلغ عنه",
+      "debtboxFee": "رسوم ديبتبوكس",
+      "instantPayoutFee": "رسوم الدفع الفوري",
+      "totalDeductions": "إجمالي الخصومات",
+      "merchantNetAmount": "صافي التاجر"
     },
     "feeExplanation": "تشمل الرسوم المخصومة رسوم Debtbox وضريبة القيمة المضافة ورسوم مزود الدفع وأي خصومات أخرى مطبقة.",
+    "feePreviewUnavailable": "معاينة الرسوم غير متاحة.",
+    "feeSnapshotAt": "لقطة في",
     "actions": {
       "extendDueDate": "تمديد تاريخ الاستحقاق",
       "flagForReview": "إحالة للمراجعة",
@@ -865,13 +875,42 @@
     }
   },
   "payments": {
+    "title": "سجلات الدفع",
     "subtitle": "عرض جميع سجلات الدفع المحاسبية",
+    "paymentId": "دفعة",
     "noPayments": "لا توجد مدفوعات",
+    "errorLoading": "فشل في تحميل تفاصيل الدفعة.",
     "statuses": {
       "succeeded": "ناجح",
       "pending": "قيد الانتظار",
       "failed": "فشل",
       "refunded": "مسترد"
+    },
+    "sections": {
+      "feeBreakdown": "تفصيل الرسوم",
+      "payoutLinks": "روابط الدفعات",
+      "debtMerchant": "الدين والتاجر",
+      "quickInfo": "معلومات الدفعة"
+    },
+    "fields": {
+      "status": "الحالة",
+      "grossAmount": "المبلغ الإجمالي",
+      "merchantNet": "صافي التاجر",
+      "debtboxFee": "رسوم ديبتبوكس",
+      "providerFee": "رسوم مزود الخدمة",
+      "includedInFee": "مشمول في رسوم ديبتبوكس",
+      "instantPayoutFee": "رسوم الدفع الفوري",
+      "totalDeductions": "إجمالي الخصومات",
+      "paymentMethod": "طريقة الدفع",
+      "payoutMethod": "طريقة الصرف",
+      "brand": "نوع البطاقة",
+      "paidAt": "تاريخ الدفع",
+      "providerFeeType": "نوع رسوم المزود",
+      "currency": "العملة",
+      "debt": "الدين",
+      "debtStatus": "حالة الدين",
+      "merchant": "التاجر",
+      "customer": "العميل"
     },
     "columns": {
       "id": "الرقم",
@@ -883,7 +922,117 @@
       "netAmount": "الصافي",
       "method": "الطريقة",
       "payouts": "الدفعات",
-      "paidAt": "تاريخ الدفع"
+      "paidAt": "تاريخ الدفع",
+      "payoutId": "رقم الدفعة",
+      "payoutStatus": "الحالة",
+      "payoutNet": "المبلغ الصافي"
+    }
+  },
+  "recovery": {
+    "title": "وحدة الاسترداد",
+    "subtitle": "أدوات إصلاح البيانات المالية لمدير النظام",
+    "dryRunCheck": "تشغيل تجريبي (معاينة فقط، بدون كتابة)",
+    "dryRun": "تشغيل تجريبي — لم تُكتب أي تغييرات",
+    "previewChanges": "معاينة التغييرات",
+    "applyChanges": "تطبيق التغييرات",
+    "runForReal": "تشغيل فعلي",
+    "changes": "تغييرات",
+    "inspect": "فحص",
+    "inspectNotFound": "الدفعة غير موجودة أو فشل الفحص.",
+    "inspectOk": "لا توجد فروقات. بيانات الدفعة صحيحة.",
+    "inspectPayment": "فحص وإصلاح الدفعة",
+    "tabs": {
+      "reconcile": "التسوية",
+      "paymentRecovery": "استرداد الدفعة",
+      "payoutLedger": "سجل المدفوعات",
+      "receivables": "المستحقات",
+      "debtSnapshots": "لقطات الديون"
+    },
+    "fields": {
+      "merchantId": "رقم التاجر",
+      "debtId": "رقم الدين",
+      "paymentId": "رقم الدفعة",
+      "from": "من",
+      "to": "إلى",
+      "fixOptions": "خيارات الإصلاح"
+    },
+    "options": {
+      "fixPayments": "إعادة احتساب المدفوعات",
+      "fixPayouts": "إعادة بناء سجل المدفوعات",
+      "fixReceivables": "إعادة بناء المستحقات",
+      "fixDebtFeeSnapshots": "إعادة بناء لقطات رسوم الديون",
+      "recomputeFees": "إعادة احتساب الرسوم",
+      "fixPaidFields": "إصلاح حقول المدفوع",
+      "includeInstantOnly": "تضمين المدفوعات الفورية فقط"
+    },
+    "reconcile": {
+      "success": "اكتملت عملية التسوية.",
+      "error": "فشلت التسوية."
+    },
+    "recompute": {
+      "success": "تم إعادة احتساب الدفعة بنجاح.",
+      "error": "فشلت إعادة الاحتساب."
+    },
+    "receivables": {
+      "success": "تم إعادة بناء المستحقات بنجاح.",
+      "error": "فشلت إعادة البناء."
+    },
+    "payoutLedger": {
+      "success": "تم إعادة بناء سجل المدفوعات بنجاح.",
+      "error": "فشلت إعادة البناء."
+    },
+    "debtSnapshots": {
+      "description": "مطلوب حقل نطاق واحد على الأقل.",
+      "success": "تم إعادة بناء لقطات رسوم الديون بنجاح.",
+      "error": "فشلت إعادة البناء."
+    },
+    "paymentRecovery": {
+      "inspect": "فحص الدفعة",
+      "recompute": "إعادة احتساب الدفعة"
+    },
+    "confirmModal": {
+      "title": "تأكيد الإجراء",
+      "warning": "سيؤدي هذا إلى كتابة تغييرات في قاعدة البيانات.",
+      "payments": "مدفوعات",
+      "payouts": "دفعات",
+      "receivables": "مستحقات",
+      "total": "الإجمالي",
+      "confirm": "تطبيق",
+      "willBeApplied": "سيتم تطبيقها."
+    },
+    "groups": {
+      "payments": "المدفوعات",
+      "payouts": "الدفعات",
+      "receivables": "المستحقات"
+    },
+    "actions": {
+      "would_update": "سيتم التحديث",
+      "would_create": "سيتم الإنشاء",
+      "updated": "تم التحديث",
+      "created_payout_and_item": "تم إنشاء الدفعة والعنصر",
+      "created_item_for_existing_payout": "أُضيف إلى الدفعة",
+      "no_change": "لا تغيير",
+      "skipped_existing_payout_item": "تم التخطي",
+      "skipped_existing_receivable": "تم التخطي",
+      "skipped_invalid_state": "تم التخطي (حالة غير صالحة)",
+      "not_found": "غير موجود"
+    },
+    "results": {
+      "title": "نتائج الاسترداد",
+      "total": "الإجمالي",
+      "changed": "مُعدَّل",
+      "same": "متطابق",
+      "unchanged": "بدون تغيير",
+      "notFound": "غير موجود",
+      "nothingToFix": "كل شيء صحيح. لا توجد تغييرات مطلوبة.",
+      "id": "الرقم",
+      "action": "الإجراء",
+      "diffs": "التغييرات",
+      "noItems": "لا توجد عناصر.",
+      "field": "الحقل",
+      "current": "الحالي",
+      "expected": "المتوقع",
+      "status": "الحالة"
     }
   }
 }

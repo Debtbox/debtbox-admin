@@ -10,10 +10,12 @@ import {
   CircleDollarSign,
   TrendingUp,
   Wallet,
+  CreditCard,
+  Wrench,
 } from "lucide-react";
 import { sidebarLogo } from "@/assets/images";
 import { PERMISSIONS, DASHBOARD_PERMISSIONS, SALES_PERMISSIONS } from "@/auth/permissions";
-import { canAny } from "@/auth/rbac";
+import { canAny, isSuperadmin } from "@/auth/rbac";
 import { useUserStore } from "@/stores/UserStore";
 
 interface SidebarProps {
@@ -26,6 +28,7 @@ interface NavItem {
   href: string;
   icon: React.ReactNode;
   permissions: readonly string[];
+  superadminOnly?: boolean;
 }
 
 const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
@@ -77,12 +80,25 @@ const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
       permissions: [PERMISSIONS.PAYMENT_LIST],
     },
     {
+      name: t("navigation.payments", "Payments"),
+      href: "/payments",
+      icon: <CreditCard className="w-5 h-5" />,
+      permissions: [PERMISSIONS.PAYMENT_LIST],
+    },
+    {
       name: t("navigation.systemUsers", "System Users"),
       href: "/system-users",
       icon: <UserCog className="w-5 h-5" />,
       permissions: [PERMISSIONS.USER_LIST],
     },
-  ].filter((item) => canAny(user, item.permissions));
+    {
+      name: t("navigation.recoveryConsole", "Recovery Console"),
+      href: "/recovery",
+      icon: <Wrench className="w-5 h-5" />,
+      permissions: [],
+      superadminOnly: true,
+    },
+  ].filter((item) => item.superadminOnly ? isSuperadmin(user) : canAny(user, item.permissions));
 
   const isActive = (href: string) => {
     if (href === "/") {

@@ -34,7 +34,9 @@
     "debts": "Debts",
     "salesLeads": "Sales Leads",
     "systemUsers": "System Users",
-    "payouts": "Payouts"
+    "payouts": "Payouts",
+    "payments": "Payments",
+    "recoveryConsole": "Recovery Console"
   },
   "navbar": {
     "welcome": "Welcome!"
@@ -405,6 +407,7 @@
     "to": "To",
     "dateRange": "Date Range",
     "cancel": "Cancel",
+    "last": "last",
     "all": "All",
     "buttons": {
       "logout": "Logout",
@@ -709,7 +712,8 @@
       "paymentHistory": "Payment & History",
       "quickInfo": "Debt Information",
       "actions": "Actions",
-      "reviewFlag": "Flagged for Review"
+      "reviewFlag": "Flagged for Review",
+      "feePreview": "Fee Preview"
     },
     "fields": {
       "amount": "Amount",
@@ -730,9 +734,15 @@
       "overdueActionsCount": "Overdue Actions",
       "flaggedAt": "Flagged At",
       "flagReason": "Reason",
-      "flaggedBy": "Flagged By"
+      "flaggedBy": "Flagged By",
+      "debtboxFee": "Debtbox Fee",
+      "instantPayoutFee": "Instant Payout Fee",
+      "totalDeductions": "Total Deductions",
+      "merchantNetAmount": "Merchant Net"
     },
     "feeExplanation": "Deducted fees include Debtbox fees, VAT, payment provider fees, and other applicable deductions.",
+    "feePreviewUnavailable": "Fee preview unavailable.",
+    "feeSnapshotAt": "Snapshot at",
     "actions": {
       "extendDueDate": "Extend Due Date",
       "flagForReview": "Flag for Review",
@@ -865,13 +875,42 @@
     }
   },
   "payments": {
+    "title": "Payments",
     "subtitle": "View all payment accounting records",
+    "paymentId": "Payment",
     "noPayments": "No payments found",
+    "errorLoading": "Failed to load payment details.",
     "statuses": {
       "succeeded": "Succeeded",
       "pending": "Pending",
       "failed": "Failed",
       "refunded": "Refunded"
+    },
+    "sections": {
+      "feeBreakdown": "Fee Breakdown",
+      "payoutLinks": "Payout Links",
+      "debtMerchant": "Debt & Merchant",
+      "quickInfo": "Payment Information"
+    },
+    "fields": {
+      "status": "Status",
+      "grossAmount": "Gross Amount",
+      "merchantNet": "Merchant Net",
+      "debtboxFee": "Debtbox Fee",
+      "providerFee": "Provider Fee",
+      "includedInFee": "incl. in Debtbox fee",
+      "instantPayoutFee": "Instant Payout Fee",
+      "totalDeductions": "Total Deductions",
+      "paymentMethod": "Payment Method",
+      "payoutMethod": "Payout Method",
+      "brand": "Card Brand",
+      "paidAt": "Paid At",
+      "providerFeeType": "Provider Fee Type",
+      "currency": "Currency",
+      "debt": "Debt",
+      "debtStatus": "Debt Status",
+      "merchant": "Merchant",
+      "customer": "Customer"
     },
     "columns": {
       "id": "ID",
@@ -883,7 +922,117 @@
       "netAmount": "Net Amount",
       "method": "Method",
       "payouts": "Payouts",
-      "paidAt": "Paid At"
+      "paidAt": "Paid At",
+      "payoutId": "Payout ID",
+      "payoutStatus": "Status",
+      "payoutNet": "Net Amount"
+    }
+  },
+  "recovery": {
+    "title": "Recovery Console",
+    "subtitle": "Superadmin repair tools for payment data integrity.",
+    "dryRunCheck": "Dry run (preview only, no writes)",
+    "dryRun": "DRY RUN — no changes written",
+    "previewChanges": "Preview Changes",
+    "applyChanges": "Apply Changes",
+    "runForReal": "Run for Real",
+    "changes": "changes",
+    "inspect": "Inspect",
+    "inspectNotFound": "Payment not found or inspection failed.",
+    "inspectOk": "No differences found. Payment data looks correct.",
+    "inspectPayment": "Inspect & Repair Payment",
+    "tabs": {
+      "reconcile": "Reconcile",
+      "paymentRecovery": "Payment Recovery",
+      "payoutLedger": "Payout Ledger",
+      "receivables": "Receivables",
+      "debtSnapshots": "Debt Snapshots"
+    },
+    "fields": {
+      "merchantId": "Merchant ID",
+      "debtId": "Debt ID",
+      "paymentId": "Payment ID",
+      "from": "From",
+      "to": "To",
+      "fixOptions": "Fix Options"
+    },
+    "options": {
+      "fixPayments": "Recompute Payments",
+      "fixPayouts": "Rebuild Payout Ledger",
+      "fixReceivables": "Rebuild Receivables",
+      "fixDebtFeeSnapshots": "Rebuild Debt Fee Snapshots",
+      "recomputeFees": "Recompute fees",
+      "fixPaidFields": "Fix paid fields",
+      "includeInstantOnly": "Include instant payouts only"
+    },
+    "reconcile": {
+      "success": "Reconciliation complete.",
+      "error": "Reconciliation failed."
+    },
+    "recompute": {
+      "success": "Payment recomputed successfully.",
+      "error": "Recompute failed."
+    },
+    "receivables": {
+      "success": "Receivables rebuilt successfully.",
+      "error": "Rebuild failed."
+    },
+    "payoutLedger": {
+      "success": "Payout ledger rebuilt successfully.",
+      "error": "Rebuild failed."
+    },
+    "debtSnapshots": {
+      "description": "At least one scope field is required.",
+      "success": "Debt fee snapshots rebuilt successfully.",
+      "error": "Rebuild failed."
+    },
+    "paymentRecovery": {
+      "inspect": "Inspect Payment",
+      "recompute": "Recompute Payment"
+    },
+    "confirmModal": {
+      "title": "Confirm Action",
+      "warning": "This will write changes to the database.",
+      "payments": "payments",
+      "payouts": "payouts",
+      "receivables": "receivables",
+      "total": "Total",
+      "confirm": "Apply",
+      "willBeApplied": "will be applied."
+    },
+    "groups": {
+      "payments": "Payments",
+      "payouts": "Payouts",
+      "receivables": "Receivables"
+    },
+    "actions": {
+      "would_update": "Will Update",
+      "would_create": "Will Create",
+      "updated": "Updated",
+      "created_payout_and_item": "Created Payout & Item",
+      "created_item_for_existing_payout": "Added to Payout",
+      "no_change": "No Change",
+      "skipped_existing_payout_item": "Skipped",
+      "skipped_existing_receivable": "Skipped",
+      "skipped_invalid_state": "Skipped (Invalid State)",
+      "not_found": "Not Found"
+    },
+    "results": {
+      "title": "Recovery Results",
+      "total": "Total",
+      "changed": "Changed",
+      "same": "Same",
+      "unchanged": "Unchanged",
+      "notFound": "Not Found",
+      "nothingToFix": "Everything looks correct. No changes needed.",
+      "id": "ID",
+      "action": "Action",
+      "diffs": "Changes",
+      "noItems": "No items.",
+      "field": "Field",
+      "current": "Current",
+      "expected": "Expected",
+      "status": "Status"
     }
   }
 }

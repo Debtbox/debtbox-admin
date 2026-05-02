@@ -6,7 +6,8 @@ import { SupportTicketsRoutes } from "@/features/supportTickets";
 import { DebtsManagementRoutes } from "@/features/debtsManagement/";
 import { SalesLeadsRoutes } from "@/features/salesLeads";
 import { UserManagementRoutes } from "@/features/user-management";
-import { PayoutsRoutes } from "@/features/payouts";
+import { PayoutsRoutes, PaymentsRoutes } from "@/features/payouts";
+import { RecoveryRoutes } from "@/features/recovery";
 import { RequirePermission } from "./RequirePermission";
 import { PERMISSIONS, DASHBOARD_PERMISSIONS, SALES_PERMISSIONS } from "@/auth/permissions";
 import { DefaultProtectedHome } from "./DefaultProtectedHome";
@@ -82,6 +83,22 @@ export const protectedRoutes = [
         element: (
           <RequirePermission permissions={[PERMISSIONS.PAYMENT_LIST, PERMISSIONS.PAYMENT_READ]}>
             <PayoutsRoutes />
+          </RequirePermission>
+        ),
+      },
+      {
+        path: "/payments*",
+        element: (
+          <RequirePermission permissions={[PERMISSIONS.PAYMENT_LIST, PERMISSIONS.PAYMENT_READ]}>
+            <PaymentsRoutes />
+          </RequirePermission>
+        ),
+      },
+      {
+        path: "/recovery*",
+        element: (
+          <RequirePermission superadminOnly>
+            <RecoveryRoutes />
           </RequirePermission>
         ),
       },

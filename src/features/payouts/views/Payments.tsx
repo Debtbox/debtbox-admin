@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useGetPayments } from "../api/getPayments";
-import { SectionTabs } from "../components/SectionTabs";
 import { PaymentsTable } from "../components/PaymentsTable";
 import { FilterBar } from "@/components/shared/FilterBar";
 
@@ -32,11 +31,9 @@ const Payments = () => {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-1">{t("payouts.title")}</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-1">{t("payments.title", "Payments")}</h1>
         <p className="text-gray-500 text-sm">{t("payments.subtitle")}</p>
       </div>
-
-      <SectionTabs />
 
       <div className="mb-6">
         <FilterBar
