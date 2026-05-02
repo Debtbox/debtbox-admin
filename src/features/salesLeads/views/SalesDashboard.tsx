@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { BarChart3, CheckCircle, CircleDollarSign, Store, Target, Users } from "lucide-react";
 import { useSalesDashboard } from "../api/sales";
-import { formatSalesAmount } from "../utils";
+import { formatIncentiveTier, formatSalesAmount } from "../utils";
 import { SalesSectionTabs } from "../components";
 
 const StatCard = ({ label, value, icon }: { label: string; value: string | number; icon: React.ReactNode }) => (
@@ -18,7 +18,10 @@ const SalesDashboard = () => {
   const { t } = useTranslation();
   const dashboardQuery = useSalesDashboard({ staleTime: 60_000 });
   const data = dashboardQuery.data?.data;
-  const leadsByStatus = data?.leadsByStatus ?? {};
+  const funnel = data?.funnel;
+  const leadsByStatus = Object.fromEntries(
+    (funnel?.leadsByStatus ?? []).map(({ status, count }) => [status, Number(count)]),
+  );
 
   return (
     <div className="p-6">
@@ -27,11 +30,11 @@ const SalesDashboard = () => {
         <h1 className="text-3xl font-bold text-gray-900">{t("salesDashboard.title", "Sales Dashboard")}</h1>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
-        <StatCard label={t("salesDashboard.totalLeads", "Total Leads")} value={data?.totalLeads ?? 0} icon={<Users className="w-6 h-6" />} />
-        <StatCard label={t("salesDashboard.assignedLeads", "Assigned Leads")} value={data?.assignedLeads ?? 0} icon={<Target className="w-6 h-6" />} />
-        <StatCard label={t("salesDashboard.convertedLeads", "Converted Leads")} value={data?.convertedLeads ?? 0} icon={<CheckCircle className="w-6 h-6" />} />
+        <StatCard label={t("salesDashboard.totalLeads", "Total Leads")} value={funnel?.totalLeads ?? 0} icon={<Users className="w-6 h-6" />} />
+        <StatCard label={t("salesDashboard.assignedLeads", "Assigned Leads")} value={funnel?.assignedLeads ?? 0} icon={<Target className="w-6 h-6" />} />
+        <StatCard label={t("salesDashboard.convertedLeads", "Converted Leads")} value={funnel?.convertedLeads ?? 0} icon={<CheckCircle className="w-6 h-6" />} />
         <StatCard label={t("salesDashboard.activeMerchants", "Active Merchants")} value={data?.activeMerchants ?? 0} icon={<Store className="w-6 h-6" />} />
-        <StatCard label={t("salesDashboard.incentiveTier", "Incentive Tier")} value={data?.incentiveTier ?? "—"} icon={<BarChart3 className="w-6 h-6" />} />
+        <StatCard label={t("salesDashboard.incentiveTier", "Incentive Tier")} value={formatIncentiveTier(data?.incentiveTier)} icon={<BarChart3 className="w-6 h-6" />} />
         <StatCard label={t("salesDashboard.incentiveAmount", "Incentive Amount")} value={formatSalesAmount(data?.incentiveAmount)} icon={<CircleDollarSign className="w-6 h-6" />} />
       </div>
       <div className="bg-white rounded-lg border border-gray-200 p-5">

@@ -53,6 +53,12 @@ export interface SalesAssignment {
   updated_at?: string;
 }
 
+export interface IncentiveTier {
+  minActiveMerchants: number;
+  maxActiveMerchants: number;
+  amount: number;
+}
+
 export interface SalesPerformance {
   totalAssignedMerchants: number;
   activeMerchants: number;
@@ -60,17 +66,21 @@ export interface SalesPerformance {
   totalDebtCount: number;
   totalDebtAmount: string | number | null;
   totalPaidAmount: number | null;
-  incentiveTier: string | null;
+  incentiveTier: IncentiveTier | string | null;
   incentiveAmount: string | number | null;
 }
 
-export interface SalesDashboard {
+export interface SalesDashboardFunnel {
   totalLeads: number;
   assignedLeads: number;
   convertedLeads: number;
-  leadsByStatus: Partial<Record<LeadStatus, number>>;
+  leadsByStatus: { status: string; count: string }[];
+}
+
+export interface SalesDashboard {
+  funnel: SalesDashboardFunnel;
   activeMerchants: number;
-  incentiveTier: string | null;
+  incentiveTier: IncentiveTier | string | null;
   incentiveAmount: string | number | null;
 }
 
