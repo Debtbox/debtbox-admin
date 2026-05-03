@@ -11,7 +11,7 @@ export interface AddSupportTicketMessageRequest {
 
 export const addSupportTicketMessage = ({ id, data }: { id: string; data: AddSupportTicketMessageRequest }): Promise<AddSupportTicketMessageResponse> => {
   const language = getLanguageFromCookie();
-  return axios.post(`/v0.0.1/api/admin/support/${id}/messages`, data, {
+  return axios.post(`/admin/support/${id}/messages`, data, {
     headers: {
       'Accept-Language': language,
     },
