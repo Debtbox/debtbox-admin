@@ -291,10 +291,13 @@ const PaymentDetails = () => {
               <Field
                 label={t("payments.fields.customer", "Customer")}
                 value={
-                  <span>
+                  <Link
+                    to={`/customers/${payment.customer.id}`}
+                    className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                  >
                     {payment.customer.nameEn}{" "}
                     <span className="text-xs text-gray-400">#{payment.customer.id}</span>
-                  </span>
+                  </Link>
                 }
               />
             </div>

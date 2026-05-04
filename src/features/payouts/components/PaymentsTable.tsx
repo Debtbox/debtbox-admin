@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Eye } from "lucide-react";
 import { cn } from "@/utils/cn";
 import Table, { type TableColumn } from "@/components/shared/Table";
@@ -92,6 +92,20 @@ export const PaymentsTable = ({ data, isLoading, pagination, onPageChange }: Pay
           <p className="text-sm text-gray-900">{record.merchant.nameEn}</p>
           <p className="text-xs text-gray-400">ID: {record.merchant.id}</p>
         </div>
+      ),
+    },
+    {
+      key: "customer",
+      title: t("payments.columns.customer"),
+      dataIndex: "customer",
+      render: (_, record) => (
+        <Link
+          to={`/customers/${record.customer.id}`}
+          className="text-blue-600 hover:text-blue-800 hover:underline text-sm font-medium"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {record.customer.nameEn}
+        </Link>
       ),
     },
     {

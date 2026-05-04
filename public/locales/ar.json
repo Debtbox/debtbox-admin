@@ -917,6 +917,7 @@
       "status": "الحالة",
       "debt": "الدين",
       "merchant": "التاجر",
+      "customer": "العميل",
       "grossAmount": "الإجمالي",
       "deductions": "الخصومات",
       "netAmount": "الصافي",

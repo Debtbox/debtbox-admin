@@ -917,6 +917,7 @@
       "status": "Status",
       "debt": "Debt",
       "merchant": "Merchant",
+      "customer": "Customer",
       "grossAmount": "Gross",
       "deductions": "Deductions",
       "netAmount": "Net Amount",
