@@ -22,11 +22,37 @@ export interface DebtDetailsDTO extends DebtDTO {
   review_flagged_at: string | null;
   review_flag_reason: string | null;
   review_flagged_by: number | null;
+  // Fee snapshot stored on debt
+  fee_snapshot_at: string | null;
+  expected_debtbox_fee_halala: number | null;
+  expected_instant_payout_fee_halala: number | null;
   expected_total_deductions_halala: number | null;
   expected_merchant_net_amount_halala: number | null;
+  expected_provider_fee_base_halala: number | null;
+  expected_provider_fee_vat_halala: number | null;
+  expected_provider_fee_total_halala: number | null;
+  expected_provider_fee_type: string | null;
+  // Actual payment data
   payment_date: string | null;
+  payment_id: number | null;
   payment_status: string | null;
+  payment_method_type: string | null;
   payment_method: string | null;
+  payout_method: string | null;
+  payment_total_amount_halala: number | null;
+  payment_paid_amount_halala: number | null;
+  payment_remaining_amount_halala: number | null;
+  debtbox_fee_halala: number | null;
+  provider_fee_total_halala: number | null;
+  provider_fee_base_halala: number | null;
+  provider_fee_vat_halala: number | null;
+  provider_fee_type_applied: string | null;
+  provider_fee_rule_source: string | null;
+  merchant_net_amount_halala: number | null;
+  payment_brand: string | null;
+  card_country: string | null;
+  card_issuer_country: string | null;
+  // Activity
   last_extension_at: string | null;
   extensions_count: string;
   last_overdue_action_at: string | null;

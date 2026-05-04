@@ -713,7 +713,9 @@
       "quickInfo": "Debt Information",
       "actions": "Actions",
       "reviewFlag": "Flagged for Review",
-      "feePreview": "Fee Preview"
+      "feePreview": "Fee Preview",
+      "storedSnapshot": "Stored Snapshot",
+      "livePreview": "Live Preview"
     },
     "fields": {
       "amount": "Amount",
@@ -738,7 +740,17 @@
       "debtboxFee": "Debtbox Fee",
       "instantPayoutFee": "Instant Payout Fee",
       "totalDeductions": "Total Deductions",
-      "merchantNetAmount": "Merchant Net"
+      "merchantNetAmount": "Merchant Net",
+      "debtTotal": "Debt Total",
+      "providerFeeBase": "Provider Fee (Base)",
+      "providerFeeVat": "Provider Fee (VAT)",
+      "providerFeeType": "Provider Fee Type",
+      "paymentId": "Payment ID",
+      "paymentMethodType": "Payment Channel",
+      "payoutMethod": "Payout Method",
+      "paymentBrand": "Card Brand",
+      "totalPaid": "Total Paid",
+      "remaining": "Remaining"
     },
     "feeExplanation": "Deducted fees include Debtbox fees, VAT, payment provider fees, and other applicable deductions.",
     "feePreviewUnavailable": "Fee preview unavailable.",

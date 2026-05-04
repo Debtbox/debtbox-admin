@@ -713,7 +713,9 @@
       "quickInfo": "معلومات الدين",
       "actions": "الإجراءات",
       "reviewFlag": "مُحدَّد للمراجعة",
-      "feePreview": "معاينة الرسوم"
+      "feePreview": "معاينة الرسوم",
+      "storedSnapshot": "اللقطة المخزنة",
+      "livePreview": "المعاينة الحية"
     },
     "fields": {
       "amount": "المبلغ",
@@ -738,7 +740,17 @@
       "debtboxFee": "رسوم ديبتبوكس",
       "instantPayoutFee": "رسوم الدفع الفوري",
       "totalDeductions": "إجمالي الخصومات",
-      "merchantNetAmount": "صافي التاجر"
+      "merchantNetAmount": "صافي التاجر",
+      "debtTotal": "إجمالي الدين",
+      "providerFeeBase": "رسوم المزود (الأساسية)",
+      "providerFeeVat": "رسوم المزود (ضريبة القيمة المضافة)",
+      "providerFeeType": "نوع رسوم المزود",
+      "paymentId": "رقم الدفعة",
+      "paymentMethodType": "قناة الدفع",
+      "payoutMethod": "طريقة الصرف",
+      "paymentBrand": "نوع البطاقة",
+      "totalPaid": "إجمالي المدفوع",
+      "remaining": "المتبقي"
     },
     "feeExplanation": "تشمل الرسوم المخصومة رسوم Debtbox وضريبة القيمة المضافة ورسوم مزود الدفع وأي خصومات أخرى مطبقة.",
     "feePreviewUnavailable": "معاينة الرسوم غير متاحة.",

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   ArrowLeft,
@@ -13,6 +13,7 @@ import {
   Bell,
   XCircle,
   Calculator,
+  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/shared/Button";
 import { useGetDebt } from "../api/getDebt";
@@ -25,11 +26,16 @@ import { ResendNotificationModal } from "../components/ResendNotificationModal";
 import { formatDebtAmount, formatHalalaAmount, isDebtOverdue } from "../utils";
 import { PERMISSIONS } from "@/auth/permissions";
 import { useCan, useCanAny } from "@/auth/rbac";
+import { formatDate } from "@/utils/formatDate";
 
 const Field = ({ label, value }: { label: string; value: ReactNode }) => (
   <div>
-    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{label}</p>
-    <div className="text-sm text-gray-900">{value ?? <span className="text-gray-400">—</span>}</div>
+    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+      {label}
+    </p>
+    <div className="text-sm text-gray-900">
+      {value ?? <span className="text-gray-400">—</span>}
+    </div>
   </div>
 );
 
@@ -44,7 +50,9 @@ const SectionCard = ({
   children: ReactNode;
   className?: string;
 }) => (
-  <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className ?? ""}`}>
+  <div
+    className={`bg-white rounded-lg border border-gray-200 p-6 ${className ?? ""}`}
+  >
     <div className="flex items-center gap-2 mb-4">
       <span className="text-gray-400">{icon}</span>
       <h3 className="text-base font-semibold text-gray-900">{title}</h3>
@@ -53,19 +61,10 @@ const SectionCard = ({
   </div>
 );
 
-const formatDate = (dateStr: string | null) => {
-  if (!dateStr) return null;
-  return new Date(dateStr).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-};
-
 const DebtDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const canExtend = useCan(PERMISSIONS.DEBT_EXTEND_DUE_DATE);
   const canFlag = useCan(PERMISSIONS.DEBT_FLAG_REVIEW);
   const canResend = useCan(PERMISSIONS.DEBT_RESEND_NOTIFICATIONS);
@@ -82,8 +81,11 @@ const DebtDetails = () => {
   const { data, isLoading, isError, refetch } = useGetDebt({ id: id! });
   const debt = data?.data;
 
-  const { data: feePreviewData, isLoading: isFeePreviewLoading, isError: isFeePreviewError } =
-    useGetDebtFeePreview({ id: id! });
+  const {
+    data: feePreviewData,
+    isLoading: isFeePreviewLoading,
+    isError: isFeePreviewError,
+  } = useGetDebtFeePreview({ id: id! });
   const feePreview = feePreviewData?.data;
 
   const [showCancel, setShowCancel] = useState(false);
@@ -110,7 +112,11 @@ const DebtDetails = () => {
   if (isError || !debt) {
     return (
       <div className="p-6">
-        <Button variant="ghost" size="sm" onClick={() => navigate("/debts-management")}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate("/debts-management")}
+        >
           <ArrowLeft className="w-4 h-4 me-1" />
           {t("common.back", "Back")}
         </Button>
@@ -123,6 +129,7 @@ const DebtDetails = () => {
 
   const isActionable = !["paid", "cancelled"].includes(debt.status);
   const hasPaymentInfo =
+    debt.payment_id ||
     debt.payment_date ||
     debt.payment_status ||
     debt.payment_method ||
@@ -173,14 +180,17 @@ const DebtDetails = () => {
                 <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                   {t("debts.fields.totalAmount", "Total Amount")}
                 </p>
-                <p className="text-2xl font-bold text-gray-900">{formatDebtAmount(debt.amount)}</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {formatDebtAmount(debt.amount)}
+                </p>
               </div>
               <div className="rounded-lg border border-red-100 bg-red-50 p-4">
                 <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                   {t("debts.fields.deductedFees", "Deducted Fees")}
                 </p>
                 <p className="text-lg font-semibold text-red-700">
-                  {formatHalalaAmount(debt.expected_total_deductions_halala) ?? "—"}
+                  {formatHalalaAmount(debt.expected_total_deductions_halala) ??
+                    "—"}
                 </p>
               </div>
               <div className="rounded-lg border border-green-100 bg-green-50 p-4">
@@ -188,7 +198,9 @@ const DebtDetails = () => {
                   {t("debts.fields.merchantNetAmount", "Merchant Net Amount")}
                 </p>
                 <p className="text-lg font-semibold text-green-700">
-                  {formatHalalaAmount(debt.expected_merchant_net_amount_halala) ?? "—"}
+                  {formatHalalaAmount(
+                    debt.expected_merchant_net_amount_halala,
+                  ) ?? "—"}
                 </p>
               </div>
             </div>
@@ -201,13 +213,40 @@ const DebtDetails = () => {
             </p>
 
             <div className="grid grid-cols-2 gap-4">
-              <Field label={t("debts.fields.dueDate", "Due Date")} value={
-                <span className={isDebtOverdue(debt.due_date, debt.status) ? "text-red-600 font-medium" : undefined}>
-                  {formatDate(debt.due_date)}
-                </span>
-              } />
-              <Field label={t("debts.fields.createdAt", "Created At")} value={formatDate(debt.created_at)} />
-              <Field label={t("debts.fields.updatedAt", "Updated At")} value={formatDate(debt.updated_at)} />
+              <Field
+                label={t("debts.fields.dueDate", "Due Date")}
+                value={
+                  <span
+                    className={
+                      isDebtOverdue(debt.due_date, debt.status)
+                        ? "text-red-600 font-medium"
+                        : undefined
+                    }
+                  >
+                    {formatDate(i18n.language, debt.due_date, {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </span>
+                }
+              />
+              <Field
+                label={t("debts.fields.createdAt", "Created At")}
+                value={formatDate(i18n.language, debt.created_at, {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
+              />
+              <Field
+                label={t("debts.fields.updatedAt", "Updated At")}
+                value={formatDate(i18n.language, debt.updated_at, {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
+              />
               <Field
                 label={t("debts.fields.createdWithSanad", "Created with Sanad")}
                 value={
@@ -218,7 +257,9 @@ const DebtDetails = () => {
                         : "bg-gray-100 text-gray-600 border-gray-200"
                     }`}
                   >
-                    {debt.createwithsanad ? t("common.yes", "Yes") : t("common.no", "No")}
+                    {debt.createwithsanad
+                      ? t("common.yes", "Yes")
+                      : t("common.no", "No")}
                   </span>
                 }
               />
@@ -240,22 +281,28 @@ const DebtDetails = () => {
                     onClick={() => navigate(`/merchants/${debt.merchant_id}`)}
                     className="text-sm text-blue-600 hover:text-blue-800 font-medium text-start block"
                   >
-                    {debt.merchant_full_name_en}
+                    {i18n.language === "ar" ? debt.merchant_full_name_ar : debt.merchant_full_name_en}
                   </button>
                 ) : (
-                  <p className="text-sm text-gray-900 font-medium">{debt.merchant_full_name_en}</p>
+                  <p className="text-sm text-gray-900 font-medium">
+                    {i18n.language === "ar" ? debt.merchant_full_name_ar : debt.merchant_full_name_en}
+                  </p>
                 )}
-                <p className="text-sm text-gray-500">{debt.merchant_full_name_ar}</p>
-                <p className="text-xs text-gray-400 mt-0.5">ID: {debt.merchant_id}</p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  ID: {debt.merchant_id}
+                </p>
               </div>
 
               <div>
                 <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                   {t("debts.fields.business", "Business")}
                 </p>
-                <p className="text-sm text-gray-900 font-medium">{debt.business_name_en}</p>
-                <p className="text-sm text-gray-500">{debt.business_name_ar}</p>
-                <p className="text-xs text-gray-400 mt-0.5">ID: {debt.business_id}</p>
+                <p className="text-sm text-gray-900 font-medium">
+                  {i18n.language === "ar" ? debt.business_name_ar : debt.business_name_en}
+                </p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  ID: {debt.business_id}
+                </p>
               </div>
             </div>
           </SectionCard>
@@ -270,13 +317,16 @@ const DebtDetails = () => {
                 onClick={() => navigate(`/customers/${debt.customer_id}`)}
                 className="text-sm text-blue-600 hover:text-blue-800 font-medium text-start block mb-0.5"
               >
-                {debt.customer_full_name_en}
+                {i18n.language === "ar" ? debt.customer_full_name_ar : debt.customer_full_name_en}
               </button>
             ) : (
-              <p className="text-sm text-gray-900 font-medium mb-0.5">{debt.customer_full_name_en}</p>
+              <p className="text-sm text-gray-900 font-medium mb-0.5">
+                {i18n.language === "ar" ? debt.customer_full_name_ar : debt.customer_full_name_en}
+              </p>
             )}
-            <p className="text-sm text-gray-500">{debt.customer_full_name_ar}</p>
-            <p className="text-xs text-gray-400 mt-0.5">ID: {debt.customer_id}</p>
+            <p className="text-xs text-gray-400 mt-0.5">
+              ID: {debt.customer_id}
+            </p>
           </SectionCard>
 
           {/* Fee Preview */}
@@ -287,7 +337,10 @@ const DebtDetails = () => {
             {isFeePreviewLoading ? (
               <div className="grid grid-cols-2 gap-3 animate-pulse">
                 {[...Array(4)].map((_, i) => (
-                  <div key={i} className="rounded-lg border border-gray-100 bg-gray-50 p-4">
+                  <div
+                    key={i}
+                    className="rounded-lg border border-gray-100 bg-gray-50 p-4"
+                  >
                     <div className="h-3 bg-gray-200 rounded w-24 mb-2" />
                     <div className="h-5 bg-gray-200 rounded w-20" />
                   </div>
@@ -299,43 +352,223 @@ const DebtDetails = () => {
               </p>
             ) : (
               <>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-lg border border-gray-100 bg-gray-50 p-4">
-                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
-                      {t("debts.fields.debtboxFee", "Debtbox Fee")}
+                <div className="mb-4 rounded-lg border border-gray-100 bg-gray-50 p-3 flex justify-between items-center">
+                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                    {t("debts.fields.debtTotal", "Debt Total")}
+                  </span>
+                  <span className="text-base font-bold text-gray-900">
+                    {formatHalalaAmount(feePreview.debtTotalHalala)}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Stored Snapshot */}
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                      {t("debts.sections.storedSnapshot", "Stored Snapshot")}
                     </p>
-                    <p className="text-lg font-semibold text-gray-900">
-                      {formatHalalaAmount(feePreview.expectedDebtboxFeeHalala) ?? "—"}
-                    </p>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">
+                          {t("debts.fields.debtboxFee", "Debtbox Fee")}
+                        </span>
+                        <span className="font-medium">
+                          {formatHalalaAmount(
+                            feePreview.storedSnapshot.expectedDebtboxFeeHalala,
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">
+                          {t(
+                            "debts.fields.providerFeeBase",
+                            "Provider Fee (Base)",
+                          )}
+                        </span>
+                        <span className="font-medium">
+                          {formatHalalaAmount(
+                            feePreview.storedSnapshot
+                              .expectedProviderFeeBaseHalala,
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">
+                          {t(
+                            "debts.fields.providerFeeVat",
+                            "Provider Fee (VAT)",
+                          )}
+                        </span>
+                        <span className="font-medium">
+                          {formatHalalaAmount(
+                            feePreview.storedSnapshot
+                              .expectedProviderFeeVatHalala,
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">
+                          {t(
+                            "debts.fields.instantPayoutFee",
+                            "Instant Payout Fee",
+                          )}
+                        </span>
+                        <span className="font-medium">
+                          {formatHalalaAmount(
+                            feePreview.storedSnapshot
+                              .expectedInstantPayoutFeeHalala,
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm pt-2 border-t border-gray-100">
+                        <span className="text-gray-600">
+                          {t(
+                            "debts.fields.providerFeeType",
+                            "Provider Fee Type",
+                          )}
+                        </span>
+                        <span className="font-medium text-gray-700">
+                          {feePreview.storedSnapshot.expectedProviderFeeType}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm font-semibold pt-2 border-t border-gray-100">
+                        <span className="text-gray-700">
+                          {t(
+                            "debts.fields.totalDeductions",
+                            "Total Deductions",
+                          )}
+                        </span>
+                        <span className="text-red-600">
+                          -
+                          {formatHalalaAmount(
+                            feePreview.storedSnapshot
+                              .expectedTotalDeductionsHalala,
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm font-bold">
+                        <span className="text-gray-700">
+                          {t("debts.fields.merchantNetAmount", "Merchant Net")}
+                        </span>
+                        <span className="text-green-700">
+                          {formatHalalaAmount(
+                            feePreview.storedSnapshot
+                              .expectedMerchantNetAmountHalala,
+                          )}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="rounded-lg border border-gray-100 bg-gray-50 p-4">
-                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
-                      {t("debts.fields.instantPayoutFee", "Instant Payout Fee")}
+
+                  {/* Live Preview */}
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                      {t("debts.sections.livePreview", "Live Preview")}
                     </p>
-                    <p className="text-lg font-semibold text-gray-900">
-                      {formatHalalaAmount(feePreview.expectedInstantPayoutFeeHalala) ?? "—"}
-                    </p>
-                  </div>
-                  <div className="rounded-lg border border-red-100 bg-red-50 p-4">
-                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
-                      {t("debts.fields.totalDeductions", "Total Deductions")}
-                    </p>
-                    <p className="text-lg font-semibold text-red-700">
-                      {formatHalalaAmount(feePreview.expectedTotalDeductionsHalala) ?? "—"}
-                    </p>
-                  </div>
-                  <div className="rounded-lg border border-green-100 bg-green-50 p-4">
-                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
-                      {t("debts.fields.merchantNetAmount", "Merchant Net")}
-                    </p>
-                    <p className="text-lg font-semibold text-green-700">
-                      {formatHalalaAmount(feePreview.expectedMerchantNetAmountHalala) ?? "—"}
-                    </p>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">
+                          {t("debts.fields.debtboxFee", "Debtbox Fee")}
+                        </span>
+                        <span className="font-medium">
+                          {formatHalalaAmount(
+                            feePreview.merchantVisibleDeductions
+                              .debtboxFeeHalala,
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">
+                          {t(
+                            "debts.fields.providerFeeBase",
+                            "Provider Fee (Base)",
+                          )}
+                        </span>
+                        <span className="font-medium">
+                          {formatHalalaAmount(
+                            feePreview.merchantVisibleDeductions
+                              .providerFeeBaseHalala,
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">
+                          {t(
+                            "debts.fields.providerFeeVat",
+                            "Provider Fee (VAT)",
+                          )}
+                        </span>
+                        <span className="font-medium">
+                          {formatHalalaAmount(
+                            feePreview.merchantVisibleDeductions
+                              .providerFeeVatHalala,
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">
+                          {t(
+                            "debts.fields.instantPayoutFee",
+                            "Instant Payout Fee",
+                          )}
+                        </span>
+                        <span className="font-medium">
+                          {formatHalalaAmount(
+                            feePreview.merchantVisibleDeductions
+                              .instantPayoutFeeHalala,
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm pt-2 border-t border-gray-100">
+                        <span className="text-gray-600">
+                          {t(
+                            "debts.fields.providerFeeType",
+                            "Provider Fee Type",
+                          )}
+                        </span>
+                        <span className="font-medium text-gray-700">
+                          {feePreview.merchantVisibleDeductions.providerFeeType}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm font-semibold pt-2 border-t border-gray-100">
+                        <span className="text-gray-700">
+                          {t(
+                            "debts.fields.totalDeductions",
+                            "Total Deductions",
+                          )}
+                        </span>
+                        <span className="text-red-600">
+                          -
+                          {formatHalalaAmount(
+                            feePreview.merchantVisibleDeductions
+                              .totalDeductionsHalala,
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm font-bold">
+                        <span className="text-gray-700">
+                          {t("debts.fields.merchantNetAmount", "Merchant Net")}
+                        </span>
+                        <span className="text-green-700">
+                          {formatHalalaAmount(
+                            feePreview.merchantVisibleDeductions
+                              .expectedMerchantNetAmountHalala,
+                          )}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <p className="mt-3 text-xs text-gray-400">
+
+                <p className="mt-4 text-xs text-gray-400">
                   {t("debts.feeSnapshotAt", "Snapshot at")}:{" "}
-                  {formatDate(feePreview.feeSnapshotAt)}
+                  {formatDate(i18n.language, feePreview.feeSnapshotAt, {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </p>
               </>
             )}
@@ -348,10 +581,18 @@ const DebtDetails = () => {
               title={t("debts.sections.paymentHistory", "Payment & History")}
             >
               <div className="grid grid-cols-2 gap-4">
-                {debt.payment_date && (
+                {debt.payment_id && (
                   <Field
-                    label={t("debts.fields.paymentDate", "Payment Date")}
-                    value={formatDate(debt.payment_date)}
+                    label={t("debts.fields.paymentId", "Payment ID")}
+                    value={
+                      <Link
+                        to={`/payments/${debt.payment_id}`}
+                        className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                      >
+                        #{debt.payment_id}
+                        <ExternalLink className="w-3 h-3" />
+                      </Link>
+                    }
                   />
                 )}
                 {debt.payment_status && (
@@ -360,19 +601,128 @@ const DebtDetails = () => {
                     value={debt.payment_status}
                   />
                 )}
+                {debt.payment_date && (
+                  <Field
+                    label={t("debts.fields.paymentDate", "Payment Date")}
+                    value={formatDate(i18n.language, debt.payment_date, {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  />
+                )}
+                {debt.payment_method_type && (
+                  <Field
+                    label={t(
+                      "debts.fields.paymentMethodType",
+                      "Payment Channel",
+                    )}
+                    value={debt.payment_method_type}
+                  />
+                )}
                 {debt.payment_method && (
                   <Field
                     label={t("debts.fields.paymentMethod", "Payment Method")}
                     value={debt.payment_method}
                   />
                 )}
+                {debt.payment_brand && (
+                  <Field
+                    label={t("debts.fields.paymentBrand", "Card Brand")}
+                    value={debt.payment_brand}
+                  />
+                )}
+                {debt.payout_method && (
+                  <Field
+                    label={t("debts.fields.payoutMethod", "Payout Method")}
+                    value={
+                      <span className="capitalize">{debt.payout_method}</span>
+                    }
+                  />
+                )}
+                {debt.payment_total_amount_halala != null && (
+                  <Field
+                    label={t("debts.fields.totalAmount", "Total Amount")}
+                    value={
+                      <span className="font-medium">
+                        {formatHalalaAmount(debt.payment_total_amount_halala)}
+                      </span>
+                    }
+                  />
+                )}
+                {debt.payment_paid_amount_halala != null && (
+                  <Field
+                    label={t("debts.fields.totalPaid", "Total Paid")}
+                    value={
+                      <span className="font-medium text-green-700">
+                        {formatHalalaAmount(debt.payment_paid_amount_halala)}
+                      </span>
+                    }
+                  />
+                )}
+                {debt.payment_remaining_amount_halala != null &&
+                  debt.payment_remaining_amount_halala > 0 && (
+                    <Field
+                      label={t("debts.fields.remaining", "Remaining")}
+                      value={
+                        <span className="font-medium text-orange-600">
+                          {formatHalalaAmount(
+                            debt.payment_remaining_amount_halala,
+                          )}
+                        </span>
+                      }
+                    />
+                  )}
+                {debt.merchant_net_amount_halala != null && (
+                  <Field
+                    label={t("debts.fields.merchantNetAmount", "Merchant Net")}
+                    value={
+                      <span className="font-medium text-green-700">
+                        {formatHalalaAmount(debt.merchant_net_amount_halala)}
+                      </span>
+                    }
+                  />
+                )}
                 <Field
                   label={t("debts.fields.extensionsCount", "Extensions")}
-                  value={`${debt.extensions_count} ${debt.last_extension_at ? `(${t("common.last", "last")}: ${formatDate(debt.last_extension_at)})` : ""}`}
+                  value={`${debt.extensions_count} ${
+                    debt.last_extension_at
+                      ? `(${t("common.last", "last")}: ${formatDate(
+                          i18n.language,
+                          debt.last_extension_at,
+                          {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          },
+                        )})`
+                      : ""
+                  }`}
                 />
                 <Field
-                  label={t("debts.fields.overdueActionsCount", "Overdue Actions")}
-                  value={`${debt.overdue_actions_count} ${debt.last_overdue_action_at ? `(${t("common.last", "last")}: ${formatDate(debt.last_overdue_action_at)})` : ""}`}
+                  label={t(
+                    "debts.fields.overdueActionsCount",
+                    "Overdue Actions",
+                  )}
+                  value={`${debt.overdue_actions_count} ${
+                    debt.last_overdue_action_at
+                      ? `(${t("common.last", "last")}: ${formatDate(
+                          i18n.language,
+                          debt.last_overdue_action_at,
+                          {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          },
+                        )})`
+                      : ""
+                  }`}
                 />
               </div>
             </SectionCard>
@@ -387,17 +737,44 @@ const DebtDetails = () => {
               {t("debts.sections.quickInfo", "Debt Information")}
             </h3>
             <div className="space-y-3">
-              <Field label={t("debts.fields.amount", "Amount")} value={formatDebtAmount(debt.amount)} />
-              <Field label={t("debts.fields.status", "Status")} value={<DebtStatusBadge status={debt.status} />} />
+              <Field
+                label={t("debts.fields.amount", "Amount")}
+                value={formatDebtAmount(debt.amount)}
+              />
+              <Field
+                label={t("debts.fields.status", "Status")}
+                value={<DebtStatusBadge status={debt.status} />}
+              />
               <Field
                 label={t("debts.fields.dueDate", "Due Date")}
                 value={
-                  <span className={isDebtOverdue(debt.due_date, debt.status) ? "text-red-600 font-medium" : undefined}>
-                    {formatDate(debt.due_date)}
+                  <span
+                    className={
+                      isDebtOverdue(debt.due_date, debt.status)
+                        ? "text-red-600 font-medium"
+                        : undefined
+                    }
+                  >
+                    {formatDate(i18n.language, debt.due_date, {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </span>
                 }
               />
-              <Field label={t("debts.fields.createdAt", "Created At")} value={formatDate(debt.created_at)} />
+              <Field
+                label={t("debts.fields.createdAt", "Created At")}
+                value={formatDate(i18n.language, debt.created_at, {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              />
             </div>
           </div>
 
@@ -408,7 +785,10 @@ const DebtDetails = () => {
             </h3>
             {!isActionable || !canUseActions ? (
               <p className="text-sm text-gray-400">
-                {t("debts.noActionsAvailable", "No actions available for this debt.")}
+                {t(
+                  "debts.noActionsAvailable",
+                  "No actions available for this debt.",
+                )}
               </p>
             ) : (
               <div className="space-y-3">
@@ -444,7 +824,10 @@ const DebtDetails = () => {
                     className="justify-start gap-2"
                   >
                     <Bell className="w-4 h-4" />
-                    {t("debts.actions.resendNotification", "Resend Notification")}
+                    {t(
+                      "debts.actions.resendNotification",
+                      "Resend Notification",
+                    )}
                   </Button>
                 )}
 
@@ -475,7 +858,13 @@ const DebtDetails = () => {
               <div className="space-y-3">
                 <Field
                   label={t("debts.fields.flaggedAt", "Flagged At")}
-                  value={formatDate(debt.review_flagged_at)}
+                  value={formatDate(i18n.language, debt.review_flagged_at, {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 />
                 <Field
                   label={t("debts.fields.flagReason", "Reason")}
@@ -483,7 +872,11 @@ const DebtDetails = () => {
                 />
                 <Field
                   label={t("debts.fields.flaggedBy", "Flagged By")}
-                  value={debt.review_flagged_by ? `Admin #${debt.review_flagged_by}` : null}
+                  value={
+                    debt.review_flagged_by
+                      ? `Admin #${debt.review_flagged_by}`
+                      : null
+                  }
                 />
               </div>
             </div>

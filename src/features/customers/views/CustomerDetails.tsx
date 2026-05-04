@@ -17,28 +17,44 @@ export const CustomerDetails = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const canUpdate = useCan(PERMISSIONS.CUSTOMER_UPDATE);
 
-  const { data: response, isLoading, error, refetch } = useGetCustomer({ id: id! });
+  const {
+    data: response,
+    isLoading,
+    error,
+    refetch,
+  } = useGetCustomer({ id: id! });
   const customer = response?.data;
   const updateMutation = useUpdateCustomer();
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "active":   return "bg-green-100 text-green-800";
-      case "inactive": return "bg-gray-100 text-gray-800";
-      case "pending":  return "bg-yellow-100 text-yellow-800";
-      case "banned":   return "bg-red-100 text-red-800";
-      default:         return "bg-gray-100 text-gray-800";
+      case "active":
+        return "bg-green-100 text-green-800";
+      case "inactive":
+        return "bg-gray-100 text-gray-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "banned":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getVerificationStatusColor = (status: string) => {
     switch (status) {
-      case "approved":                   return "bg-green-100 text-green-800";
-      case "rejected":                   return "bg-red-100 text-red-800";
-      case "pending_nafath":             return "bg-yellow-100 text-yellow-800";
-      case "pending_email_verification": return "bg-blue-100 text-blue-800";
-      case "pending_admin_approval":     return "bg-orange-100 text-orange-800";
-      default:                           return "bg-gray-100 text-gray-800";
+      case "approved":
+        return "bg-green-100 text-green-800";
+      case "rejected":
+        return "bg-red-100 text-red-800";
+      case "pending_nafath":
+        return "bg-yellow-100 text-yellow-800";
+      case "pending_email_verification":
+        return "bg-blue-100 text-blue-800";
+      case "pending_admin_approval":
+        return "bg-orange-100 text-orange-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -54,7 +70,10 @@ export const CustomerDetails = () => {
     return (
       <div className="text-center py-12">
         <p className="text-red-600">
-          {t("customers.errorLoadingCustomer", "Error loading customer details")}
+          {t(
+            "customers.errorLoadingCustomer",
+            "Error loading customer details",
+          )}
         </p>
         <Button onClick={() => navigate("/customers")} className="mt-4">
           {t("common.back", "Back")}
@@ -68,7 +87,12 @@ export const CustomerDetails = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="outline" size="sm" onClick={() => navigate("/customers")} className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate("/customers")}
+            className="flex items-center gap-2"
+          >
             <ArrowLeft className="w-4 h-4" />
             {t("common.back", "Back")}
           </Button>
@@ -80,7 +104,10 @@ export const CustomerDetails = () => {
           </div>
         </div>
         {canUpdate && (
-          <Button onClick={() => setShowEditModal(true)} className="flex items-center gap-2">
+          <Button
+            onClick={() => setShowEditModal(true)}
+            className="flex items-center gap-2"
+          >
             <Edit className="w-4 h-4" />
             {t("common.edit", "Edit")}
           </Button>
@@ -89,11 +116,18 @@ export const CustomerDetails = () => {
 
       {/* Status Badges */}
       <div className="flex gap-2">
-        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(customer.status)}`}>
+        <span
+          className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(customer.status)}`}
+        >
           {t(`customers.statusLabel.${customer.status}`, customer.status)}
         </span>
-        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getVerificationStatusColor(customer.verification_status)}`}>
-          {t(`customers.verificationStatus.${customer.verification_status}`, customer.verification_status)}
+        <span
+          className={`px-3 py-1 rounded-full text-sm font-medium ${getVerificationStatusColor(customer.verification_status)}`}
+        >
+          {t(
+            `customers.verificationStatus.${customer.verification_status}`,
+            customer.verification_status,
+          )}
         </span>
       </div>
 
@@ -106,22 +140,52 @@ export const CustomerDetails = () => {
           </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Field label={t("customers.fullNameEn", "Full Name (English)")} value={customer.full_name_en} />
-          <Field label={t("customers.fullNameAr", "Full Name (Arabic)")} value={customer.full_name_ar} />
-          <Field label={t("customers.email", "Email")} value={customer.email} />
-          <Field label={t("customers.nationalId", "National ID")} value={customer.national_id} />
-          <Field label={t("customers.iqamaId", "Iqama ID")} value={customer.iqama_id} />
           <Field
-            label={t("customers.registrationMethodLabel", "Registration Method")}
-            value={customer.registration_method
-              ? t(`customers.registrationMethod.${customer.registration_method}`, customer.registration_method)
-              : undefined}
+            label={t("customers.fullNameEn", "Full Name (English)")}
+            value={customer.full_name_en}
           />
-          <Field label={t("customers.nationality", "Nationality")} value={customer.nationality} />
-          <Field label={t("customers.dob", "Date of Birth")} value={customer.dob} />
+          <Field
+            label={t("customers.fullNameAr", "Full Name (Arabic)")}
+            value={customer.full_name_ar}
+          />
+          <Field label={t("customers.email", "Email")} value={customer.email} />
+          <Field
+            label={t("customers.nationalId", "National ID")}
+            value={customer.national_id}
+          />
+          <Field
+            label={t("customers.iqamaId", "Iqama ID")}
+            value={customer.iqama_id}
+          />
+          <Field
+            label={t(
+              "customers.registrationMethodLabel",
+              "Registration Method",
+            )}
+            value={
+              customer.registration_method
+                ? t(
+                    `customers.registrationMethod.${customer.registration_method}`,
+                    customer.registration_method,
+                  )
+                : undefined
+            }
+          />
+          <Field
+            label={t("customers.nationality", "Nationality")}
+            value={customer.nationality}
+          />
+          <Field
+            label={t("customers.dob", "Date of Birth")}
+            value={customer.dob}
+          />
           <Field
             label={t("customers.gender", "Gender")}
-            value={customer.gender ? t(`common.gender.${customer.gender}`, customer.gender) : undefined}
+            value={
+              customer.gender
+                ? t(`common.gender.${customer.gender}`, customer.gender)
+                : undefined
+            }
           />
         </div>
       </div>
@@ -135,14 +199,30 @@ export const CustomerDetails = () => {
           </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <StatCard label={t("customers.purchasesCount", "Total Purchases")} value={customer.purchasesCount} />
-          <StatCard label={t("customers.merchantsBoughtFromCount", "Merchants Bought From")} value={customer.merchantsBoughtFromCount} />
-          <StatCard label={t("customers.businessesBoughtFromCount", "Businesses Bought From")} value={customer.businessesBoughtFromCount} />
+          <StatCard
+            label={t("customers.purchasesCount", "Total Purchases")}
+            value={customer.purchasesCount}
+          />
+          <StatCard
+            label={t(
+              "customers.merchantsBoughtFromCount",
+              "Merchants Bought From",
+            )}
+            value={customer.merchantsBoughtFromCount}
+          />
+          <StatCard
+            label={t(
+              "customers.businessesBoughtFromCount",
+              "Businesses Bought From",
+            )}
+            value={customer.businessesBoughtFromCount}
+          />
         </div>
       </div>
 
       {/* Verification */}
-      {(customer.verification_reviewed_at || customer.verification_review_note) && (
+      {(customer.verification_reviewed_at ||
+        customer.verification_review_note) && (
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             {t("customers.verificationReview", "Verification Review")}
@@ -151,14 +231,24 @@ export const CustomerDetails = () => {
             {customer.verification_reviewed_at && (
               <Field
                 label={t("customers.reviewedAt", "Reviewed At")}
-                value={formatDate(i18n.language, customer.verification_reviewed_at, {
-                  year: "numeric", month: "short", day: "numeric",
-                  hour: "2-digit", minute: "2-digit",
-                })}
+                value={formatDate(
+                  i18n.language,
+                  customer.verification_reviewed_at,
+                  {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  },
+                )}
               />
             )}
             {customer.verification_review_note && (
-              <Field label={t("customers.reviewNote", "Review Note")} value={customer.verification_review_note} />
+              <Field
+                label={t("customers.reviewNote", "Review Note")}
+                value={customer.verification_review_note}
+              />
             )}
           </div>
         </div>
@@ -170,15 +260,21 @@ export const CustomerDetails = () => {
           <Field
             label={t("customers.createdAt", "Created At")}
             value={formatDate(i18n.language, customer.created_at, {
-              year: "numeric", month: "short", day: "numeric",
-              hour: "2-digit", minute: "2-digit",
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
             })}
           />
           <Field
             label={t("customers.updatedAt", "Updated At")}
             value={formatDate(i18n.language, customer.updated_at, {
-              year: "numeric", month: "short", day: "numeric",
-              hour: "2-digit", minute: "2-digit",
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
             })}
           />
         </div>
@@ -214,7 +310,13 @@ const Field = ({ label, value }: { label: string; value?: string | null }) => (
   </div>
 );
 
-const StatCard = ({ label, value }: { label: string; value?: string | null }) => (
+const StatCard = ({
+  label,
+  value,
+}: {
+  label: string;
+  value?: string | null;
+}) => (
   <div className="bg-gray-50 rounded-lg p-4 text-center">
     <p className="text-2xl font-bold text-gray-900">{value || "0"}</p>
     <p className="text-sm text-gray-600 mt-1">{label}</p>

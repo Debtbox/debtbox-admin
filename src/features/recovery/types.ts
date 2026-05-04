@@ -56,11 +56,33 @@ export interface PaymentInspectResult {
   receivableLinkage: unknown | null;
 }
 
-export interface DebtFeePreview {
-  debtId: number;
+export interface DebtFeePreviewDeductions {
+  debtboxFeeHalala: number;
+  providerFeeBaseHalala: number;
+  providerFeeVatHalala: number;
+  providerFeeTotalHalala: number;
+  providerFeeType: string;
+  providerFeeIncludedInDebtboxFee: boolean;
+  instantPayoutFeeHalala: number;
+  totalDeductionsHalala: number;
+  expectedMerchantNetAmountHalala: number;
+}
+
+export interface DebtFeePreviewStoredSnapshot {
   expectedDebtboxFeeHalala: number;
   expectedInstantPayoutFeeHalala: number;
   expectedTotalDeductionsHalala: number;
   expectedMerchantNetAmountHalala: number;
+  expectedProviderFeeBaseHalala: number;
+  expectedProviderFeeVatHalala: number;
+  expectedProviderFeeTotalHalala: number;
+  expectedProviderFeeType: string;
+}
+
+export interface DebtFeePreview {
+  debtId: number;
+  debtTotalHalala: number;
   feeSnapshotAt: string;
+  merchantVisibleDeductions: DebtFeePreviewDeductions;
+  storedSnapshot: DebtFeePreviewStoredSnapshot;
 }
