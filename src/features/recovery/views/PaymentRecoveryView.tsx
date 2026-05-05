@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import { toast } from '@/lib/toast';
 import { AlertTriangle, X, Search } from "lucide-react";
 import { Button } from "@/components/shared/Button";
+import { MerchantSelect } from "@/components/shared/MerchantSelect";
+import { PaymentSelect } from "@/components/shared/PaymentSelect";
 import { RecoverySectionTabs } from "../components/RecoverySectionTabs";
 import { DryRunResultsCard } from "../components/DryRunResultsCard";
 import { useInspectPaymentRecovery } from "../api/inspectPaymentRecovery";
@@ -13,11 +15,11 @@ import { useRecomputePayment } from "../api/recomputePayment";
 import type { RecoverySummary, FieldDiff } from "../types";
 
 const inspectSchema = z.object({
-  paymentId: z.string().min(1, "Payment ID is required"),
+  paymentId: z.string().min(1, "Payment is required"),
 });
 
 const recomputeSchema = z.object({
-  paymentId: z.string().min(1, "Payment ID is required"),
+  paymentId: z.string().min(1, "Payment is required"),
   recomputeFees: z.boolean(),
   fixPaidFields: z.boolean(),
   dryRun: z.boolean(),
@@ -50,6 +52,7 @@ const DiffRow = ({ diff }: { diff: FieldDiff }) => {
 
 const PaymentRecoveryView = () => {
   const { t } = useTranslation();
+  const [filterMerchantId, setFilterMerchantId] = useState("");
   const [inspectId, setInspectId] = useState<number | null>(null);
   const [dryRunResult, setDryRunResult] = useState<RecoverySummary | null>(null);
   const [lastRecomputeValues, setLastRecomputeValues] = useState<RecomputeForm | null>(null);
@@ -62,11 +65,12 @@ const PaymentRecoveryView = () => {
 
   const inspectForm = useForm<InspectForm>({
     resolver: zodResolver(inspectSchema),
+    defaultValues: { paymentId: "" },
   });
 
   const recomputeForm = useForm<RecomputeForm>({
     resolver: zodResolver(recomputeSchema),
-    defaultValues: { recomputeFees: true, fixPaidFields: true, dryRun: true },
+    defaultValues: { paymentId: "", recomputeFees: true, fixPaidFields: true, dryRun: true },
   });
 
   const watchDryRun = recomputeForm.watch("dryRun");
@@ -133,6 +137,22 @@ const PaymentRecoveryView = () => {
       <RecoverySectionTabs />
 
       <div className="space-y-6">
+        {/* Merchant filter — shared context for both payment selects below */}
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <MerchantSelect
+            value={filterMerchantId}
+            onChange={(id) => {
+              setFilterMerchantId(id);
+              inspectForm.reset({ paymentId: "" });
+              recomputeForm.reset({ paymentId: "", recomputeFees: true, fixPaidFields: true, dryRun: true });
+              setInspectId(null);
+              setDryRunResult(null);
+            }}
+            label={t("recovery.fields.merchantFilter", "Filter payments by merchant")}
+            required
+          />
+        </div>
+
         {/* Inspect Section */}
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h2 className="text-base font-semibold text-gray-900 mb-4">
@@ -143,20 +163,20 @@ const PaymentRecoveryView = () => {
             className="flex gap-3 items-end"
           >
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t("recovery.fields.paymentId", "Payment ID")}
-              </label>
-              <input
-                type="number"
-                {...inspectForm.register("paymentId")}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="e.g. 123"
+              <Controller
+                control={inspectForm.control}
+                name="paymentId"
+                render={({ field }) => (
+                  <PaymentSelect
+                    value={field.value}
+                    onChange={field.onChange}
+                    merchantId={filterMerchantId}
+                    label={t("recovery.fields.paymentId", "Payment")}
+                    required
+                    error={inspectForm.formState.errors.paymentId?.message}
+                  />
+                )}
               />
-              {inspectForm.formState.errors.paymentId && (
-                <p className="mt-1 text-xs text-red-600">
-                  {inspectForm.formState.errors.paymentId.message}
-                </p>
-              )}
             </div>
             <Button type="submit" loading={isInspecting} className="flex items-center gap-2">
               <Search className="w-4 h-4" />
@@ -217,23 +237,23 @@ const PaymentRecoveryView = () => {
             onSubmit={recomputeForm.handleSubmit(onRecomputeSubmit)}
             className="space-y-4"
           >
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t("recovery.fields.paymentId", "Payment ID")} *
-              </label>
-              <input
-                type="number"
-                {...recomputeForm.register("paymentId")}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="e.g. 123"
-                onChange={() => setDryRunResult(null)}
-              />
-              {recomputeForm.formState.errors.paymentId && (
-                <p className="mt-1 text-xs text-red-600">
-                  {recomputeForm.formState.errors.paymentId.message}
-                </p>
+            <Controller
+              control={recomputeForm.control}
+              name="paymentId"
+              render={({ field }) => (
+                <PaymentSelect
+                  value={field.value}
+                  onChange={(id) => {
+                    field.onChange(id);
+                    setDryRunResult(null);
+                  }}
+                  merchantId={filterMerchantId}
+                  label={t("recovery.fields.paymentId", "Payment")}
+                  required
+                  error={recomputeForm.formState.errors.paymentId?.message}
+                />
               )}
-            </div>
+            />
 
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
@@ -299,7 +319,7 @@ const PaymentRecoveryView = () => {
             </div>
             <div className="p-6 space-y-4">
               <div className="flex gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                 <p className="text-sm text-amber-800">
                   {t("recovery.confirmModal.warning", "This will write changes to the database.")}
                   {" "}{dryRunResult.changed} {t("recovery.changes", "changes")} {t("recovery.confirmModal.willBeApplied", "will be applied.")}

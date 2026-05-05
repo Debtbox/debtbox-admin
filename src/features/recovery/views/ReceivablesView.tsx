@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import { toast } from '@/lib/toast';
 import { AlertTriangle, X } from "lucide-react";
 import { Button } from "@/components/shared/Button";
+import { MerchantSelect } from "@/components/shared/MerchantSelect";
+import { DebtSelect } from "@/components/shared/DebtSelect";
 import { RecoverySectionTabs } from "../components/RecoverySectionTabs";
 import { DryRunResultsCard } from "../components/DryRunResultsCard";
 import { useRebuildReceivables } from "../api/rebuildReceivables";
@@ -29,16 +31,17 @@ const ReceivablesView = () => {
   const [showConfirm, setShowConfirm] = useState(false);
 
   const {
+    control,
     register,
     handleSubmit,
     watch,
-    formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { dryRun: true },
+    defaultValues: { merchantId: "", debtId: "", dryRun: true },
   });
 
   const watchDryRun = watch("dryRun");
+  const watchedMerchantId = watch("merchantId");
 
   const runMutation = (values: FormValues) => {
     mutate(
@@ -102,36 +105,37 @@ const ReceivablesView = () => {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t("recovery.fields.merchantId", "Merchant ID")}
-                </label>
-                <input
-                  type="number"
-                  {...register("merchantId")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Optional"
-                  onChange={() => setDryRunResult(null)}
-                />
-                {errors.merchantId && (
-                  <p className="mt-1 text-xs text-red-600">{errors.merchantId.message}</p>
+              <Controller
+                control={control}
+                name="merchantId"
+                render={({ field }) => (
+                  <MerchantSelect
+                    value={field.value ?? ""}
+                    onChange={(id) => {
+                      field.onChange(id);
+                      setDryRunResult(null);
+                    }}
+                    label={t("recovery.fields.merchantId", "Merchant")}
+                    placeholder={t("common.optional", "Optional")}
+                  />
                 )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t("recovery.fields.debtId", "Debt ID")}
-                </label>
-                <input
-                  type="number"
-                  {...register("debtId")}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Optional"
-                  onChange={() => setDryRunResult(null)}
-                />
-                {errors.debtId && (
-                  <p className="mt-1 text-xs text-red-600">{errors.debtId.message}</p>
+              />
+              <Controller
+                control={control}
+                name="debtId"
+                render={({ field }) => (
+                  <DebtSelect
+                    value={field.value ?? ""}
+                    onChange={(id) => {
+                      field.onChange(id);
+                      setDryRunResult(null);
+                    }}
+                    merchantId={watchedMerchantId}
+                    label={t("recovery.fields.debtId", "Debt")}
+                    placeholder={t("common.optional", "Optional")}
+                  />
                 )}
-              </div>
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -202,7 +206,7 @@ const ReceivablesView = () => {
             </div>
             <div className="p-6 space-y-4">
               <div className="flex gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                 <p className="text-sm text-amber-800">
                   {t("recovery.confirmModal.warning", "This will write changes to the database.")}
                   {" "}{dryRunResult.changed} {t("recovery.changes", "changes")} {t("recovery.confirmModal.willBeApplied", "will be applied.")}

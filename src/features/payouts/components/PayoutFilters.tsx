@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { FilterBar, type FilterGroupDef } from "@/components/shared/FilterBar";
+import { MerchantSelect } from "@/components/shared/MerchantSelect";
 import type { PayoutStatus } from "../utils";
 
 const PAYOUT_STATUSES: PayoutStatus[] = [
@@ -22,7 +23,10 @@ interface PayoutFiltersProps {
   onFiltersChange: (f: PayoutFiltersState) => void;
 }
 
-export const PayoutFilters = ({ filters, onFiltersChange }: PayoutFiltersProps) => {
+export const PayoutFilters = ({
+  filters,
+  onFiltersChange,
+}: PayoutFiltersProps) => {
   const { t } = useTranslation();
 
   const statusGroup: FilterGroupDef = {
@@ -47,14 +51,23 @@ export const PayoutFilters = ({ filters, onFiltersChange }: PayoutFiltersProps) 
   };
 
   return (
-    <FilterBar
-      searchPlaceholder={t("payouts.filters.merchantIdPlaceholder")}
-      searchValue={filters.merchantId}
-      onSearchChange={(value) => onFiltersChange({ ...filters, merchantId: value })}
-      filterGroups={[statusGroup]}
-      values={filterValues}
-      onChange={handleFilterChange}
-      onClearAll={handleClearAll}
-    />
+    <div className="flex items-end gap-2">
+      <MerchantSelect
+        value={filters.merchantId}
+        onChange={(id) => onFiltersChange({ ...filters, merchantId: id })}
+        label={t("payouts.filters.merchant", "Merchant")}
+        placeholder={t(
+          "payouts.filters.merchantIdPlaceholder",
+          "Filter by merchant...",
+        )}
+        className="flex-1"
+      />
+      <FilterBar
+        filterGroups={[statusGroup]}
+        values={filterValues}
+        onChange={handleFilterChange}
+        onClearAll={handleClearAll}
+      />
+    </div>
   );
 };

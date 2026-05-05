@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useGetPayments } from "../api/getPayments";
 import { PaymentsTable } from "../components/PaymentsTable";
-import { FilterBar } from "@/components/shared/FilterBar";
+import { MerchantSelect } from "@/components/shared/MerchantSelect";
 
 const PAYMENTS_PER_PAGE = 20;
 
@@ -23,8 +23,8 @@ const Payments = () => {
 
   const paymentsQuery = useGetPayments({ params: buildParams() });
 
-  const handleMerchantIdChange = (value: string) => {
-    setMerchantId(value);
+  const handleMerchantChange = (id: string) => {
+    setMerchantId(id);
     setPage(0);
   };
 
@@ -36,13 +36,11 @@ const Payments = () => {
       </div>
 
       <div className="mb-6">
-        <FilterBar
-          searchPlaceholder={t("payouts.filters.merchantIdPlaceholder")}
-          searchValue={merchantId}
-          onSearchChange={handleMerchantIdChange}
-          values={{}}
-          onChange={() => {}}
-          onClearAll={() => { setMerchantId(""); setPage(0); }}
+        <MerchantSelect
+          value={merchantId}
+          onChange={handleMerchantChange}
+          label={t("payouts.filters.merchant", "Merchant")}
+          placeholder={t("payouts.filters.merchantIdPlaceholder", "Filter by merchant...")}
         />
       </div>
 
