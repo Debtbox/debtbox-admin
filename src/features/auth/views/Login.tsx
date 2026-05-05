@@ -8,7 +8,7 @@ import { Mail, Lock, LogIn } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 
 const basename = import.meta.env.VITE_BASE_PATH || '/debtbox-admin/';
 

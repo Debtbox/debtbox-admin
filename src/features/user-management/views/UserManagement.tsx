@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useUserStore } from "@/stores/UserStore";
 import { PERMISSIONS } from "@/auth/permissions";
 import { can } from "@/auth/rbac";
-import { toast } from "sonner";
+import { toast } from '@/lib/toast';
 import {
   CheckCircle,
   Eye,

@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import { AlertTriangle, X } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from '@/lib/toast';
 import { Button } from "@/components/shared/Button";
 import { Textarea } from "@/components/shared/Textarea";
 import { useCancelDebt } from "../api/cancelDebt";

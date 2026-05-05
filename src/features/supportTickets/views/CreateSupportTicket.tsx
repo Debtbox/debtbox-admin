@@ -8,7 +8,7 @@ import { useCreateSupportTicket, type CreateSupportTicketRequest, type CreateSup
 import { Input, Textarea, Select, Button } from "@/components/shared";
 import type { SupportTicketPriority, SupportTicketRequesterType, SupportTicketType } from "@/enums";
 import type { ApiError } from "@/types/ApiError";
-import { toast } from "sonner";
+import { toast } from '@/lib/toast';
 
 const createTicketSchema = z.object({
   subject: z.string().min(1, "Subject is required").max(255, "Subject must be less than 255 characters"),

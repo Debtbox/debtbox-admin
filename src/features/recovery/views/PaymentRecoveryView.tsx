@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
+import { toast } from '@/lib/toast';
 import { AlertTriangle, X, Search } from "lucide-react";
 import { Button } from "@/components/shared/Button";
 import { RecoverySectionTabs } from "../components/RecoverySectionTabs";

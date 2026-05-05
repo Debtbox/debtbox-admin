@@ -1,4 +1,4 @@
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 import Axios, {
   type AxiosError,
   type AxiosRequestConfig,

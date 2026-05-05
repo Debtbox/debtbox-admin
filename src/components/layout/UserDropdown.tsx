@@ -14,7 +14,7 @@ import { useUserStore } from "@/stores/UserStore";
 import { clearAuthTokens } from "@/utils/storage";
 import { queryClient } from "@/lib/queryClient";
 import { useLogout } from "@/features/auth/api/logout";
-import { toast } from "sonner";
+import { toast } from '@/lib/toast';
 
 const UserDropdown = () => {
   const { t } = useTranslation();
