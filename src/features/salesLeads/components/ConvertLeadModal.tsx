@@ -3,8 +3,9 @@ import { useTranslation } from "react-i18next";
 import { toast } from '@/lib/toast';
 import { X } from "lucide-react";
 import { Button } from "@/components/shared/Button";
-import { Input } from "@/components/shared/Input";
 import { Select } from "@/components/shared/Select";
+import { MerchantSelect } from "@/components/shared/MerchantSelect";
+import { CustomerSelect } from "@/components/shared/CustomerSelect";
 import type { SalesLead } from "@/types/SalesLeadDTO";
 import { useConvertSalesLeadMutation } from "../api/sales";
 
@@ -47,19 +48,29 @@ export const ConvertLeadModal = ({ lead, onClose }: ConvertLeadModalProps) => {
           <Select
             label={t("salesLeads.details.convertedEntityType", "Entity Type")}
             value={convertedEntityType}
-            onChange={(event) =>
-              setConvertedEntityType(event.target.value as "MERCHANT" | "CUSTOMER")
-            }
+            onChange={(event) => {
+              setConvertedEntityType(event.target.value as "MERCHANT" | "CUSTOMER");
+              setConvertedEntityId("");
+            }}
             options={[
               { value: "MERCHANT", label: t("salesLeads.leadTypes.MERCHANT", "Merchant") },
               { value: "CUSTOMER", label: t("salesLeads.leadTypes.CUSTOMER", "Customer") },
             ]}
           />
-          <Input
-            label={t("salesLeads.details.convertedEntityId", "Entity ID")}
-            value={convertedEntityId}
-            onChange={(event) => setConvertedEntityId(event.target.value)}
-          />
+          {convertedEntityType === "MERCHANT" && (
+            <MerchantSelect
+              label={t("salesLeads.details.convertedEntityId", "Entity ID")}
+              value={convertedEntityId}
+              onChange={setConvertedEntityId}
+            />
+          )}
+          {convertedEntityType === "CUSTOMER" && (
+            <CustomerSelect
+              label={t("salesLeads.details.convertedEntityId", "Entity ID")}
+              value={convertedEntityId}
+              onChange={setConvertedEntityId}
+            />
+          )}
           <div className="flex justify-end gap-3">
             <Button type="button" variant="outline" onClick={onClose} disabled={mutation.isPending}>
               {t("common.cancel", "Cancel")}

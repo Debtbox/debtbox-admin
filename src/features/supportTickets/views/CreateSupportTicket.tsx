@@ -1,11 +1,11 @@
 import { useTranslation } from "react-i18next";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Plus } from "lucide-react";
 import { useCreateSupportTicket, type CreateSupportTicketRequest, type CreateSupportTicketResponse } from "../api/createSupportTicket";
-import { Input, Textarea, Select, Button } from "@/components/shared";
+import { Input, Textarea, Select, Button, MerchantSelect, CustomerSelect, DebtSelect, PaymentSelect } from "@/components/shared";
 import type { SupportTicketPriority, SupportTicketRequesterType, SupportTicketType } from "@/enums";
 import type { ApiError } from "@/types/ApiError";
 import { toast } from '@/lib/toast';
@@ -53,6 +53,8 @@ export const CreateSupportTicket = () => {
     register,
     handleSubmit,
     watch,
+    setValue,
+    control,
     formState: { errors },
   } = useForm<CreateTicketFormData>({
     resolver: zodResolver(createTicketSchema),
@@ -65,6 +67,21 @@ export const CreateSupportTicket = () => {
   });
 
   const requesterType = watch("requesterType");
+  const relatedEntityType = watch("relatedEntityType");
+  const requesterMerchantId = watch("requesterMerchantId");
+  const requesterCustomerId = watch("requesterCustomerId");
+
+  const cascadeMerchantId = requesterMerchantId ? String(requesterMerchantId) : undefined;
+  const cascadeCustomerId = requesterCustomerId ? String(requesterCustomerId) : undefined;
+
+  const entityTypeOptions = [
+    { value: "MERCHANT", label: t("supportTickets.entityTypes.MERCHANT", "Merchant") },
+    { value: "CUSTOMER", label: t("supportTickets.entityTypes.CUSTOMER", "Customer") },
+    { value: "DEBT", label: t("supportTickets.entityTypes.DEBT", "Debt") },
+    { value: "PAYMENT", label: t("supportTickets.entityTypes.PAYMENT", "Payment") },
+  ];
+
+  const entityTypeRegister = register("relatedEntityType");
 
   const typeOptions: { value: SupportTicketType; label: string }[] = [
     { value: "GENERAL", label: t("supportTickets.types.GENERAL") },
@@ -248,19 +265,81 @@ export const CreateSupportTicket = () => {
             </h2>
 
             <div className="space-y-4">
-              <Input
+              <Select
                 label={t("supportTickets.entityType", "Entity Type")}
-                placeholder={t("supportTickets.entityTypePlaceholder", "e.g., DEBT, PAYMENT")}
+                options={entityTypeOptions}
+                placeholder={t("supportTickets.entityTypePlaceholder", "Select entity type")}
                 error={errors.relatedEntityType}
-                {...register("relatedEntityType")}
+                {...entityTypeRegister}
+                onChange={(e) => {
+                  void entityTypeRegister.onChange(e);
+                  setValue("relatedEntityId", "");
+                }}
               />
 
-              <Input
-                label={t("supportTickets.entityId", "Entity ID")}
-                placeholder={t("supportTickets.entityIdPlaceholder", "Enter entity ID")}
-                error={errors.relatedEntityId}
-                {...register("relatedEntityId")}
-              />
+              {relatedEntityType === "MERCHANT" && (
+                <Controller
+                  control={control}
+                  name="relatedEntityId"
+                  render={({ field }) => (
+                    <MerchantSelect
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      label={t("supportTickets.entityId", "Entity ID")}
+                      error={errors.relatedEntityId?.message}
+                    />
+                  )}
+                />
+              )}
+
+              {relatedEntityType === "CUSTOMER" && (
+                <Controller
+                  control={control}
+                  name="relatedEntityId"
+                  render={({ field }) => (
+                    <CustomerSelect
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      label={t("supportTickets.entityId", "Entity ID")}
+                      error={errors.relatedEntityId?.message}
+                    />
+                  )}
+                />
+              )}
+
+              {relatedEntityType === "DEBT" && (
+                <Controller
+                  control={control}
+                  name="relatedEntityId"
+                  render={({ field }) => (
+                    <DebtSelect
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      label={t("supportTickets.entityId", "Entity ID")}
+                      error={errors.relatedEntityId?.message}
+                      merchantId={cascadeMerchantId}
+                      customerId={cascadeCustomerId}
+                    />
+                  )}
+                />
+              )}
+
+              {relatedEntityType === "PAYMENT" && (
+                <Controller
+                  control={control}
+                  name="relatedEntityId"
+                  render={({ field }) => (
+                    <PaymentSelect
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      label={t("supportTickets.entityId", "Entity ID")}
+                      error={errors.relatedEntityId?.message}
+                      merchantId={cascadeMerchantId}
+                      customerId={cascadeCustomerId}
+                    />
+                  )}
+                />
+              )}
             </div>
           </div>
 

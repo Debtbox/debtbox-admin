@@ -2,13 +2,13 @@ import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ArrowLeft, AlertCircle, Calendar, Clock, MessageSquare, Tag, User, Edit, Settings, Plus, Eye, EyeOff } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useGetSupportTicketDetails } from "../api/getSupportTicketDetails";
 import { useUpdateSupportTicket } from "../api/updateSupportTicket";
 import { useChangeSupportTicketStatus } from "../api/changeSupportTicketStatus";
 import { useAddSupportTicketMessage } from "../api/addSupportTicketMessage";
 import { getStatusColor, getPriorityColor, formatDate } from "../utils";
-import { Button, Input, Textarea, Select } from "@/components/shared";
+import { Button, Input, Textarea, Select, MerchantSelect, CustomerSelect, DebtSelect, PaymentSelect } from "@/components/shared";
 import type { ApiError } from "@/types/ApiError";
 import type { SupportTicketDTO, SupportTicketMessageDTO } from "@/types/SupportTicketDTO";
 import type { UpdateSupportTicketRequest } from "../api/updateSupportTicket";
@@ -520,7 +520,7 @@ const EditTicketModal = ({
   isLoading: boolean;
 }) => {
   const { t } = useTranslation();
-  const { register, handleSubmit, formState: { errors } } = useForm<UpdateSupportTicketRequest>({
+  const { register, handleSubmit, watch, setValue, control, formState: { errors } } = useForm<UpdateSupportTicketRequest>({
     defaultValues: {
       type: ticket.type,
       priority: ticket.priority,
@@ -529,6 +529,11 @@ const EditTicketModal = ({
       relatedEntityId: ticket.relatedEntityId || undefined,
     },
   });
+
+  const relatedEntityType = watch("relatedEntityType");
+  const entityTypeRegister = register("relatedEntityType");
+
+  const DROPDOWN_ENTITY_TYPES = ["MERCHANT", "CUSTOMER", "DEBT", "PAYMENT"] as const;
 
   const typeOptions: { value: SupportTicketType; label: string }[] = [
     { value: "GENERAL", label: t("supportTickets.types.GENERAL") },
@@ -584,15 +589,85 @@ const EditTicketModal = ({
               label={t("supportTickets.entityType", "Entity Type")}
               options={relatedEntityTypeOptions}
               error={errors.relatedEntityType}
-              {...register("relatedEntityType")}
+              {...entityTypeRegister}
+              onChange={(e) => {
+                void entityTypeRegister.onChange(e);
+                setValue("relatedEntityId", "");
+              }}
             />
 
-            <Input
-              label={t("supportTickets.entityId", "Entity ID")}
-              placeholder={t("supportTickets.entityIdPlaceholder", "Enter entity ID")}
-              error={errors.relatedEntityId}
-              {...register("relatedEntityId")}
-            />
+            {relatedEntityType === "MERCHANT" && (
+              <Controller
+                control={control}
+                name="relatedEntityId"
+                render={({ field }) => (
+                  <MerchantSelect
+                    value={field.value ?? ""}
+                    onChange={field.onChange}
+                    label={t("supportTickets.entityId", "Entity ID")}
+                    error={errors.relatedEntityId?.message}
+                  />
+                )}
+              />
+            )}
+
+            {relatedEntityType === "CUSTOMER" && (
+              <Controller
+                control={control}
+                name="relatedEntityId"
+                render={({ field }) => (
+                  <CustomerSelect
+                    value={field.value ?? ""}
+                    onChange={field.onChange}
+                    label={t("supportTickets.entityId", "Entity ID")}
+                    error={errors.relatedEntityId?.message}
+                  />
+                )}
+              />
+            )}
+
+            {relatedEntityType === "DEBT" && (
+              <Controller
+                control={control}
+                name="relatedEntityId"
+                render={({ field }) => (
+                  <DebtSelect
+                    value={field.value ?? ""}
+                    onChange={field.onChange}
+                    label={t("supportTickets.entityId", "Entity ID")}
+                    error={errors.relatedEntityId?.message}
+                    merchantId={ticket.requesterMerchantId ?? undefined}
+                    customerId={ticket.requesterCustomerId ?? undefined}
+                  />
+                )}
+              />
+            )}
+
+            {relatedEntityType === "PAYMENT" && (
+              <Controller
+                control={control}
+                name="relatedEntityId"
+                render={({ field }) => (
+                  <PaymentSelect
+                    value={field.value ?? ""}
+                    onChange={field.onChange}
+                    label={t("supportTickets.entityId", "Entity ID")}
+                    error={errors.relatedEntityId?.message}
+                    merchantId={ticket.requesterMerchantId ?? undefined}
+                    customerId={ticket.requesterCustomerId ?? undefined}
+                  />
+                )}
+              />
+            )}
+
+            {relatedEntityType && !DROPDOWN_ENTITY_TYPES.includes(relatedEntityType as typeof DROPDOWN_ENTITY_TYPES[number]) && (
+              <Input
+                label={t("supportTickets.entityId", "Entity ID")}
+                placeholder={t("supportTickets.entityIdPlaceholder", "Enter entity ID")}
+                error={errors.relatedEntityId}
+                {...register("relatedEntityId")}
+              />
+            )}
 
             <div className="flex items-center justify-end gap-3 pt-4">
               <Button type="button" variant="outline" onClick={onClose}>

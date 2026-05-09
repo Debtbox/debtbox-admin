@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown, Search, X, Loader2 } from "lucide-react";
 import { cn } from "@/utils/cn";
 
@@ -47,7 +48,10 @@ export const SearchableSelect = ({
   className,
 }: SearchableSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
   const containerRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const selectedOption = options.find((o) => o.value === value);
 
@@ -61,7 +65,8 @@ export const SearchableSelect = ({
     const handleClickOutside = (e: MouseEvent) => {
       if (
         containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
+        !containerRef.current.contains(e.target as Node) &&
+        (!dropdownRef.current || !dropdownRef.current.contains(e.target as Node))
       ) {
         setIsOpen(false);
       }
@@ -78,8 +83,28 @@ export const SearchableSelect = ({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleScroll = (e: Event) => {
+      if (dropdownRef.current?.contains(e.target as Node)) return;
+      setIsOpen(false);
+    };
+    window.addEventListener("scroll", handleScroll, true);
+    return () => window.removeEventListener("scroll", handleScroll, true);
+  }, [isOpen]);
+
   const handleOpen = () => {
-    if (!disabled) setIsOpen(!isOpen);
+    if (!disabled) {
+      if (!isOpen && buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        setDropdownStyle({
+          top: rect.bottom + 4,
+          left: rect.left,
+          width: rect.width,
+        });
+      }
+      setIsOpen(!isOpen);
+    }
   };
 
   const handleSelect = (option: SelectOption) => {
@@ -104,6 +129,7 @@ export const SearchableSelect = ({
       )}
 
       <button
+        ref={buttonRef}
         type="button"
         disabled={disabled}
         onClick={handleOpen}
@@ -143,65 +169,71 @@ export const SearchableSelect = ({
 
       {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
 
-      {isOpen && (
-        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
-          <div className="p-2 border-b border-gray-100">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
-              <input
-                autoFocus
-                type="text"
-                value={searchValue}
-                onChange={(e) => onSearchChange(e.target.value)}
-                placeholder="Search..."
-                className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-
-          <div className="max-h-52 overflow-y-auto">
-            {isLoading ? (
-              <div className="flex justify-center py-4">
-                <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+      {isOpen &&
+        createPortal(
+          <div
+            ref={dropdownRef}
+            style={{ position: "fixed", zIndex: 9999, ...dropdownStyle }}
+            className="bg-white border border-gray-200 rounded-lg shadow-lg"
+          >
+            <div className="p-2 border-b border-gray-100">
+              <div className="relative">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+                <input
+                  autoFocus
+                  type="text"
+                  value={searchValue}
+                  onChange={(e) => onSearchChange(e.target.value)}
+                  placeholder="Search..."
+                  className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
               </div>
-            ) : filteredOptions.length === 0 ? (
-              <p className="px-3 py-4 text-sm text-gray-500 text-center">
-                {noResultsText}
-              </p>
-            ) : (
-              <>
-                {filteredOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => handleSelect(option)}
-                    className={cn(
-                      "w-full text-left px-3 py-2 text-sm hover:bg-blue-50 transition-colors",
-                      option.value === value &&
-                        "bg-blue-50 text-blue-700 font-medium",
-                    )}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-                {hasMore && (
-                  <button
-                    type="button"
-                    onClick={onLoadMore}
-                    disabled={isLoadingMore}
-                    className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-xs text-blue-600 hover:bg-blue-50 border-t border-gray-100 transition-colors disabled:opacity-50"
-                  >
-                    {isLoadingMore && (
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                    )}
-                    {loadMoreText}
-                  </button>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-      )}
+            </div>
+
+            <div className="max-h-52 overflow-y-auto">
+              {isLoading ? (
+                <div className="flex justify-center py-4">
+                  <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                </div>
+              ) : filteredOptions.length === 0 ? (
+                <p className="px-3 py-4 text-sm text-gray-500 text-center">
+                  {noResultsText}
+                </p>
+              ) : (
+                <>
+                  {filteredOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => handleSelect(option)}
+                      className={cn(
+                        "w-full text-left px-3 py-2 text-sm hover:bg-blue-50 transition-colors",
+                        option.value === value &&
+                          "bg-blue-50 text-blue-700 font-medium",
+                      )}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                  {hasMore && (
+                    <button
+                      type="button"
+                      onClick={onLoadMore}
+                      disabled={isLoadingMore}
+                      className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-xs text-blue-600 hover:bg-blue-50 border-t border-gray-100 transition-colors disabled:opacity-50"
+                    >
+                      {isLoadingMore && (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      )}
+                      {loadMoreText}
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 };
