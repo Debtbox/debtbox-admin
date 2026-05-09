@@ -3,13 +3,9 @@ import { useProfile } from '../api/getProfile';
 import { useUserStore } from '@/stores/UserStore';
 import { mapProfileToStore } from '../types/auth';
 
-/**
- * Fetches GET /admin/me when mounted (protected layout) and syncs profile to UserStore
- * so navbar and user dropdown show up-to-date user info after reload.
- */
 export const ProfileSync = () => {
   const setUser = useUserStore((s) => s.setUser);
-  const setProfileLoaded = useUserStore((s) => s.setProfileLoaded);
+  const setProfileLoadFailed = useUserStore((s) => s.setProfileLoadFailed);
   const { data, isSuccess, isError } = useProfile();
 
   useEffect(() => {
@@ -17,9 +13,9 @@ export const ProfileSync = () => {
       setUser(mapProfileToStore(data.data));
     }
     if (isError) {
-      setProfileLoaded(true);
+      setProfileLoadFailed();
     }
-  }, [isSuccess, isError, data, setUser, setProfileLoaded]);
+  }, [isSuccess, isError, data, setUser, setProfileLoadFailed]);
 
   return null;
 };

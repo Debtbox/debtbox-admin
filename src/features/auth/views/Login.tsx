@@ -24,8 +24,11 @@ export const Login = () => {
         if (d.user) {
           setUser(mapAuthUserToStore(d.user));
         }
-        toast.success(t('login.success', 'Signed in successfully'));
-        // Full page redirect so AppRoutes re-reads cookie and shows protected routes
+        if (d.forcePasswordChange) {
+          toast.warning(t('login.forcePasswordChange', 'Your password must be changed. Please update it as soon as possible.'));
+        } else {
+          toast.success(t('login.success', 'Signed in successfully'));
+        }
         window.location.replace(`${basename.replace(/\/$/, '')}/`);
       }
     },
@@ -117,24 +120,6 @@ export const Login = () => {
                   {t(errors.password.message ?? 'validation.passwordRequired')}
                 </p>
               )}
-            </div>
-
-            <div className="flex items-center justify-between">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
-                />
-                <span className="ml-2 text-sm text-gray-600">
-                  {t('login.rememberMe', 'Remember me')}
-                </span>
-              </label>
-              <a
-                href="#"
-                className="text-sm text-primary hover:text-primary-dark font-medium"
-              >
-                {t('login.forgotPassword', 'Forgot password?')}
-              </a>
             </div>
 
             <button

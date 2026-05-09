@@ -20,15 +20,19 @@ export interface User {
 interface UserStore {
   user: User | null;
   isProfileLoaded: boolean;
+  profileLoadFailed: boolean;
   setUser: (user: User | null) => void;
   setProfileLoaded: (isLoaded: boolean) => void;
+  setProfileLoadFailed: () => void;
   clearUser: () => void;
 }
 
 export const useUserStore = create<UserStore>((set) => ({
   user: null,
   isProfileLoaded: false,
-  setUser: (user) => set({ user, isProfileLoaded: true }),
+  profileLoadFailed: false,
+  setUser: (user) => set({ user, isProfileLoaded: true, profileLoadFailed: false }),
   setProfileLoaded: (isProfileLoaded) => set({ isProfileLoaded }),
-  clearUser: () => set({ user: null, isProfileLoaded: false }),
+  setProfileLoadFailed: () => set({ profileLoadFailed: true, isProfileLoaded: true }),
+  clearUser: () => set({ user: null, isProfileLoaded: false, profileLoadFailed: false }),
 }));
