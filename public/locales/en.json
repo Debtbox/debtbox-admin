@@ -1,4 +1,21 @@
 {
+  "groupedDebt": {
+    "label": "Grouped debt",
+    "summaryTitle": "Grouped Debt Breakdown",
+    "childDebts": "Child debts",
+    "includesChildren": "Includes {{count}} child debts",
+    "includesCount": "Includes {{count}} child debts",
+    "viewBreakdown": "View grouped breakdown",
+    "toggleBreakdown": "Toggle breakdown",
+    "groupTotal": "Group total",
+    "debtIds": "Debt IDs",
+    "fields": {
+      "groupId": "Group ID",
+      "debtsCount": "Child Debts",
+      "groupAmount": "Group Amount",
+      "groupStatus": "Group Status"
+    }
+  },
   "login": {
     "email": "Email",
     "nationalId": "National ID",

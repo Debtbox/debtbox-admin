@@ -14,8 +14,10 @@ import {
   XCircle,
   Calculator,
   ExternalLink,
+  Layers,
 } from "lucide-react";
 import { Button } from "@/components/shared/Button";
+import { GroupedDebtBadge } from "@/components/shared/GroupedDebtBadge";
 import { useGetDebt } from "../api/getDebt";
 import { useGetDebtFeePreview } from "../api/getDebtFeePreview";
 import { DebtStatusBadge } from "../components/DebtStatusBadge";
@@ -160,6 +162,9 @@ const DebtDetails = () => {
               {t("debts.flagged", "Flagged")}
             </span>
           )}
+          {debt.groupedDebt?.isGrouped && (
+            <GroupedDebtBadge count={debt.groupedDebt.debtsCount} size="md" />
+          )}
         </div>
         <p className="text-sm text-gray-500">
           {t("debts.debtId", "Debt")} #{debt.id}
@@ -265,6 +270,132 @@ const DebtDetails = () => {
               />
             </div>
           </SectionCard>
+
+          {/* Grouped Debt Breakdown */}
+          {debt.groupedDebt?.isGrouped && (
+            <SectionCard
+              icon={<Layers className="w-5 h-5" />}
+              title={t("groupedDebt.summaryTitle", "Grouped Debt Breakdown")}
+              className="border-l-4 border-l-indigo-400"
+            >
+              <div className="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="rounded-lg border border-indigo-100 bg-indigo-50 p-3">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                    {t("groupedDebt.fields.debtsCount", "Child Debts")}
+                  </p>
+                  <p className="text-lg font-bold text-indigo-700">
+                    {debt.groupedDebt.debtsCount}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-gray-100 bg-gray-50 p-3">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                    {t("groupedDebt.fields.groupAmount", "Group Amount")}
+                  </p>
+                  <p className="text-lg font-bold text-gray-900">
+                    {formatDebtAmount(debt.groupedDebt.groupAmount)}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-gray-100 bg-gray-50 p-3">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                    {t("groupedDebt.fields.groupStatus", "Group Status")}
+                  </p>
+                  <p className="text-lg font-bold text-gray-900 capitalize">
+                    {debt.groupedDebt.groupStatus}
+                  </p>
+                </div>
+              </div>
+              {debt.groupedDebt.groupId != null && (
+                <p className="mb-2 text-xs text-gray-500">
+                  {t("groupedDebt.fields.groupId", "Group ID")}:{" "}
+                  <span className="font-mono">{debt.groupedDebt.groupId}</span>
+                </p>
+              )}
+              {debt.groupedDebt.debtIds.length > 0 && (
+                <p className="mb-3 text-xs text-gray-500 font-mono">
+                  {t("groupedDebt.debtIds", "Debt IDs")}:{" "}
+                  {debt.groupedDebt.debtIds.join(", ")}
+                </p>
+              )}
+              {debt.groupedDebt.debts.length > 0 && (
+                <div className="overflow-x-auto rounded-lg border border-gray-100">
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="text-left px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                          ID
+                        </th>
+                        <th className="text-left px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                          {t("debts.columns.title", "Title")}
+                        </th>
+                        <th className="text-left px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                          {t("debts.columns.amount", "Amount")}
+                        </th>
+                        <th className="text-left px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                          {t("debts.columns.status", "Status")}
+                        </th>
+                        <th className="text-left px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                          {t("debts.columns.dueDate", "Due Date")}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {debt.groupedDebt.debts.map((child) => {
+                        const isCurrent = child.id === debt.id;
+                        return (
+                          <tr
+                            key={child.id}
+                            className={isCurrent ? "bg-indigo-50/60" : ""}
+                          >
+                            <td className="px-3 py-2 font-mono text-xs">
+                              {isCurrent ? (
+                                <span className="text-indigo-700 font-semibold">
+                                  #{child.id}
+                                </span>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    navigate(`/debts-management/${child.id}`)
+                                  }
+                                  className="text-blue-600 hover:text-blue-800"
+                                >
+                                  #{child.id}
+                                </button>
+                              )}
+                            </td>
+                            <td className="px-3 py-2 text-gray-800 max-w-[260px] truncate">
+                              {child.title ?? "—"}
+                            </td>
+                            <td className="px-3 py-2 text-gray-700">
+                              {child.amount != null
+                                ? formatDebtAmount(child.amount)
+                                : "—"}
+                            </td>
+                            <td className="px-3 py-2">
+                              {child.status ? (
+                                <DebtStatusBadge status={child.status} />
+                              ) : (
+                                <span className="text-gray-400 text-xs">—</span>
+                              )}
+                            </td>
+                            <td className="px-3 py-2 text-xs text-gray-600">
+                              {child.due_date
+                                ? formatDate(i18n.language, child.due_date, {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                  })
+                                : "—"}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </SectionCard>
+          )}
 
           {/* Merchant & Business */}
           <SectionCard

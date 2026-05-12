@@ -1,4 +1,21 @@
 {
+  "groupedDebt": {
+    "label": "دين مُجمَّع",
+    "summaryTitle": "تفصيل الدين المُجمَّع",
+    "childDebts": "الديون الفرعية",
+    "includesChildren": "يشمل {{count}} ديون فرعية",
+    "includesCount": "يشمل {{count}} ديون فرعية",
+    "viewBreakdown": "عرض التفصيل المُجمَّع",
+    "toggleBreakdown": "تبديل التفصيل",
+    "groupTotal": "إجمالي المجموعة",
+    "debtIds": "أرقام الديون",
+    "fields": {
+      "groupId": "رقم المجموعة",
+      "debtsCount": "عدد الديون الفرعية",
+      "groupAmount": "مبلغ المجموعة",
+      "groupStatus": "حالة المجموعة"
+    }
+  },
   "login": {
     "email": "البريد الإلكتروني",
     "nationalId": "الهوية الوطنية",

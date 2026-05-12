@@ -1,3 +1,5 @@
+import type { GroupedDebt } from "./GroupedDebtDTO";
+
 export interface DebtDTO {
   id: number;
   title: string;
@@ -14,6 +16,7 @@ export interface DebtDTO {
   business_id: number;
   business_name_ar: string;
   business_name_en: string;
+  groupedDebt?: GroupedDebt | null;
 }
 
 export interface DebtDetailsDTO extends DebtDTO {

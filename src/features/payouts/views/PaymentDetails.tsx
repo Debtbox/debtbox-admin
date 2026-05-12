@@ -7,9 +7,11 @@ import {
   Building2,
   Link as LinkIcon,
   Wrench,
+  Layers,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/shared/Button";
+import { GroupedDebtBadge } from "@/components/shared/GroupedDebtBadge";
 import { useGetPayment } from "../api/getPayment";
 import { formatHalala, formatDate } from "../utils";
 import { useIsSuperadmin } from "@/auth/rbac";
@@ -109,6 +111,9 @@ const PaymentDetails = () => {
             {t("payments.paymentId", "Payment")} #{payment.id}
           </h1>
           <PaymentStatusBadge status={payment.status} />
+          {payment.groupedDebt?.isGrouped && (
+            <GroupedDebtBadge count={payment.groupedDebt.debtsCount} size="md" />
+          )}
         </div>
         <p className="text-sm text-gray-500 capitalize">
           {payment.paymentMethod} · {payment.payoutMethod}
@@ -257,6 +262,101 @@ const PaymentDetails = () => {
                   </tbody>
                 </table>
               </div>
+            </SectionCard>
+          )}
+
+          {/* Grouped Debt Summary */}
+          {payment.groupedDebt?.isGrouped && (
+            <SectionCard
+              icon={<Layers className="w-5 h-5" />}
+              title={t("groupedDebt.summaryTitle", "Grouped Debt Breakdown")}
+              className="border-l-4 border-l-indigo-400"
+            >
+              <div className="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="rounded-lg border border-indigo-100 bg-indigo-50 p-3">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                    {t("groupedDebt.fields.debtsCount", "Child Debts")}
+                  </p>
+                  <p className="text-lg font-bold text-indigo-700">
+                    {payment.groupedDebt.debtsCount}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-gray-100 bg-gray-50 p-3">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                    {t("groupedDebt.fields.groupAmount", "Group Amount")}
+                  </p>
+                  <p className="text-lg font-bold text-gray-900">
+                    SAR {Number(payment.groupedDebt.groupAmount).toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-gray-100 bg-gray-50 p-3">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                    {t("groupedDebt.fields.groupStatus", "Group Status")}
+                  </p>
+                  <p className="text-lg font-bold text-gray-900 capitalize">
+                    {payment.groupedDebt.groupStatus}
+                  </p>
+                </div>
+              </div>
+              {payment.groupedDebt.debtIds.length > 0 && (
+                <p className="mb-3 text-xs text-gray-500 font-mono">
+                  {t("groupedDebt.debtIds", "Debt IDs")}:{" "}
+                  {payment.groupedDebt.debtIds.join(", ")}
+                </p>
+              )}
+              {payment.groupedDebt.debts.length > 0 && (
+                <div className="overflow-x-auto rounded-lg border border-gray-100">
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="text-left px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                          ID
+                        </th>
+                        <th className="text-left px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                          {t("debts.columns.title", "Title")}
+                        </th>
+                        <th className="text-left px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                          {t("debts.columns.amount", "Amount")}
+                        </th>
+                        <th className="text-left px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                          {t("debts.columns.status", "Status")}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {payment.groupedDebt.debts.map((child) => (
+                        <tr key={child.id}>
+                          <td className="px-3 py-2 font-mono text-xs text-gray-500">
+                            <Link
+                              to={`/debts-management/${child.id}`}
+                              className="text-blue-600 hover:text-blue-800"
+                            >
+                              #{child.id}
+                            </Link>
+                          </td>
+                          <td className="px-3 py-2 text-gray-800 max-w-[260px] truncate">
+                            {child.title ?? "—"}
+                          </td>
+                          <td className="px-3 py-2 text-gray-700">
+                            {child.amount != null
+                              ? `SAR ${Number(child.amount).toLocaleString("en-US", {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                })}`
+                              : "—"}
+                          </td>
+                          <td className="px-3 py-2 text-xs text-gray-700 capitalize">
+                            {child.status ?? "—"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </SectionCard>
           )}
 

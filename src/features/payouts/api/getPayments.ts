@@ -2,6 +2,7 @@ import { axios } from "@/lib/axios";
 import type { QueryConfig } from "@/lib/react-query";
 import { useQueryWithCallback } from "@/lib/hooks/useQueryWithCallback";
 import { getLanguageFromCookie } from "@/utils/getLanguageFromCookies";
+import type { GroupedDebt } from "@/types/GroupedDebtDTO";
 
 export interface PaymentPayoutRef {
   payoutItemId: number;
@@ -45,6 +46,7 @@ export interface PaymentDTO {
   customer: { id: number; nameEn: string };
   business: { id: number; nameEn: string };
   payouts: PaymentPayoutRef[];
+  groupedDebt?: GroupedDebt | null;
 }
 
 export type GetPaymentsResponse = {

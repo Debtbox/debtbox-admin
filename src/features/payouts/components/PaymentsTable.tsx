@@ -4,6 +4,7 @@ import { Eye } from "lucide-react";
 import { cn } from "@/utils/cn";
 import Table, { type TableColumn } from "@/components/shared/Table";
 import { Button } from "@/components/shared/Button";
+import { GroupedDebtBadge } from "@/components/shared/GroupedDebtBadge";
 import { PERMISSIONS } from "@/auth/permissions";
 import { useCan } from "@/auth/rbac";
 import type { PaymentDTO } from "../api/getPayments";
@@ -76,12 +77,26 @@ export const PaymentsTable = ({ data, isLoading, pagination, onPageChange }: Pay
       key: "debt",
       title: t("payments.columns.debt"),
       dataIndex: "debt",
-      render: (_, record) => (
-        <div>
-          <p className="text-sm text-gray-900 max-w-[180px] truncate">{record.debt.title}</p>
-          <p className="text-xs text-gray-400">ID: {record.debt.id}</p>
-        </div>
-      ),
+      render: (_, record) => {
+        const isGrouped = !!record.groupedDebt?.isGrouped;
+        return (
+          <div className="max-w-[220px]">
+            <p className="text-sm text-gray-900 truncate">{record.debt.title}</p>
+            <p className="text-xs text-gray-400">ID: {record.debt.id}</p>
+            {isGrouped && record.groupedDebt && (
+              <div className="mt-1 space-y-0.5">
+                <GroupedDebtBadge count={record.groupedDebt.debtsCount} />
+                {record.groupedDebt.debtIds.length > 0 && (
+                  <p className="text-[11px] text-gray-500 font-mono truncate">
+                    {t("groupedDebt.debtIds", "Debt IDs")}:{" "}
+                    {record.groupedDebt.debtIds.join(", ")}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      },
     },
     {
       key: "merchant",

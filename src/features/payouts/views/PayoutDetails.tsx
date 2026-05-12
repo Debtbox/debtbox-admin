@@ -12,6 +12,7 @@ import {
   Eye,
 } from "lucide-react";
 import { Button } from "@/components/shared/Button";
+import { GroupedDebtBadge } from "@/components/shared/GroupedDebtBadge";
 import { PERMISSIONS } from "@/auth/permissions";
 import { useCan } from "@/auth/rbac";
 import { useGetPayout } from "../api/getPayout";
@@ -191,16 +192,29 @@ const PayoutDetails = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
-                    {payout.items.map((item) => (
+                    {payout.items.map((item) => {
+                      const isGrouped = !!item.groupedDebt?.isGrouped;
+                      return (
                       <tr key={item.id} className="hover:bg-gray-50">
                         <td className="py-2.5 px-3 font-mono text-xs text-gray-500">
                           #{item.paymentId}
                         </td>
                         <td className="py-2.5 px-3">
-                          <p className="text-sm text-gray-900 max-w-[160px] truncate">{item.debt.title}</p>
+                          <p className="text-sm text-gray-900 max-w-[200px] truncate">{item.debt.title}</p>
                           <p className="text-xs text-gray-400">
                             SAR {item.debt.totalAmount} · ID: {item.debt.id}
                           </p>
+                          {isGrouped && item.groupedDebt && (
+                            <div className="mt-1 space-y-0.5">
+                              <GroupedDebtBadge count={item.groupedDebt.debtsCount} />
+                              {item.groupedDebt.debtIds.length > 0 && (
+                                <p className="text-[11px] text-gray-500 font-mono truncate max-w-[200px]">
+                                  {t("groupedDebt.debtIds", "Debt IDs")}:{" "}
+                                  {item.groupedDebt.debtIds.join(", ")}
+                                </p>
+                              )}
+                            </div>
+                          )}
                         </td>
                         <td className="py-2.5 px-3 text-gray-700">{item.paymentStatus}</td>
                         <td className="py-2.5 px-3 text-right font-medium text-green-700">
@@ -221,7 +235,8 @@ const PayoutDetails = () => {
                           {item.providerFeeTypeApplied}
                         </td>
                       </tr>
-                    ))}
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

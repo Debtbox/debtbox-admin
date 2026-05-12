@@ -3,6 +3,7 @@ import type { QueryConfig } from "@/lib/react-query";
 import { useQueryWithCallback } from "@/lib/hooks/useQueryWithCallback";
 import { getLanguageFromCookie } from "@/utils/getLanguageFromCookies";
 import type { PayoutStatus } from "../utils";
+import type { GroupedDebt } from "@/types/GroupedDebtDTO";
 
 export interface PayoutItem {
   id: number;
@@ -18,6 +19,7 @@ export interface PayoutItem {
   providerFeeTotalHalala: number;
   providerFeeIncludedInDebtboxFee: boolean;
   providerFeeTypeApplied: string;
+  groupedDebt?: GroupedDebt | null;
 }
 
 export interface ManualSettlement {
