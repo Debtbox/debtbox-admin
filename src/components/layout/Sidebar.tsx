@@ -12,6 +12,7 @@ import {
   Wallet,
   CreditCard,
   Wrench,
+  ReceiptText,
 } from "lucide-react";
 import { sidebarLogo } from "@/assets/images";
 import { PERMISSIONS, DASHBOARD_PERMISSIONS, SALES_PERMISSIONS } from "@/auth/permissions";
@@ -83,6 +84,12 @@ const Sidebar = ({ isCollapsed = true, onToggle }: SidebarProps) => {
       name: t("navigation.payments", "Payments"),
       href: "/payments",
       icon: <CreditCard className="w-5 h-5" />,
+      permissions: [PERMISSIONS.PAYMENT_LIST],
+    },
+    {
+      name: t("navigation.receivables", "Receivables"),
+      href: "/receivables",
+      icon: <ReceiptText className="w-5 h-5" />,
       permissions: [PERMISSIONS.PAYMENT_LIST],
     },
     {

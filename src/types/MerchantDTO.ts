@@ -16,6 +16,8 @@ export interface MerchantDTO {
     debtsCount: string;
     customersCountDistinct: string;
     businessesCount: string;
+    outstandingReceivablesHalala?: number | null;
+    outstandingReceivablesDebtsCount?: number | null;
 }
 
 export interface MerchantDetailsDTO extends MerchantDTO {

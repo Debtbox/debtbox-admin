@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Edit, Building2, User, CreditCard } from "lucide-react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { ArrowLeft, Edit, Building2, User, CreditCard, ReceiptText } from "lucide-react";
 import { useGetMerchant } from "../api/getMerchant";
 import { useUpdateMerchant } from "../api/updateMerchant";
 import { Button } from "@/components/shared";
@@ -279,6 +279,46 @@ export const MerchantDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* Outstanding Receivables */}
+      {(merchant.outstandingReceivablesHalala != null || merchant.outstandingReceivablesDebtsCount != null) && (
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <ReceiptText className="w-5 h-5 text-gray-600" />
+            <h2 className="text-lg font-semibold text-gray-900">
+              {t("receivables.outstandingReceivables", "Outstanding Receivables")}
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="rounded-lg border border-red-100 bg-red-50 p-4">
+              <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                {t("receivables.fields.amountOutstanding", "Outstanding Amount")}
+              </label>
+              <p className="text-2xl font-bold text-red-700">
+                {merchant.outstandingReceivablesHalala != null
+                  ? `SAR ${(merchant.outstandingReceivablesHalala / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                  : "—"}
+              </p>
+            </div>
+            <div className="rounded-lg border border-gray-100 bg-gray-50 p-4">
+              <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                {t("receivables.outstandingCount", "Outstanding Debts Count")}
+              </label>
+              <p className="text-2xl font-bold text-gray-900">
+                {merchant.outstandingReceivablesDebtsCount ?? "—"}
+              </p>
+            </div>
+          </div>
+          <div className="mt-4">
+            <Link
+              to={`/receivables?merchantId=${merchant.id}`}
+              className="text-sm text-blue-600 hover:text-blue-800 underline"
+            >
+              {t("receivables.viewAll", "View all receivables for this merchant")} →
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Edit Modal */}
       {canUpdate && showEditModal && (

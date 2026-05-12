@@ -53,6 +53,7 @@
     "systemUsers": "System Users",
     "payouts": "Payouts",
     "payments": "Payments",
+    "receivables": "Receivables",
     "recoveryConsole": "Recovery Console"
   },
   "navbar": {
@@ -1063,6 +1064,85 @@
       "current": "Current",
       "expected": "Expected",
       "status": "Status"
+    }
+  },
+  "receivables": {
+    "title": "Receivables",
+    "subtitle": "Manage merchant receivables and settlements",
+    "outstandingReceivables": "Outstanding Receivables",
+    "outstandingCount": "Outstanding Debts Count",
+    "viewAll": "View all receivables for this merchant",
+    "noReceivables": "No receivables found",
+    "errorLoading": "Failed to load receivables",
+    "errorLoadingDetail": "Failed to load receivable details",
+    "noAllocations": "No allocations yet",
+    "noActionsAvailable": "No actions available for this receivable.",
+    "payout": "Payout",
+    "directSettlement": "Direct settlement",
+    "statuses": {
+      "OPEN": "Open",
+      "PARTIALLY_SETTLED": "Partially Settled",
+      "SETTLED": "Settled"
+    },
+    "columns": {
+      "merchant": "Merchant",
+      "debt": "Debt",
+      "amountTotal": "Total",
+      "amountOutstanding": "Outstanding",
+      "status": "Status",
+      "createdAt": "Created At"
+    },
+    "fields": {
+      "amountTotal": "Total Amount",
+      "amountOutstanding": "Outstanding",
+      "status": "Status",
+      "merchant": "Merchant",
+      "business": "Business",
+      "debt": "Debt",
+      "customer": "Customer",
+      "debtAmount": "Debt Amount",
+      "debtStatus": "Debt Status",
+      "dueDate": "Due Date",
+      "createdAt": "Created At",
+      "settledAt": "Settled At",
+      "amountApplied": "Amount Applied",
+      "appliedAt": "Applied At",
+      "settledBy": "Settled By",
+      "payoutId": "Source"
+    },
+    "sections": {
+      "receivableDetails": "Receivable Details",
+      "debtDetails": "Debt Details",
+      "merchantDetails": "Merchant & Business",
+      "allocations": "Settlement Allocations",
+      "quickInfo": "Quick Info",
+      "actions": "Actions"
+    },
+    "filters": {
+      "status": "Status",
+      "merchant": "Merchant",
+      "dateRange": "Created Date"
+    },
+    "actions": {
+      "settle": "Settle Receivable"
+    },
+    "modals": {
+      "settle": {
+        "title": "Settle Receivable",
+        "description": "Record a manual settlement for this receivable. Partial settlements set status to Partially Settled.",
+        "amountLabel": "Amount to Settle (SAR)",
+        "amountPlaceholder": "e.g. 25.00",
+        "refLabel": "External Reference",
+        "refPlaceholder": "e.g. BANK-TRX-1234",
+        "noteLabel": "Settlement Note",
+        "notePlaceholder": "e.g. Collected by bank transfer.",
+        "outstandingLabel": "Outstanding Amount",
+        "amountExceedsOutstanding": "Amount cannot exceed outstanding balance",
+        "cancel": "Cancel",
+        "confirm": "Settle",
+        "success": "Receivable settled successfully",
+        "error": "Failed to settle receivable"
+      }
     }
   }
 }

@@ -53,6 +53,7 @@
     "systemUsers": "مستخدمو النظام",
     "payouts": "المدفوعات",
     "payments": "سجلات الدفع",
+    "receivables": "المستحقات",
     "recoveryConsole": "وحدة الاسترداد"
   },
   "navbar": {
@@ -1063,6 +1064,85 @@
       "current": "الحالي",
       "expected": "المتوقع",
       "status": "الحالة"
+    }
+  },
+  "receivables": {
+    "title": "المستحقات",
+    "subtitle": "إدارة مستحقات التجار والتسويات",
+    "outstandingReceivables": "المستحقات القائمة",
+    "outstandingCount": "عدد الديون القائمة",
+    "viewAll": "عرض جميع المستحقات لهذا التاجر",
+    "noReceivables": "لا توجد مستحقات",
+    "errorLoading": "فشل تحميل المستحقات",
+    "errorLoadingDetail": "فشل تحميل تفاصيل المستحق",
+    "noAllocations": "لا توجد تخصيصات بعد",
+    "noActionsAvailable": "لا توجد إجراءات متاحة لهذا المستحق.",
+    "payout": "صرف",
+    "directSettlement": "تسوية مباشرة",
+    "statuses": {
+      "OPEN": "مفتوح",
+      "PARTIALLY_SETTLED": "مسوّى جزئياً",
+      "SETTLED": "مسوّى"
+    },
+    "columns": {
+      "merchant": "التاجر",
+      "debt": "الدين",
+      "amountTotal": "الإجمالي",
+      "amountOutstanding": "القائم",
+      "status": "الحالة",
+      "createdAt": "تاريخ الإنشاء"
+    },
+    "fields": {
+      "amountTotal": "المبلغ الإجمالي",
+      "amountOutstanding": "المبلغ القائم",
+      "status": "الحالة",
+      "merchant": "التاجر",
+      "business": "النشاط التجاري",
+      "debt": "الدين",
+      "customer": "العميل",
+      "debtAmount": "مبلغ الدين",
+      "debtStatus": "حالة الدين",
+      "dueDate": "تاريخ الاستحقاق",
+      "createdAt": "تاريخ الإنشاء",
+      "settledAt": "تاريخ التسوية",
+      "amountApplied": "المبلغ المطبق",
+      "appliedAt": "تاريخ التطبيق",
+      "settledBy": "سوّى بواسطة",
+      "payoutId": "المصدر"
+    },
+    "sections": {
+      "receivableDetails": "تفاصيل المستحق",
+      "debtDetails": "تفاصيل الدين",
+      "merchantDetails": "التاجر والنشاط",
+      "allocations": "تخصيصات التسوية",
+      "quickInfo": "معلومات سريعة",
+      "actions": "الإجراءات"
+    },
+    "filters": {
+      "status": "الحالة",
+      "merchant": "التاجر",
+      "dateRange": "تاريخ الإنشاء"
+    },
+    "actions": {
+      "settle": "تسوية المستحق"
+    },
+    "modals": {
+      "settle": {
+        "title": "تسوية المستحق",
+        "description": "تسجيل تسوية يدوية لهذا المستحق. التسويات الجزئية تغير الحالة إلى مسوّى جزئياً.",
+        "amountLabel": "المبلغ للتسوية (ريال)",
+        "amountPlaceholder": "مثال: 25.00",
+        "refLabel": "المرجع الخارجي",
+        "refPlaceholder": "مثال: BANK-TRX-1234",
+        "noteLabel": "ملاحظة التسوية",
+        "notePlaceholder": "مثال: تم التحصيل عبر تحويل بنكي.",
+        "outstandingLabel": "المبلغ القائم",
+        "amountExceedsOutstanding": "لا يمكن أن يتجاوز المبلغ الرصيد القائم",
+        "cancel": "إلغاء",
+        "confirm": "تسوية",
+        "success": "تمت تسوية المستحق بنجاح",
+        "error": "فشل تسوية المستحق"
+      }
     }
   }
 }
