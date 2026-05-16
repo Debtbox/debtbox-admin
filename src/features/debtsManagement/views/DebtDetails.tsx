@@ -339,27 +339,29 @@ const DebtDetails = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
-                      {debt.groupedDebt.debts.map((child) => {
-                        const isCurrent = child.id === debt.id;
+                      {debt.groupedDebt.debts.map((child, idx) => {
+                        const childNumId = child.id ?? (child.debtId != null ? parseInt(String(child.debtId), 10) : undefined);
+                        const isCurrent = childNumId === debt.id;
+                        const childDueDate = child.due_date ?? child.dueDate;
                         return (
                           <tr
-                            key={child.id}
+                            key={childNumId ?? idx}
                             className={isCurrent ? "bg-indigo-50/60" : ""}
                           >
                             <td className="px-3 py-2 font-mono text-xs">
                               {isCurrent ? (
                                 <span className="text-indigo-700 font-semibold">
-                                  #{child.id}
+                                  #{childNumId}
                                 </span>
                               ) : (
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    navigate(`/debts-management/${child.id}`)
+                                    navigate(`/debts-management/${childNumId}`)
                                   }
                                   className="text-blue-600 hover:text-blue-800"
                                 >
-                                  #{child.id}
+                                  #{childNumId}
                                 </button>
                               )}
                             </td>
@@ -379,8 +381,8 @@ const DebtDetails = () => {
                               )}
                             </td>
                             <td className="px-3 py-2 text-xs text-gray-600">
-                              {child.due_date
-                                ? formatDate(i18n.language, child.due_date, {
+                              {childDueDate
+                                ? formatDate(i18n.language, childDueDate, {
                                     year: "numeric",
                                     month: "short",
                                     day: "numeric",

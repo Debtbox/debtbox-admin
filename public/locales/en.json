@@ -739,7 +739,7 @@
       "amount": "Amount",
       "totalAmount": "Total Amount",
       "deductedFees": "Deducted Fees",
-      "merchantNetAmount": "Merchant Net Amount",
+      "merchantNetAmount": "Merchant Net",
       "status": "Status",
       "dueDate": "Due Date",
       "createdAt": "Created At",
@@ -758,7 +758,6 @@
       "debtboxFee": "Debtbox Fee",
       "instantPayoutFee": "Instant Payout Fee",
       "totalDeductions": "Total Deductions",
-      "merchantNetAmount": "Merchant Net",
       "debtTotal": "Debt Total",
       "providerFeeBase": "Provider Fee (Base)",
       "providerFeeVat": "Provider Fee (VAT)",
@@ -787,7 +786,8 @@
         "reasonPlaceholder": "Explain why this debt is being cancelled...",
         "confirmButton": "Cancel Debt",
         "success": "Debt cancelled successfully",
-        "error": "Failed to cancel debt"
+        "error": "Failed to cancel debt",
+        "successGrouped": "Debt cancelled ({{count}} debts in the group were affected)"
       },
       "extend": {
         "title": "Extend Due Date",
@@ -797,7 +797,8 @@
         "reasonPlaceholder": "Explain why the due date is being extended...",
         "confirmButton": "Extend Due Date",
         "success": "Due date extended successfully",
-        "error": "Failed to extend due date"
+        "error": "Failed to extend due date",
+        "successGrouped": "Due date extended ({{count}} debts in the group were affected)"
       },
       "flag": {
         "title": "Flag for Review",
@@ -806,14 +807,16 @@
         "reasonPlaceholder": "Describe the reason for flagging this debt...",
         "confirmButton": "Flag for Review",
         "success": "Debt flagged for review",
-        "error": "Failed to flag debt"
+        "error": "Failed to flag debt",
+        "successGrouped": "Debt flagged for review ({{count}} debts in the group were affected)"
       },
       "resend": {
         "title": "Resend Notification",
         "description": "This will resend the debt notification to the customer. Do you want to continue?",
         "confirmButton": "Resend",
         "success": "Notification sent successfully",
-        "error": "Failed to send notification"
+        "error": "Failed to send notification",
+        "successGrouped": "{{count}} notifications sent (all debts in the group)"
       }
     }
   },
@@ -1141,7 +1144,9 @@
         "cancel": "Cancel",
         "confirm": "Settle",
         "success": "Receivable settled successfully",
-        "error": "Failed to settle receivable"
+        "error": "Failed to settle receivable",
+        "successGrouped": "Group receivable settled ({{count}} debts)",
+        "groupedDescription": "This receivable belongs to a grouped debt. Settlement will apply to all {{count}} debts in the group."
       }
     }
   }

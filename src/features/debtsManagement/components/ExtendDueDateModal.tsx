@@ -53,8 +53,12 @@ export const ExtendDueDateModal = ({
     mutate(
       { id: debtId, data: { newDueDate: values.newDueDate, reason: values.reason } },
       {
-        onSuccess: () => {
-          toast.success(t("debts.modals.extend.success", "Due date extended successfully"));
+        onSuccess: (res) => {
+          const count = res?.data?.affectedCount ?? 1;
+          const msg = count > 1
+            ? t("debts.modals.extend.successGrouped", "Due date extended ({{count}} debts in the group were affected)", { count })
+            : t("debts.modals.extend.success", "Due date extended successfully");
+          toast.success(msg);
           onSuccess();
         },
         onError: (err: unknown) => {

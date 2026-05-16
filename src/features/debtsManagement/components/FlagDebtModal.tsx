@@ -34,8 +34,12 @@ export const FlagDebtModal = ({ debtId, onClose, onSuccess }: FlagDebtModalProps
     mutate(
       { id: debtId, data: { reason: values.reason } },
       {
-        onSuccess: () => {
-          toast.success(t("debts.modals.flag.success", "Debt flagged for review"));
+        onSuccess: (res) => {
+          const count = res?.data?.affectedCount ?? 1;
+          const msg = count > 1
+            ? t("debts.modals.flag.successGrouped", "Debt flagged for review ({{count}} debts in the group were affected)", { count })
+            : t("debts.modals.flag.success", "Debt flagged for review");
+          toast.success(msg);
           onSuccess();
         },
         onError: (err: unknown) => {

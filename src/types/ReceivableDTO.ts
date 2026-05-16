@@ -1,3 +1,5 @@
+import type { GroupedDebt } from "./GroupedDebtDTO";
+
 export type ReceivableStatus = "OPEN" | "PARTIALLY_SETTLED" | "SETTLED";
 
 export interface ReceivableMerchant {
@@ -48,4 +50,5 @@ export interface AllocationDTO {
 
 export interface ReceivableDetailsDTO extends ReceivableDTO {
   allocations: AllocationDTO[];
+  groupedDebt?: GroupedDebt | null;
 }

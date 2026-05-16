@@ -18,8 +18,12 @@ import { useIsSuperadmin } from "@/auth/rbac";
 
 const Field = ({ label, value }: { label: string; value: ReactNode }) => (
   <div>
-    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{label}</p>
-    <div className="text-sm text-gray-900">{value ?? <span className="text-gray-400">—</span>}</div>
+    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+      {label}
+    </p>
+    <div className="text-sm text-gray-900">
+      {value ?? <span className="text-gray-400">—</span>}
+    </div>
   </div>
 );
 
@@ -34,7 +38,9 @@ const SectionCard = ({
   children: ReactNode;
   className?: string;
 }) => (
-  <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className ?? ""}`}>
+  <div
+    className={`bg-white rounded-lg border border-gray-200 p-6 ${className ?? ""}`}
+  >
     <div className="flex items-center gap-2 mb-4">
       <span className="text-gray-400">{icon}</span>
       <h3 className="text-base font-semibold text-gray-900">{title}</h3>
@@ -112,7 +118,10 @@ const PaymentDetails = () => {
           </h1>
           <PaymentStatusBadge status={payment.status} />
           {payment.groupedDebt?.isGrouped && (
-            <GroupedDebtBadge count={payment.groupedDebt.debtsCount} size="md" />
+            <GroupedDebtBadge
+              count={payment.groupedDebt.debtsCount}
+              size="md"
+            />
           )}
         </div>
         <p className="text-sm text-gray-500 capitalize">
@@ -163,7 +172,10 @@ const PaymentDetails = () => {
                   </span>
                   {payment.providerFeeIncludedInDebtboxFee && (
                     <span className="ms-2 text-xs text-gray-400">
-                      {t("payments.fields.includedInFee", "incl. in Debtbox fee")}
+                      {t(
+                        "payments.fields.includedInFee",
+                        "incl. in Debtbox fee",
+                      )}
                     </span>
                   )}
                 </div>
@@ -174,7 +186,10 @@ const PaymentDetails = () => {
               {payment.instantPayoutFeesHalala > 0 && (
                 <div className="py-2 flex justify-between items-center">
                   <span className="text-sm text-gray-600">
-                    {t("payments.fields.instantPayoutFee", "Instant Payout Fee")}
+                    {t(
+                      "payments.fields.instantPayoutFee",
+                      "Instant Payout Fee",
+                    )}
                   </span>
                   <span className="text-sm font-medium text-red-600">
                     -{formatHalala(payment.instantPayoutFeesHalala)}
@@ -198,7 +213,9 @@ const PaymentDetails = () => {
               />
               <Field
                 label={t("payments.fields.payoutMethod", "Payout Method")}
-                value={<span className="capitalize">{payment.payoutMethod}</span>}
+                value={
+                  <span className="capitalize">{payment.payoutMethod}</span>
+                }
               />
               {payment.paymentBrand && (
                 <Field
@@ -211,7 +228,10 @@ const PaymentDetails = () => {
                 value={formatDate(payment.paidAt) ?? "—"}
               />
               <Field
-                label={t("payments.fields.providerFeeType", "Provider Fee Type")}
+                label={t(
+                  "payments.fields.providerFeeType",
+                  "Provider Fee Type",
+                )}
                 value={payment.providerFeeTypeApplied}
               />
               <Field
@@ -253,7 +273,9 @@ const PaymentDetails = () => {
                             #{p.payoutId}
                           </Link>
                         </td>
-                        <td className="py-2.5 px-3 text-gray-700">{p.payoutStatus}</td>
+                        <td className="py-2.5 px-3 text-gray-700">
+                          {p.payoutStatus}
+                        </td>
                         <td className="py-2.5 px-3 text-right font-medium text-green-700">
                           {formatHalala(p.merchantNetAmountHalala)}
                         </td>
@@ -286,10 +308,14 @@ const PaymentDetails = () => {
                     {t("groupedDebt.fields.groupAmount", "Group Amount")}
                   </p>
                   <p className="text-lg font-bold text-gray-900">
-                    SAR {Number(payment.groupedDebt.groupAmount).toLocaleString("en-US", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
+                    SAR{" "}
+                    {Number(payment.groupedDebt.groupAmount).toLocaleString(
+                      "en-US",
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      },
+                    )}
                   </p>
                 </div>
                 <div className="rounded-lg border border-gray-100 bg-gray-50 p-3">
@@ -328,13 +354,13 @@ const PaymentDetails = () => {
                     </thead>
                     <tbody className="divide-y divide-gray-50">
                       {payment.groupedDebt.debts.map((child) => (
-                        <tr key={child.id}>
+                        <tr key={child.debtId}>
                           <td className="px-3 py-2 font-mono text-xs text-gray-500">
                             <Link
-                              to={`/debts-management/${child.id}`}
+                              to={`/debts-management/${child.debtId}`}
                               className="text-blue-600 hover:text-blue-800"
                             >
-                              #{child.id}
+                              #{child.debtId}
                             </Link>
                           </td>
                           <td className="px-3 py-2 text-gray-800 max-w-[260px] truncate">
@@ -342,10 +368,13 @@ const PaymentDetails = () => {
                           </td>
                           <td className="px-3 py-2 text-gray-700">
                             {child.amount != null
-                              ? `SAR ${Number(child.amount).toLocaleString("en-US", {
-                                  minimumFractionDigits: 2,
-                                  maximumFractionDigits: 2,
-                                })}`
+                              ? `SAR ${Number(child.amount).toLocaleString(
+                                  "en-US",
+                                  {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  },
+                                )}`
                               : "—"}
                           </td>
                           <td className="px-3 py-2 text-xs text-gray-700 capitalize">
@@ -371,7 +400,9 @@ const PaymentDetails = () => {
                 value={
                   <span>
                     {payment.debt.title}{" "}
-                    <span className="text-xs text-gray-400">#{payment.debt.id}</span>
+                    <span className="text-xs text-gray-400">
+                      #{payment.debt.id}
+                    </span>
                   </span>
                 }
               />
@@ -384,7 +415,9 @@ const PaymentDetails = () => {
                 value={
                   <span>
                     {payment.merchant.nameEn}{" "}
-                    <span className="text-xs text-gray-400">#{payment.merchant.id}</span>
+                    <span className="text-xs text-gray-400">
+                      #{payment.merchant.id}
+                    </span>
                   </span>
                 }
               />
@@ -396,7 +429,9 @@ const PaymentDetails = () => {
                     className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
                   >
                     {payment.customer.nameEn}{" "}
-                    <span className="text-xs text-gray-400">#{payment.customer.id}</span>
+                    <span className="text-xs text-gray-400">
+                      #{payment.customer.id}
+                    </span>
                   </Link>
                 }
               />
@@ -418,7 +453,11 @@ const PaymentDetails = () => {
               />
               <Field
                 label={t("payments.fields.grossAmount", "Gross Amount")}
-                value={<span className="font-semibold">{formatHalala(payment.grossAmountHalala)}</span>}
+                value={
+                  <span className="font-semibold">
+                    {formatHalala(payment.grossAmountHalala)}
+                  </span>
+                }
               />
               <Field
                 label={t("payments.fields.merchantNet", "Merchant Net")}

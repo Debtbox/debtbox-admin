@@ -2,7 +2,6 @@ import { axios } from "@/lib/axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { MutationConfig } from "@/lib/react-query";
 import { getLanguageFromCookie } from "@/utils/getLanguageFromCookies";
-import type { ReceivableDetailsDTO } from "@/types/ReceivableDTO";
 
 export interface SettleReceivableRequest {
   amountHalala: number;
@@ -10,10 +9,27 @@ export interface SettleReceivableRequest {
   settlementNote?: string;
 }
 
+export interface SettledReceivableData {
+  id: string;
+  amountTotalHalala: number;
+  amountOutstandingHalala: number;
+  status: string;
+}
+
 export type SettleReceivableResponse = {
   message: string;
   success: boolean;
-  data: ReceivableDetailsDTO;
+  data: {
+    receivable: SettledReceivableData;
+    groupReceivables: SettledReceivableData[];
+    groupId: string | null;
+    debtIds: (string | number)[];
+    receivableIds: string[];
+    totalOutstanding: number;
+    amountHalala: number;
+    isGrouped: boolean;
+    previousState: unknown[];
+  };
 };
 
 export const settleReceivable = ({

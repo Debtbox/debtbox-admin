@@ -22,8 +22,12 @@ export const ResendNotificationModal = ({
     mutate(
       { id: debtId },
       {
-        onSuccess: () => {
-          toast.success(t("debts.modals.resend.success", "Notification sent successfully"));
+        onSuccess: (res) => {
+          const sentCount = res?.data?.sentCount ?? res?.data?.affectedCount ?? 1;
+          const msg = sentCount > 1
+            ? t("debts.modals.resend.successGrouped", "{{count}} notifications sent (all debts in the group)", { count: sentCount })
+            : t("debts.modals.resend.success", "Notification sent successfully");
+          toast.success(msg);
           onSuccess();
         },
         onError: (err: unknown) => {

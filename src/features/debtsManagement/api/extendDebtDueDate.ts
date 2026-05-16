@@ -2,6 +2,7 @@ import { axios } from "@/lib/axios";
 import { getLanguageFromCookie } from "@/utils/getLanguageFromCookies";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { MutationConfig } from "@/lib/react-query";
+import type { DebtGroupedActionData } from "@/types/GroupedDebtDTO";
 
 export interface ExtendDebtDueDateRequest {
   newDueDate: string;
@@ -26,7 +27,7 @@ export const extendDebtDueDate = ({
 export type ExtendDebtDueDateResponse = {
   message: string;
   success: boolean;
-  data: null;
+  data: DebtGroupedActionData;
 };
 
 type UseExtendDebtDueDateOptions = {

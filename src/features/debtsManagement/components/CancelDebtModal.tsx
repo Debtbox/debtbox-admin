@@ -35,8 +35,12 @@ export const CancelDebtModal = ({ debtId, debtTitle, onClose, onSuccess }: Cance
     mutate(
       { id: debtId, data: { reason: values.reason } },
       {
-        onSuccess: () => {
-          toast.success(t("debts.modals.cancel.success", "Debt cancelled successfully"));
+        onSuccess: (res) => {
+          const count = res?.data?.affectedCount ?? 1;
+          const msg = count > 1
+            ? t("debts.modals.cancel.successGrouped", "Debt cancelled ({{count}} debts in the group were affected)", { count })
+            : t("debts.modals.cancel.success", "Debt cancelled successfully");
+          toast.success(msg);
           onSuccess();
         },
         onError: (err: unknown) => {

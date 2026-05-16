@@ -11,6 +11,7 @@ import {
   User,
 } from "lucide-react";
 import { Button } from "@/components/shared/Button";
+import { GroupedDebtBadge } from "@/components/shared/GroupedDebtBadge";
 import { PERMISSIONS } from "@/auth/permissions";
 import { useCan } from "@/auth/rbac";
 import { useGetReceivable } from "../api/getReceivable";
@@ -103,6 +104,9 @@ const ReceivableDetails = () => {
             {t("receivables.title", "Receivable")} #{receivable.id.slice(0, 8)}
           </h1>
           <ReceivableStatusBadge status={receivable.status} />
+          {receivable.groupedDebt?.isGrouped && (
+            <GroupedDebtBadge count={receivable.groupedDebt.debtsCount} size="md" />
+          )}
         </div>
         <p className="text-sm text-gray-500">{formatDate(receivable.createdAt)}</p>
       </div>
@@ -352,6 +356,8 @@ const ReceivableDetails = () => {
         <SettleReceivableModal
           receivableId={receivable.id}
           amountOutstandingHalala={receivable.amountOutstandingHalala}
+          isGrouped={receivable.groupedDebt?.isGrouped ?? false}
+          groupDebtsCount={receivable.groupedDebt?.debtsCount}
           onClose={() => setShowSettleModal(false)}
           onSuccess={handleActionSuccess}
         />

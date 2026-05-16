@@ -2,6 +2,7 @@ import { axios } from "@/lib/axios";
 import { getLanguageFromCookie } from "@/utils/getLanguageFromCookies";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { MutationConfig } from "@/lib/react-query";
+import type { ResendDebtGroupedActionData } from "@/types/GroupedDebtDTO";
 
 export const resendDebtNotification = ({
   id,
@@ -9,7 +10,7 @@ export const resendDebtNotification = ({
   id: number | string;
 }): Promise<ResendDebtNotificationResponse> => {
   const language = getLanguageFromCookie();
-  return axios.post(`/admin/debts/${id}/actions/resend-notifications`, {
+  return axios.post(`/admin/debts/${id}/actions/resend-notifications`, undefined, {
     headers: {
       "Accept-Language": language,
     },
@@ -19,7 +20,7 @@ export const resendDebtNotification = ({
 export type ResendDebtNotificationResponse = {
   message: string;
   success: boolean;
-  data: null;
+  data: ResendDebtGroupedActionData;
 };
 
 type UseResendDebtNotificationOptions = {
