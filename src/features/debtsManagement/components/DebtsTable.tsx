@@ -58,7 +58,7 @@ export const DebtsTable = ({ data, isLoading, pagination, onPageChange }: DebtsT
       title: t("debts.columns.title"),
       dataIndex: "title",
       render: (value, record) => {
-        const isGrouped = !!record.groupedDebt?.isGrouped;
+        const isGrouped = (record.debtsCount ?? 0) > 1;
         const isExpanded = expandedIds.has(record.id);
         return (
           <div className="flex flex-col gap-1 max-w-[240px]">
@@ -88,7 +88,7 @@ export const DebtsTable = ({ data, isLoading, pagination, onPageChange }: DebtsT
               </span>
             </div>
             {isGrouped && (
-              <GroupedDebtBadge count={record.groupedDebt?.debtsCount} />
+              <GroupedDebtBadge count={record.debtsCount} />
             )}
           </div>
         );
@@ -99,16 +99,16 @@ export const DebtsTable = ({ data, isLoading, pagination, onPageChange }: DebtsT
       title: t("debts.columns.amount"),
       dataIndex: "amount",
       render: (value, record) => {
-        const isGrouped = !!record.groupedDebt?.isGrouped;
+        const isGrouped = (record.debtsCount ?? 0) > 1;
         return (
           <div>
             <span className="font-medium text-gray-900">
               {formatDebtAmount(value as string)}
             </span>
-            {isGrouped && record.groupedDebt && (
+            {isGrouped && record.groupAmount != null && (
               <p className="text-xs text-gray-400">
                 {t("groupedDebt.groupTotal", "Group total")}:{" "}
-                {formatDebtAmount(record.groupedDebt.groupAmount)}
+                {formatDebtAmount(record.groupAmount)}
               </p>
             )}
           </div>
@@ -187,94 +187,71 @@ export const DebtsTable = ({ data, isLoading, pagination, onPageChange }: DebtsT
         </Button>
       ) : null}
       rowExtra={(record) => {
-        if (!record.groupedDebt?.isGrouped || !expandedIds.has(record.id)) {
+        const isGrouped = (record.debtsCount ?? 0) > 1;
+        if (!isGrouped || !expandedIds.has(record.id)) {
           return null;
         }
-        const { debts, debtIds, debtsCount } = record.groupedDebt;
+        const debts = record.debts ?? [];
+        const debtsCount = record.debtsCount ?? 0;
         return (
-          <div className="bg-indigo-50/40 -mx-6 px-6 py-3 border-y border-indigo-100">
-            <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-gray-600">
-              <span className="font-semibold uppercase tracking-wide text-indigo-700">
+          <div className="-mx-6 -my-3 bg-linear-to-b from-indigo-50/50 to-white border-t border-indigo-100 pt-3 pb-5">
+            <div className="flex items-center gap-2 px-8 mb-3">
+              <span className="text-[11px] font-semibold uppercase tracking-widest text-indigo-500">
                 {t("groupedDebt.childDebts", "Child debts")}
               </span>
-              <span className="text-gray-400">·</span>
-              <span>
-                {t("groupedDebt.includesCount", "Includes {{count}} child debts", {
-                  count: debtsCount,
-                })}
+              <span className="inline-flex items-center justify-center text-[10px] font-bold text-indigo-600 bg-indigo-100 rounded-full w-5 h-5">
+                {debtsCount}
               </span>
-              {debtIds.length > 0 && (
-                <>
-                  <span className="text-gray-400">·</span>
-                  <span className="font-mono">
-                    {t("groupedDebt.debtIds", "Debt IDs")}: {debtIds.join(", ")}
-                  </span>
-                </>
-              )}
             </div>
-            <div className="rounded-lg border border-indigo-100 bg-white overflow-hidden">
-              <table className="w-full text-sm">
-                <thead className="bg-indigo-50/60">
-                  <tr>
-                    <th className="text-left px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
-                      {t("debts.columns.id", "ID")}
-                    </th>
-                    <th className="text-left px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
-                      {t("debts.columns.title", "Title")}
-                    </th>
-                    <th className="text-left px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
-                      {t("debts.columns.amount", "Amount")}
-                    </th>
-                    <th className="text-left px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
-                      {t("debts.columns.status", "Status")}
-                    </th>
-                    <th className="text-left px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
-                      {t("debts.columns.dueDate", "Due Date")}
-                    </th>
-                    <th className="text-right px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500" />
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-indigo-50">
-                  {debts.map((child) => (
-                    <tr key={child.id} className="hover:bg-indigo-50/40">
-                      <td className="px-3 py-2 font-mono text-xs text-gray-500">
-                        #{child.id}
-                      </td>
-                      <td className="px-3 py-2 text-gray-800 max-w-[240px] truncate">
-                        {child.title ?? "—"}
-                      </td>
-                      <td className="px-3 py-2 text-gray-700">
-                        {child.amount != null ? formatDebtAmount(child.amount) : "—"}
-                      </td>
-                      <td className="px-3 py-2">
-                        {child.status ? (
-                          <DebtStatusBadge status={child.status} />
-                        ) : (
-                          <span className="text-gray-400 text-xs">—</span>
-                        )}
-                      </td>
-                      <td className="px-3 py-2 text-xs text-gray-600">
-                        {child.due_date ? formatDate(child.due_date) : "—"}
-                      </td>
-                      <td className="px-3 py-2 text-right">
-                        {canRead && (
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/debts-management/${child.id}`);
-                            }}
-                            className="inline-flex items-center text-blue-600 hover:text-blue-800"
-                            aria-label={t("common.view", "View")}
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="flex flex-col gap-2 px-8">
+              {debts.map((child) => (
+                <div
+                  key={child.id ?? child.debtId}
+                  className="flex items-center gap-4 bg-white rounded-lg ring-1 ring-indigo-100 border-l-4 border-l-indigo-400 px-4 py-3 hover:ring-indigo-200 hover:border-l-indigo-500 hover:shadow-sm transition-all group"
+                >
+                  <span className="font-mono text-xs text-gray-400 min-w-[52px]">
+                    #{child.id ?? child.debtId}
+                  </span>
+                  <span className="text-sm text-gray-800 flex-1 truncate max-w-[200px]">
+                    {child.title ?? "—"}
+                  </span>
+                  <span className="text-sm font-medium text-gray-700 min-w-20">
+                    {child.amount != null
+                      ? formatDebtAmount(child.amount as string)
+                      : "—"}
+                  </span>
+                  <div className="min-w-[100px]">
+                    {child.status ? (
+                      <DebtStatusBadge status={child.status} />
+                    ) : (
+                      <span className="text-gray-400 text-xs">—</span>
+                    )}
+                  </div>
+                  <span className="text-xs text-gray-500 min-w-[90px]">
+                    {child.due_date ?? child.dueDate
+                      ? formatDate((child.due_date ?? child.dueDate)!)
+                      : "—"}
+                  </span>
+                  {child.created_at && (
+                    <span className="text-xs text-gray-400 min-w-[90px]">
+                      {formatDate(child.created_at)}
+                    </span>
+                  )}
+                  {canRead && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/debts-management/${child.id}`);
+                      }}
+                      className="ms-auto opacity-0 group-hover:opacity-100 inline-flex items-center justify-center w-7 h-7 rounded-full text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 transition-all"
+                      aria-label={t("common.view", "View")}
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         );

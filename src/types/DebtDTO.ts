@@ -1,4 +1,4 @@
-import type { GroupedDebt } from "./GroupedDebtDTO";
+import type { GroupedDebt, GroupedDebtChildDTO } from "./GroupedDebtDTO";
 
 export interface DebtDTO {
   id: number;
@@ -16,7 +16,14 @@ export interface DebtDTO {
   business_id: number;
   business_name_ar: string;
   business_name_en: string;
-  groupedDebt?: GroupedDebt | null;
+  // Grouped debt fields returned flat by the API
+  isGrouped?: boolean;
+  groupId?: string | null;
+  debtIds?: (number | string)[];
+  debtsCount?: number;
+  groupAmount?: string | number;
+  groupStatus?: string;
+  debts?: GroupedDebtChildDTO[];
 }
 
 export interface DebtDetailsDTO extends DebtDTO {
@@ -55,9 +62,19 @@ export interface DebtDetailsDTO extends DebtDTO {
   payment_brand: string | null;
   card_country: string | null;
   card_issuer_country: string | null;
+  // Receivable / payout tracking
+  receivable_id: number | null;
+  receivable_amount_total_halala: number | null;
+  receivable_amount_outstanding_halala: number | null;
+  receivable_status: string | null;
+  merchant_outstanding_receivable_halala: string;
+  // Payment extras
+  payment_currency: string | null;
   // Activity
   last_extension_at: string | null;
   extensions_count: string;
   last_overdue_action_at: string | null;
   overdue_actions_count: string;
+  // Nested grouped debt — only present on the single-debt details endpoint
+  groupedDebt?: GroupedDebt | null;
 }

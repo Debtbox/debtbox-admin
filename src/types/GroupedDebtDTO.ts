@@ -9,6 +9,10 @@ export interface GroupedDebtChildDTO {
   created_at?: string;
   merchant_id?: number;
   customer_id?: number;
+  // Rich fields available from the details endpoint
+  signatureUrl?: string | null;
+  createWithSanad?: boolean;
+  review_flagged_at?: string | null;
 }
 
 export interface GroupedDebt {

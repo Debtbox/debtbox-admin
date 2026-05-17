@@ -15,6 +15,9 @@ import {
   Calculator,
   ExternalLink,
   Layers,
+  Wallet,
+  PenLine,
+  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/shared/Button";
 import { GroupedDebtBadge } from "@/components/shared/GroupedDebtBadge";
@@ -336,6 +339,15 @@ const DebtDetails = () => {
                         <th className="text-left px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
                           {t("debts.columns.dueDate", "Due Date")}
                         </th>
+                        <th className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500 text-center">
+                          {t("debts.columns.sanad", "Sanad")}
+                        </th>
+                        <th className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500 text-center">
+                          {t("debts.columns.signed", "Signed")}
+                        </th>
+                        <th className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-500 text-center">
+                          {t("debts.columns.flagged", "Flagged")}
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
@@ -389,6 +401,35 @@ const DebtDetails = () => {
                                   })
                                 : "—"}
                             </td>
+                            <td className="px-3 py-2 text-center">
+                              {child.createWithSanad ? (
+                                <CheckCircle2 className="w-4 h-4 text-green-500 mx-auto" />
+                              ) : (
+                                <span className="text-gray-300 text-xs">—</span>
+                              )}
+                            </td>
+                            <td className="px-3 py-2 text-center">
+                              {child.signatureUrl ? (
+                                <a
+                                  href={child.signatureUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center justify-center text-indigo-500 hover:text-indigo-700"
+                                  title={t("debts.viewSignature", "View signature")}
+                                >
+                                  <PenLine className="w-4 h-4" />
+                                </a>
+                              ) : (
+                                <span className="text-gray-300 text-xs">—</span>
+                              )}
+                            </td>
+                            <td className="px-3 py-2 text-center">
+                              {child.review_flagged_at ? (
+                                <Flag className="w-4 h-4 text-orange-500 mx-auto" />
+                              ) : (
+                                <span className="text-gray-300 text-xs">—</span>
+                              )}
+                            </td>
                           </tr>
                         );
                       })}
@@ -438,6 +479,18 @@ const DebtDetails = () => {
                 </p>
               </div>
             </div>
+            {Number(debt.merchant_outstanding_receivable_halala ?? "0") > 0 && (
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <Field
+                  label={t("debts.fields.merchantOutstanding", "Merchant Outstanding Receivable")}
+                  value={
+                    <span className="font-medium text-amber-600">
+                      {formatHalalaAmount(debt.merchant_outstanding_receivable_halala)}
+                    </span>
+                  }
+                />
+              </div>
+            )}
           </SectionCard>
 
           {/* Customer */}
@@ -856,6 +909,108 @@ const DebtDetails = () => {
                         )})`
                       : ""
                   }`}
+                />
+                {debt.card_country && (
+                  <Field
+                    label={t("debts.fields.cardCountry", "Card Country")}
+                    value={debt.card_country}
+                  />
+                )}
+                {debt.card_issuer_country && (
+                  <Field
+                    label={t("debts.fields.cardIssuerCountry", "Card Issuer Country")}
+                    value={debt.card_issuer_country}
+                  />
+                )}
+                {debt.payment_currency && (
+                  <Field
+                    label={t("debts.fields.currency", "Currency")}
+                    value={debt.payment_currency}
+                  />
+                )}
+              </div>
+              {debt.debtbox_fee_halala !== null && (
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                    {t("debts.sections.actualFees", "Actual Fees Charged")}
+                  </p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Field
+                      label={t("debts.fields.debtboxFeeActual", "Debtbox Fee")}
+                      value={
+                        <span className="font-medium text-red-600">
+                          {formatHalalaAmount(debt.debtbox_fee_halala) ?? "—"}
+                        </span>
+                      }
+                    />
+                    {debt.provider_fee_base_halala !== null && (
+                      <Field
+                        label={t("debts.fields.providerFeeBaseActual", "Provider Fee (Base)")}
+                        value={formatHalalaAmount(debt.provider_fee_base_halala) ?? "—"}
+                      />
+                    )}
+                    {debt.provider_fee_vat_halala !== null && (
+                      <Field
+                        label={t("debts.fields.providerFeeVatActual", "Provider Fee (VAT)")}
+                        value={formatHalalaAmount(debt.provider_fee_vat_halala) ?? "—"}
+                      />
+                    )}
+                    {debt.provider_fee_total_halala !== null && (
+                      <Field
+                        label={t("debts.fields.providerFeeTotalActual", "Total Provider Fee")}
+                        value={
+                          <span className="font-medium">
+                            {formatHalalaAmount(debt.provider_fee_total_halala) ?? "—"}
+                          </span>
+                        }
+                      />
+                    )}
+                    {debt.provider_fee_type_applied && (
+                      <Field
+                        label={t("debts.fields.providerFeeTypeActual", "Applied Fee Type")}
+                        value={
+                          <span className="font-mono text-xs text-gray-700">
+                            {debt.provider_fee_type_applied}
+                          </span>
+                        }
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+            </SectionCard>
+          )}
+
+          {/* Receivable */}
+          {debt.receivable_id && (
+            <SectionCard
+              icon={<Wallet className="w-5 h-5" />}
+              title={t("debts.sections.receivable", "Receivable")}
+            >
+              <div className="grid grid-cols-2 gap-4">
+                <Field
+                  label={t("debts.fields.receivableId", "Receivable ID")}
+                  value={
+                    <span className="font-mono text-sm">#{debt.receivable_id}</span>
+                  }
+                />
+                <Field
+                  label={t("debts.fields.receivableStatus", "Receivable Status")}
+                  value={
+                    <span className="capitalize">{debt.receivable_status ?? "—"}</span>
+                  }
+                />
+                <Field
+                  label={t("debts.fields.receivableTotal", "Total Amount")}
+                  value={formatHalalaAmount(debt.receivable_amount_total_halala) ?? "—"}
+                />
+                <Field
+                  label={t("debts.fields.receivableOutstanding", "Outstanding")}
+                  value={
+                    <span className="font-medium text-amber-600">
+                      {formatHalalaAmount(debt.receivable_amount_outstanding_halala) ?? "—"}
+                    </span>
+                  }
                 />
               </div>
             </SectionCard>
