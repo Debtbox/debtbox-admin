@@ -5,6 +5,7 @@ import { getLanguageFromCookie } from "@/utils/getLanguageFromCookies";
 
 export type DebtsStatsData = {
   totalDebts: number;
+  groupedTotalDebts: number;
   activeDebts: number;
   overdueDebts: number;
   paidDebts: number;

@@ -14,7 +14,9 @@ const DEBTS_PER_PAGE = 10;
 const DebtsManagement = () => {
   const { t } = useTranslation();
 
-  const [filters, setFilters] = useState<DebtFiltersState & { page: number; limit: number }>({
+  const [filters, setFilters] = useState<
+    DebtFiltersState & { page: number; limit: number }
+  >({
     page: 0,
     limit: DEBTS_PER_PAGE,
     search: "",
@@ -33,7 +35,14 @@ const DebtsManagement = () => {
         limit: f.limit,
         search: f.search || undefined,
         status: f.status.length
-          ? (f.status as ("pending" | "active" | "paid" | "overdue" | "in_arrears" | "cancelled")[])
+          ? (f.status as (
+              | "pending"
+              | "active"
+              | "paid"
+              | "overdue"
+              | "in_arrears"
+              | "cancelled"
+            )[])
           : undefined,
         createdFrom: f.createdFrom || undefined,
         createdTo: f.createdTo || undefined,
@@ -41,7 +50,7 @@ const DebtsManagement = () => {
         dueTo: f.dueTo || undefined,
       };
     },
-    [filters]
+    [filters],
   );
 
   const debtsQuery = useGetDebts({ params: buildParams() });
@@ -58,12 +67,14 @@ const DebtsManagement = () => {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-1">{t("debts.title")}</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-1">
+          {t("debts.title")}
+        </h1>
         <p className="text-gray-500 text-sm">{t("debts.subtitle")}</p>
       </div>
 
       <DebtsStats
-        total={statsQuery.data?.data.totalDebts ?? 0}
+        total={statsQuery.data?.data.groupedTotalDebts ?? 0}
         active={statsQuery.data?.data.activeDebts ?? 0}
         overdue={statsQuery.data?.data.overdueDebts ?? 0}
         paid={statsQuery.data?.data.paidDebts ?? 0}
@@ -72,10 +83,7 @@ const DebtsManagement = () => {
       />
 
       <div className="mb-6">
-        <DebtFilters
-          filters={filters}
-          onFiltersChange={handleFiltersChange}
-        />
+        <DebtFilters filters={filters} onFiltersChange={handleFiltersChange} />
       </div>
 
       <DebtsTable
